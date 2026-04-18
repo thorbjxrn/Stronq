@@ -10,11 +10,12 @@ final class WorkoutViewModel {
     var isRestTimerRunning = false
     var elapsedTime: TimeInterval = 0
 
-    var currentSeriesNumber: Int = 0
     var seriesMode: SeriesMode = .fixed(5)
     var plannedExercises: [PlannedSeriesExercise] = []
     var dayType: DayType = .heavy
     var weekNumber: Int = 1
+    var currentExerciseIndex: Int = 0
+    var seriesPerExercise: [String: Int] = [:]
 
     private var restTimerTask: Task<Void, Never>?
     private var elapsedTimerTask: Task<Void, Never>?
@@ -33,8 +34,8 @@ final class WorkoutViewModel {
         guard let nextDayType = DeLormeEngine.nextWorkout(program: program) else { return }
         dayType = nextDayType
 
-        let mondaySeries = lastMondaySeriesCount(program: program, week: weekNumber)
-        seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: nextDayType, mondaySeriesCount: mondaySeries)
+        let mondaySeries = lastMondaySeriesCounts(program: program, week: weekNumber)
+        seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: nextDayType, mondaySeriesCount: mondaySeries.values.min())
         setRestDuration = program.setRestDuration
         seriesRestDuration = program.seriesRestDuration
 
@@ -43,15 +44,58 @@ final class WorkoutViewModel {
             dayType: nextDayType,
             week: weekNumber
         )
+
+        for exercise in plannedExercises {
+            let mondayCount = mondaySeries[exercise.name]
+            let mode = DeLormeEngine.seriesCount(week: weekNumber, dayType: nextDayType, mondaySeriesCount: mondayCount)
+            switch mode {
+            case .fixed(let n): seriesPerExercise[exercise.name] = n
+            case .max: seriesPerExercise[exercise.name] = 0
+            }
+        }
     }
 
     var hasWorkoutToday: Bool { !plannedExercises.isEmpty }
 
-    var targetSeriesCount: Int? {
-        switch seriesMode {
-        case .fixed(let n): return n
-        case .max: return nil
+    var currentExercise: PlannedSeriesExercise? {
+        guard currentExerciseIndex < plannedExercises.count else { return nil }
+        return plannedExercises[currentExerciseIndex]
+    }
+
+    var isLastExercise: Bool {
+        currentExerciseIndex >= plannedExercises.count - 1
+    }
+
+    func seriesModeForExercise(_ name: String) -> SeriesMode {
+        let count = seriesPerExercise[name] ?? 0
+        return count == 0 ? .max : .fixed(count)
+    }
+
+    func currentSeriesForExercise(_ name: String) -> Int {
+        guard let session = activeSession else { return 0 }
+        return session.completedSets
+            .filter { $0.exerciseName == name }
+            .map(\.seriesNumber)
+            .max() ?? 0
+    }
+
+    func canAddMoreSeries(for name: String) -> Bool {
+        let mode = seriesModeForExercise(name)
+        let current = currentSeriesForExercise(name)
+        switch mode {
+        case .max: return true
+        case .fixed(let n): return current < n
         }
+    }
+
+    func allSetsCompleteForCurrentSeries(exerciseName: String) -> Bool {
+        guard let session = activeSession else { return false }
+        let current = currentSeriesForExercise(exerciseName)
+        guard current > 0 else { return false }
+        let setsInSeries = session.completedSets.filter {
+            $0.exerciseName == exerciseName && $0.seriesNumber == current
+        }
+        return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
     }
 
     // MARK: - Session Lifecycle
@@ -64,49 +108,45 @@ final class WorkoutViewModel {
 
         activeSession = session
         isWorkoutActive = true
-        currentSeriesNumber = 0
+        currentExerciseIndex = 0
         elapsedTime = 0
         startElapsedTimer()
 
-        addNextSeries(to: session)
-    }
-
-    func addNextSeries(to session: WorkoutSession) {
-        currentSeriesNumber += 1
-
-        for exercise in plannedExercises {
-            for (setIndex, set) in exercise.sets.enumerated() {
-                let completedSet = CompletedSet(
-                    exerciseName: exercise.name,
-                    seriesNumber: currentSeriesNumber,
-                    setNumber: setIndex + 1,
-                    targetWeight: set.weight,
-                    targetReps: set.reps,
-                    intensity: set.intensity,
-                    pushUpVariant: set.pushUpVariant
-                )
-                completedSet.session = session
-                session.completedSets.append(completedSet)
-            }
+        if let exercise = currentExercise {
+            addSeries(for: exercise, to: session)
         }
     }
 
-    var canAddMoreSeries: Bool {
-        switch seriesMode {
-        case .fixed(let n): return currentSeriesNumber < n
-        case .max: return true
-        }
-    }
+    func addSeries(for exercise: PlannedSeriesExercise, to session: WorkoutSession) {
+        let nextSeries = currentSeriesForExercise(exercise.name) + 1
 
-    var currentSeriesComplete: Bool {
-        guard let session = activeSession else { return false }
-        let setsInCurrentSeries = session.completedSets.filter { $0.seriesNumber == currentSeriesNumber }
-        return !setsInCurrentSeries.isEmpty && setsInCurrentSeries.allSatisfy(\.isCompleted)
+        for (setIndex, set) in exercise.sets.enumerated() {
+            let completedSet = CompletedSet(
+                exerciseName: exercise.name,
+                seriesNumber: nextSeries,
+                setNumber: setIndex + 1,
+                targetWeight: set.weight,
+                targetReps: set.reps,
+                intensity: set.intensity,
+                pushUpVariant: set.pushUpVariant
+            )
+            completedSet.session = session
+            session.completedSets.append(completedSet)
+        }
     }
 
     func addAnotherSeries() {
-        guard let session = activeSession, canAddMoreSeries else { return }
-        addNextSeries(to: session)
+        guard let session = activeSession, let exercise = currentExercise else { return }
+        guard canAddMoreSeries(for: exercise.name) else { return }
+        addSeries(for: exercise, to: session)
+    }
+
+    func moveToNextExercise() {
+        guard let session = activeSession else { return }
+        currentExerciseIndex += 1
+        if let exercise = currentExercise {
+            addSeries(for: exercise, to: session)
+        }
     }
 
     // MARK: - Set Actions
@@ -116,7 +156,7 @@ final class WorkoutViewModel {
         set.completedAt = .now
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-        if currentSeriesComplete {
+        if allSetsCompleteForCurrentSeries(exerciseName: set.exerciseName) {
             startRestTimer(duration: seriesRestDuration)
         } else {
             startRestTimer(duration: setRestDuration)
@@ -192,13 +232,20 @@ final class WorkoutViewModel {
 
     // MARK: - Helpers
 
-    private func lastMondaySeriesCount(program: Program, week: Int) -> Int? {
+    private func lastMondaySeriesCounts(program: Program, week: Int) -> [String: Int] {
         let mondaySession = program.sessions.first {
             $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
         }
-        guard let session = mondaySession else { return nil }
-        let maxSeries = session.completedSets.map(\.seriesNumber).max() ?? 0
-        return maxSeries
+        guard let session = mondaySession else { return [:] }
+
+        var counts: [String: Int] = [:]
+        for exercise in program.exercises {
+            counts[exercise.name] = session.completedSets
+                .filter { $0.exerciseName == exercise.name }
+                .map(\.seriesNumber)
+                .max() ?? 0
+        }
+        return counts
     }
 
     var formattedElapsed: String {
@@ -213,20 +260,18 @@ final class WorkoutViewModel {
         return String(format: "%d:%02d", minutes, seconds)
     }
 
-    func setsForCurrentSeries() -> [CompletedSet] {
+    func setsForExercise(_ name: String) -> [CompletedSet] {
         guard let session = activeSession else { return [] }
         return session.completedSets
-            .filter { $0.seriesNumber == currentSeriesNumber }
-            .sorted { ($0.exerciseName, $0.setNumber) < ($1.exerciseName, $1.setNumber) }
+            .filter { $0.exerciseName == name }
+            .sorted { ($0.seriesNumber, $0.setNumber) < ($1.seriesNumber, $1.setNumber) }
     }
 
-    func allSetsGroupedBySeries() -> [(series: Int, sets: [CompletedSet])] {
-        guard let session = activeSession else { return [] }
-        let grouped = Dictionary(grouping: session.completedSets) { $0.seriesNumber }
-        return grouped.keys.sorted().map { series in
-            (series: series, sets: grouped[series]!.sorted {
-                ($0.exerciseName, $0.setNumber) < ($1.exerciseName, $1.setNumber)
-            })
+    func setsGroupedBySeries(for name: String) -> [(series: Int, sets: [CompletedSet])] {
+        let all = setsForExercise(name)
+        let grouped = Dictionary(grouping: all) { $0.seriesNumber }
+        return grouped.keys.sorted().map { s in
+            (series: s, sets: grouped[s]!.sorted { $0.setNumber < $1.setNumber })
         }
     }
 }
