@@ -30,8 +30,10 @@ struct ExerciseConfigView: View {
                                         .foregroundStyle(theme.textSecondary)
                                 }
 
-                                Text(formatted(exercise.initial10RM))
+                                TextField("", value: $exercise.initial10RM, format: .number)
                                     .font(.system(size: 40, weight: .bold, design: .rounded))
+                                    .multilineTextAlignment(.center)
+                                    .keyboardType(.decimalPad)
                                     .frame(minWidth: 80)
 
                                 Button {
