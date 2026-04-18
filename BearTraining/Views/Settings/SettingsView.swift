@@ -201,13 +201,10 @@ struct SettingsView: View {
             #if DEBUG
             if let program {
                 Section {
-                    HStack {
-                        Text("Current Week")
-                        Spacer()
-                        Text("\(program.currentWeek)")
-                        Button("-") { if program.currentWeek > program.firstWeek { program.currentWeek -= 1 } }
-                        Button("+") { if program.currentWeek < 7 { program.currentWeek += 1 } }
-                    }
+                    Stepper("Week \(program.currentWeek)", value: Binding(
+                        get: { program.currentWeek },
+                        set: { program.currentWeek = $0 }
+                    ), in: program.firstWeek...7)
 
                     Button("Reset Program (delete all sessions)") {
                         for session in program.sessions {
@@ -225,7 +222,8 @@ struct SettingsView: View {
                     }
                     .foregroundStyle(.red)
                 } header: {
-                    Text("Debug")
+                    Label("Debug — dev builds only", systemImage: "ant")
+                        .font(.caption2)
                 }
             }
             #endif
