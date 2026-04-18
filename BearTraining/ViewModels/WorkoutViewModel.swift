@@ -98,7 +98,14 @@ final class WorkoutViewModel {
     }
 
     func isExerciseDone(_ name: String) -> Bool {
-        doneExercises.contains(name)
+        if doneExercises.contains(name) { return true }
+        let mode = seriesModeForExercise(name)
+        if case .fixed = mode {
+            guard let session = activeSession else { return false }
+            let sets = session.completedSets.filter { $0.exerciseName == name }
+            return !sets.isEmpty && sets.allSatisfy(\.isCompleted)
+        }
+        return false
     }
 
     func markExerciseDone(_ name: String) {
@@ -120,7 +127,15 @@ final class WorkoutViewModel {
         startElapsedTimer()
 
         for exercise in plannedExercises {
-            addSeries(for: exercise, to: session)
+            let mode = seriesModeForExercise(exercise.name)
+            let initialCount: Int
+            switch mode {
+            case .fixed(let n): initialCount = n
+            case .max: initialCount = 5
+            }
+            for _ in 0..<initialCount {
+                addSeries(for: exercise, to: session)
+            }
         }
     }
 

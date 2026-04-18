@@ -152,11 +152,32 @@ struct WorkoutSessionView: View {
                     seriesCard(group: group, exerciseName: exercise.name)
                 }
 
-                // Action buttons
                 if isDone {
                     doneLabel(exercise.name, seriesCount: currentSeries)
-                } else if lastSeriesDone {
-                    actionButtons(exercise: exercise)
+                } else if mode == .max && lastSeriesDone {
+                    VStack(spacing: 10) {
+                        Button {
+                            withAnimation { viewModel.addAnotherSeriesForExercise(exercise.name) }
+                        } label: {
+                            Label("Add Series", systemImage: "plus.circle.fill")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(theme.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
+                                .foregroundStyle(theme.accentColor)
+                        }
+
+                        Button {
+                            withAnimation { viewModel.markExerciseDone(exercise.name) }
+                        } label: {
+                            Label("Done — \(currentSeries) series", systemImage: "checkmark")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(theme.completedColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
+                                .foregroundStyle(theme.completedColor)
+                        }
+                    }
                 }
             }
             .padding(16)
