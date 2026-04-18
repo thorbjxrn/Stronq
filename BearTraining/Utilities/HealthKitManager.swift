@@ -51,29 +51,24 @@ final class HealthKitManager {
         }
     }
 
-    func readLatestBodyweight() async -> Double? {
-        guard isAuthorized else { return nil }
+    func readBodyweightHistory(limit: Int = 100) async -> [(date: Date, weight: Double)] {
+        guard isAuthorized else { return [] }
 
         let bodyMassType = HKQuantityType.quantityType(forIdentifier: .bodyMass)!
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
-        let query = HKSampleQuery(
-            sampleType: bodyMassType,
-            predicate: nil,
-            limit: 1,
-            sortDescriptors: [sortDescriptor]
-        ) { _, _, _ in }
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
 
         return await withCheckedContinuation { continuation in
             let query = HKSampleQuery(
                 sampleType: bodyMassType,
                 predicate: nil,
-                limit: 1,
+                limit: limit,
                 sortDescriptors: [sortDescriptor]
             ) { _, samples, _ in
-                let weight = (samples?.first as? HKQuantitySample)?
-                    .quantity
-                    .doubleValue(for: .gramUnit(with: .kilo))
-                continuation.resume(returning: weight)
+                let results = (samples as? [HKQuantitySample])?.map { sample in
+                    (date: sample.startDate,
+                     weight: sample.quantity.doubleValue(for: .gramUnit(with: .kilo)))
+                } ?? []
+                continuation.resume(returning: results)
             }
             healthStore.execute(query)
         }

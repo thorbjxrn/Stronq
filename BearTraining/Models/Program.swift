@@ -9,7 +9,6 @@ final class Program {
     var introCycleEnabled: Bool
     var setRestDuration: Int?
     var seriesRestDuration: Int?
-    var exerciseOrderRaw: String?
 
     @Relationship(deleteRule: .cascade, inverse: \Exercise.program)
     var exercises: [Exercise]
@@ -28,7 +27,6 @@ final class Program {
         self.introCycleEnabled = introCycleEnabled
         self.setRestDuration = 60
         self.seriesRestDuration = 180
-        self.exerciseOrderRaw = ExerciseOrder.sequential.rawValue
         self.exercises = []
         self.sessions = []
     }
@@ -41,11 +39,6 @@ final class Program {
     @Transient var restBetweenSeries: Int {
         get { seriesRestDuration ?? 180 }
         set { seriesRestDuration = newValue }
-    }
-
-    @Transient var exerciseOrder: ExerciseOrder {
-        get { ExerciseOrder(rawValue: exerciseOrderRaw ?? "") ?? .sequential }
-        set { exerciseOrderRaw = newValue.rawValue }
     }
 
     var firstWeek: Int { introCycleEnabled ? -1 : 1 }

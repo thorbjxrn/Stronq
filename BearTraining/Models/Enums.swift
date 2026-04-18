@@ -44,18 +44,6 @@ enum WeightUnit: String, Codable, CaseIterable {
     var symbol: String { rawValue }
 }
 
-enum ExerciseOrder: String, Codable, CaseIterable {
-    case sequential = "Sequential"
-    case alternating = "Alternating"
-
-    var description: String {
-        switch self {
-        case .sequential: "All sets of one exercise, then the next"
-        case .alternating: "Alternate exercises each series"
-        }
-    }
-}
-
 enum PushUpVariant: String, Codable {
     case regular = "Regular"
     case archer = "Archer"

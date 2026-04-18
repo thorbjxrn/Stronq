@@ -8,6 +8,8 @@ struct ProgressView: View {
     @Query(sort: \BodyweightEntry.date) private var bodyweightEntries: [BodyweightEntry]
     @Query private var programs: [Program]
     @State private var selectedChart = 0
+    @State private var healthKitWeights: [(date: Date, weight: Double)] = []
+    @State private var healthKitManager = HealthKitManager()
 
     private var program: Program? { programs.first }
 
@@ -97,8 +99,8 @@ struct ProgressView: View {
                         x: .value("Date", point.date, unit: .day),
                         y: .value("Volume", point.volume)
                     )
-                    .foregroundStyle(theme.accentColor.gradient)
                 }
+                .chartForegroundStyleScale(range: [theme.accentColor])
                 .chartYAxisLabel("kg × reps")
                 .frame(height: 250)
                 .padding()
@@ -122,33 +124,75 @@ struct ProgressView: View {
 
     private var bodyweightChart: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Bodyweight")
-                .font(.headline)
-                .padding(.horizontal)
+            HStack {
+                Text("Bodyweight")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    Task {
+                        await healthKitManager.requestAuthorization()
+                        healthKitWeights = await healthKitManager.readBodyweightHistory()
+                    }
+                } label: {
+                    Label("Sync Health", systemImage: "heart.fill")
+                        .font(.caption)
+                        .foregroundStyle(theme.accentColor)
+                }
+            }
+            .padding(.horizontal)
 
-            if bodyweightEntries.isEmpty {
-                emptyState("Log your bodyweight in Settings to track it here.")
+            let allWeights = mergedBodyweightData
+
+            if allWeights.isEmpty {
+                emptyState("Log bodyweight in Settings or sync from Apple Health.")
             } else {
-                Chart(bodyweightEntries) { entry in
+                Chart(allWeights, id: \.id) { point in
                     LineMark(
-                        x: .value("Date", entry.date, unit: .day),
-                        y: .value("Weight", entry.weight)
+                        x: .value("Date", point.date, unit: .day),
+                        y: .value("Weight", point.weight)
                     )
                     .foregroundStyle(theme.accentColor)
 
                     PointMark(
-                        x: .value("Date", entry.date, unit: .day),
-                        y: .value("Weight", entry.weight)
+                        x: .value("Date", point.date, unit: .day),
+                        y: .value("Weight", point.weight)
                     )
-                    .foregroundStyle(theme.accentColor)
+                    .foregroundStyle(point.source == "health" ? theme.completedColor : theme.accentColor)
                 }
-                .chartYAxisLabel(bodyweightEntries.first?.unit.symbol ?? "kg")
+                .chartYAxisLabel("kg")
                 .frame(height: 250)
                 .padding()
                 .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal)
             }
         }
+    }
+
+    private var mergedBodyweightData: [BodyweightPoint] {
+        var points: [BodyweightPoint] = []
+
+        for entry in bodyweightEntries {
+            points.append(BodyweightPoint(
+                id: entry.id.uuidString,
+                date: entry.date,
+                weight: entry.weight,
+                source: "manual"
+            ))
+        }
+
+        for hk in healthKitWeights {
+            let isDuplicate = points.contains { abs($0.date.timeIntervalSince(hk.date)) < 86400 && abs($0.weight - hk.weight) < 0.1 }
+            if !isDuplicate {
+                points.append(BodyweightPoint(
+                    id: "hk-\(hk.date.timeIntervalSince1970)",
+                    date: hk.date,
+                    weight: hk.weight,
+                    source: "health"
+                ))
+            }
+        }
+
+        return points.sorted { $0.date < $1.date }
     }
 
     // MARK: - Helpers
@@ -225,4 +269,11 @@ struct VolumePoint: Identifiable {
     let date: Date
     let volume: Double
     let dayType: String
+}
+
+struct BodyweightPoint: Identifiable {
+    let id: String
+    let date: Date
+    let weight: Double
+    let source: String
 }

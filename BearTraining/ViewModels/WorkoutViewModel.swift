@@ -14,7 +14,6 @@ final class WorkoutViewModel {
     var plannedExercises: [PlannedSeriesExercise] = []
     var dayType: DayType = .heavy
     var weekNumber: Int = 1
-    var exerciseOrder: ExerciseOrder = .sequential
     var doneExercises: Set<String> = []
     private var seriesPerExercise: [String: Int] = [:]
 
@@ -43,7 +42,6 @@ final class WorkoutViewModel {
         seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: next.dayType, mondaySeriesCount: mondaySeries.values.min())
         setRestDuration = program.restBetweenSets
         seriesRestDuration = program.restBetweenSeries
-        exerciseOrder = program.exerciseOrder
 
         plannedExercises = DeLormeEngine.generateSeries(
             exercises: program.exercises,
