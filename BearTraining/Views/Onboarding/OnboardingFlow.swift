@@ -86,19 +86,20 @@ struct OnboardingFlow: View {
                 .foregroundStyle(theme.textSecondary)
                 .tracking(2)
 
+            NavigationLink {
+                HowItWorksView()
+            } label: {
+                Label("How does it work?", systemImage: "info.circle")
+                    .font(.subheadline)
+                    .foregroundStyle(theme.accentColor.opacity(0.7))
+            }
+            .padding(.top, 4)
+
             Spacer()
             Spacer()
 
             ctaButton("Get Started") {
                 withAnimation { step = 1 }
-            }
-
-            NavigationLink {
-                HowItWorksView()
-            } label: {
-                Text("How does it work?")
-                    .font(.subheadline)
-                    .foregroundStyle(theme.textSecondary)
             }
         }
         .padding(.horizontal, 24)
