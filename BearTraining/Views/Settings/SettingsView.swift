@@ -62,13 +62,6 @@ struct SettingsView: View {
     private var programSection: some View {
         Section("Program") {
             if let program {
-                HStack {
-                    Text("Current Week")
-                    Spacer()
-                    Text("\(program.currentWeek)")
-                        .foregroundStyle(theme.textSecondary)
-                }
-
                 Stepper("Set rest: \(program.restBetweenSets)s", value: Binding(
                     get: { program.restBetweenSets },
                     set: { program.restBetweenSets = $0 }
