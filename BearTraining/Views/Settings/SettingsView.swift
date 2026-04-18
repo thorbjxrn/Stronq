@@ -69,14 +69,14 @@ struct SettingsView: View {
                         .foregroundStyle(theme.textSecondary)
                 }
 
-                Stepper("Set rest: \(program.setRestDuration)s", value: Binding(
-                    get: { program.setRestDuration },
-                    set: { program.setRestDuration = $0 }
+                Stepper("Set rest: \(program.restBetweenSets)s", value: Binding(
+                    get: { program.restBetweenSets },
+                    set: { program.restBetweenSets = $0 }
                 ), in: 15...180, step: 15)
 
-                Stepper("Series rest: \(program.seriesRestDuration)s", value: Binding(
-                    get: { program.seriesRestDuration },
-                    set: { program.seriesRestDuration = $0 }
+                Stepper("Series rest: \(program.restBetweenSeries)s", value: Binding(
+                    get: { program.restBetweenSeries },
+                    set: { program.restBetweenSeries = $0 }
                 ), in: 60...600, step: 30)
 
                 Picker("Exercise Order", selection: Binding(

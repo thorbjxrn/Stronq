@@ -7,9 +7,9 @@ final class Program {
     var startDate: Date
     var currentWeek: Int
     var introCycleEnabled: Bool
-    var setRestDuration: Int = 60
-    var seriesRestDuration: Int = 180
-    var exerciseOrder: ExerciseOrder = ExerciseOrder.sequential
+    var setRestDuration: Int?
+    var seriesRestDuration: Int?
+    var exerciseOrderRaw: String?
 
     @Relationship(deleteRule: .cascade, inverse: \Exercise.program)
     var exercises: [Exercise]
@@ -20,20 +20,32 @@ final class Program {
     init(
         startDate: Date = .now,
         currentWeek: Int = 1,
-        introCycleEnabled: Bool = false,
-        setRestDuration: Int = 60,
-        seriesRestDuration: Int = 180,
-        exerciseOrder: ExerciseOrder = .sequential
+        introCycleEnabled: Bool = false
     ) {
         self.id = UUID()
         self.startDate = startDate
         self.currentWeek = introCycleEnabled ? -1 : 1
         self.introCycleEnabled = introCycleEnabled
-        self.setRestDuration = setRestDuration
-        self.seriesRestDuration = seriesRestDuration
-        self.exerciseOrder = exerciseOrder
+        self.setRestDuration = 60
+        self.seriesRestDuration = 180
+        self.exerciseOrderRaw = ExerciseOrder.sequential.rawValue
         self.exercises = []
         self.sessions = []
+    }
+
+    var restBetweenSets: Int {
+        get { setRestDuration ?? 60 }
+        set { setRestDuration = newValue }
+    }
+
+    var restBetweenSeries: Int {
+        get { seriesRestDuration ?? 180 }
+        set { seriesRestDuration = newValue }
+    }
+
+    var exerciseOrder: ExerciseOrder {
+        get { ExerciseOrder(rawValue: exerciseOrderRaw ?? "") ?? .sequential }
+        set { exerciseOrderRaw = newValue.rawValue }
     }
 
     var firstWeek: Int { introCycleEnabled ? -1 : 1 }

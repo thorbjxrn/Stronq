@@ -42,8 +42,8 @@ final class WorkoutViewModel {
 
         let mondaySeries = lastMondaySeriesCounts(program: program, week: weekNumber)
         seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: next.dayType, mondaySeriesCount: mondaySeries.values.min())
-        setRestDuration = program.setRestDuration
-        seriesRestDuration = program.seriesRestDuration
+        setRestDuration = program.restBetweenSets
+        seriesRestDuration = program.restBetweenSeries
         exerciseOrder = program.exerciseOrder
 
         plannedExercises = DeLormeEngine.generateSeries(
