@@ -1,0 +1,24 @@
+## Xcode
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+DerivedData/
+build/
+.build/
+
+## CocoaPods
+Pods/
+
+## SPM
+.swiftpm/
+
+## macOS
+.DS_Store
+*.swp
+*~.nib
+
+## Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
