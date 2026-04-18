@@ -171,11 +171,19 @@ final class WorkoutViewModel {
         set.completedAt = .now
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-        if allSetsCompleteForCurrentSeries(exerciseName: set.exerciseName) {
+        if allSetsCompleteInSeries(set.seriesNumber, exerciseName: set.exerciseName) {
             startRestTimer(duration: seriesRestDuration)
         } else {
             startRestTimer(duration: setRestDuration)
         }
+    }
+
+    private func allSetsCompleteInSeries(_ series: Int, exerciseName: String) -> Bool {
+        guard let session = activeSession else { return false }
+        let setsInSeries = session.completedSets.filter {
+            $0.exerciseName == exerciseName && $0.seriesNumber == series
+        }
+        return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
     }
 
     func uncompleteSet(_ set: CompletedSet) {
