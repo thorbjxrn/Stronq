@@ -65,7 +65,7 @@ struct OnboardingFlow: View {
             Text("Stronq")
                 .font(.system(size: 56, weight: .heavy))
 
-            Text("Two exercises.\nSix weeks.\nBecome a bear.")
+            Text("Two exercises.\nSix weeks.\nSeriously strong.")
                 .font(.system(size: 20, weight: .regular))
                 .foregroundStyle(theme.textSecondary)
                 .lineSpacing(6)
