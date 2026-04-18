@@ -323,6 +323,7 @@ struct SetRowView: View {
                 } else {
                     viewModel.completeSet(set)
                 }
+                isEditing = false
             } label: {
                 Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.title2)
@@ -340,20 +341,24 @@ struct SetRowView: View {
             Spacer()
 
             if isEditing {
-                Stepper("", value: $set.actualReps, in: 0...10)
+                Stepper("", value: $set.actualReps, in: 0...25)
                     .labelsHidden()
                     .fixedSize()
                 Text("\(set.actualReps)")
                     .font(.system(.body, design: .monospaced, weight: .bold))
             } else {
                 Button { isEditing = true } label: {
-                    Text("x\(set.targetReps)")
+                    Text("x\(set.actualReps)")
                         .font(.subheadline)
-                        .foregroundStyle(theme.textSecondary)
+                        .foregroundStyle(set.actualReps != set.targetReps ? .white : theme.textSecondary)
                 }
             }
         }
         .padding(.vertical, 2)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if isEditing { isEditing = false }
+        }
     }
 
     private var intensityLabel: String {
