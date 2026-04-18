@@ -85,14 +85,18 @@ struct ProgressView: View {
             if completed.isEmpty {
                 emptyState("Complete workouts to see volume trends.")
             } else {
-                let volumeData = completed.map { session in
-                    VolumePoint(
-                        id: session.id.uuidString,
-                        date: session.date,
-                        volume: session.totalVolume,
-                        dayType: session.dayType.rawValue
-                    )
+                let calendar = Calendar.current
+                let grouped = Dictionary(grouping: completed) { session in
+                    calendar.startOfDay(for: session.date)
                 }
+                let volumeData = grouped.map { (day, daySessions) in
+                    VolumePoint(
+                        id: day.timeIntervalSince1970.description,
+                        date: day,
+                        volume: daySessions.reduce(0) { $0 + $1.totalVolume },
+                        dayType: daySessions.first?.dayType.rawValue ?? ""
+                    )
+                }.sorted { $0.date < $1.date }
 
                 Chart(volumeData, id: \.id) { point in
                     BarMark(
