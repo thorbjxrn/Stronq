@@ -40,18 +40,21 @@ struct TodayView: View {
         ScrollView {
             VStack(spacing: 20) {
                 // Day header
-                VStack(spacing: 4) {
+                VStack(spacing: 6) {
                     Text("Week \(viewModel.weekNumber)")
-                        .font(.subheadline)
+                        .font(.caption)
                         .foregroundStyle(theme.textSecondary)
                     Text(viewModel.dayType.rawValue)
-                        .font(.title.bold())
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                    Text(DeLormeEngine.suggestedDay(for: viewModel.dayType))
+                        .font(.caption)
+                        .foregroundStyle(theme.textSecondary)
                 }
                 .padding(.top, 8)
 
                 // Series info
                 HStack {
-                    Image(systemName: "arrow.triangle.2.circlepath")
+                    Image(systemName: viewModel.seriesMode == .max ? "flame" : "arrow.triangle.2.circlepath")
                         .foregroundStyle(theme.accentColor)
                     switch viewModel.seriesMode {
                     case .max:
@@ -62,7 +65,7 @@ struct TodayView: View {
                     Spacer()
                 }
                 .font(.subheadline)
-                .padding()
+                .padding(14)
                 .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
 
                 // Exercise preview
@@ -112,14 +115,14 @@ struct TodayView: View {
     }
 
     private var restDayView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             Spacer()
-            Image(systemName: "bed.double.fill")
-                .font(.system(size: 50))
-                .foregroundStyle(theme.textSecondary)
-            Text("Rest Day")
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 56))
+                .foregroundStyle(theme.completedColor)
+            Text("Week Complete")
                 .font(.title2.bold())
-            Text("No workout scheduled today.\nYour next session is on the next training day.")
+            Text("All workouts for this week are done.\nRest up — you've earned it.")
                 .font(.subheadline)
                 .foregroundStyle(theme.textSecondary)
                 .multilineTextAlignment(.center)

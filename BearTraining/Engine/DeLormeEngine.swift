@@ -98,13 +98,23 @@ struct DeLormeEngine {
 
     // MARK: - Schedule
 
-    static func dayType(for date: Date) -> DayType? {
-        let weekday = Calendar.current.component(.weekday, from: date)
-        switch weekday {
-        case 2: return .heavy
-        case 4: return .light
-        case 6: return .medium
-        default: return nil
+    static func nextWorkout(program: Program) -> DayType? {
+        let week = program.currentWeek
+        if week > 7 { return nil }
+
+        let sequence: [DayType] = week == 7 ? [.heavy] : [.heavy, .light, .medium]
+        for dayType in sequence {
+            let done = program.session(week: week, dayType: dayType)?.isCompleted == true
+            if !done { return dayType }
+        }
+        return nil
+    }
+
+    static func suggestedDay(for dayType: DayType) -> String {
+        switch dayType {
+        case .heavy: "Usually Monday"
+        case .light: "Usually Wednesday"
+        case .medium: "Usually Friday"
         }
     }
 

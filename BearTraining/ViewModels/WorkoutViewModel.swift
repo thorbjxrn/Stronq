@@ -24,28 +24,23 @@ final class WorkoutViewModel {
     // MARK: - Setup
 
     func prepareWorkout(program: Program) {
-        let today = Date.now
         weekNumber = DeLormeEngine.currentWeek(
             startDate: program.startDate,
-            currentDate: today,
+            currentDate: .now,
             introCycleEnabled: program.introCycleEnabled
         )
 
-        guard let dt = DeLormeEngine.dayType(for: today) else { return }
-        dayType = dt
-
-        if program.session(week: weekNumber, dayType: dt)?.isCompleted == true {
-            return
-        }
+        guard let nextDayType = DeLormeEngine.nextWorkout(program: program) else { return }
+        dayType = nextDayType
 
         let mondaySeries = lastMondaySeriesCount(program: program, week: weekNumber)
-        seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: dt, mondaySeriesCount: mondaySeries)
+        seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: nextDayType, mondaySeriesCount: mondaySeries)
         setRestDuration = program.setRestDuration
         seriesRestDuration = program.seriesRestDuration
 
         plannedExercises = DeLormeEngine.generateSeries(
             exercises: program.exercises,
-            dayType: dt,
+            dayType: nextDayType,
             week: weekNumber
         )
     }
