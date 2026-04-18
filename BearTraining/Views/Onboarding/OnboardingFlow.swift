@@ -18,15 +18,25 @@ struct OnboardingFlow: View {
         ZStack {
             theme.backgroundColor.ignoresSafeArea()
 
-            TabView(selection: $step) {
-                welcomeStep.tag(0)
-                unitStep.tag(1)
-                exerciseSetupStep.tag(2)
-                configStep.tag(3)
-                readyStep.tag(4)
+            VStack(spacing: 0) {
+                TabView(selection: $step) {
+                    welcomeStep.tag(0)
+                    unitStep.tag(1)
+                    exerciseSetupStep.tag(2)
+                    configStep.tag(3)
+                    readyStep.tag(4)
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+
+                HStack(spacing: 8) {
+                    ForEach(0..<5) { i in
+                        Circle()
+                            .fill(i == step ? theme.accentColor : theme.textSecondary.opacity(0.4))
+                            .frame(width: 8, height: 8)
+                    }
+                }
+                .padding(.bottom, 16)
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            .indexViewStyle(.page(backgroundDisplayMode: .always))
         }
         .preferredColorScheme(.dark)
     }
@@ -42,8 +52,9 @@ struct OnboardingFlow: View {
                 .foregroundStyle(theme.accentColor)
 
             Text("How to Become\na Bear")
-                .font(.system(size: 36, weight: .bold))
+                .font(.system(size: 34, weight: .bold))
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
 
             Text("DeLorme Hypertrophy Program")
                 .font(.title3)
@@ -256,6 +267,7 @@ struct OnboardingFlow: View {
                 .foregroundStyle(.black)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
         }
+        .padding(.bottom, 40)
     }
 
     private func formatted(_ value: Double) -> String {
