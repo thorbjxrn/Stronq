@@ -33,17 +33,17 @@ final class Program {
         self.sessions = []
     }
 
-    var restBetweenSets: Int {
+    @Transient var restBetweenSets: Int {
         get { setRestDuration ?? 60 }
         set { setRestDuration = newValue }
     }
 
-    var restBetweenSeries: Int {
+    @Transient var restBetweenSeries: Int {
         get { seriesRestDuration ?? 180 }
         set { seriesRestDuration = newValue }
     }
 
-    var exerciseOrder: ExerciseOrder {
+    @Transient var exerciseOrder: ExerciseOrder {
         get { ExerciseOrder(rawValue: exerciseOrderRaw ?? "") ?? .sequential }
         set { exerciseOrderRaw = newValue.rawValue }
     }
