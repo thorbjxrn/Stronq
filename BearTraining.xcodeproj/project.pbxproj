@@ -464,7 +464,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.BearTrainingTests;
+				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.StronqTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BearTraining.app/BearTraining";
@@ -545,7 +545,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.BearTrainingTests;
+				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.StronqTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BearTraining.app/BearTraining";
@@ -560,12 +560,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BearTraining/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Bear Training";
+				INFOPLIST_KEY_CFBundleDisplayName = Stronq;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.BearTraining;
+				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.Stronq;
 				SDKROOT = iphoneos;
 				SUPPORTS_LIVE_ACTIVITIES = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -580,12 +580,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BearTraining/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Bear Training";
+				INFOPLIST_KEY_CFBundleDisplayName = Stronq;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.BearTraining;
+				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.Stronq;
 				SDKROOT = iphoneos;
 				SUPPORTS_LIVE_ACTIVITIES = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";

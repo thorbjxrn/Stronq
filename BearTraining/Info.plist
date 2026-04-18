@@ -20,9 +20,9 @@
 		<string>AccentColor</string>
 	</dict>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Bear Training reads your bodyweight from Health to track your progress alongside your training.</string>
+	<string>Stronq reads your bodyweight from Health to track your progress alongside your training.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Bear Training saves your workouts and bodyweight entries to Apple Health.</string>
+	<string>Stronq saves your workouts and bodyweight entries to Apple Health.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 </dict>

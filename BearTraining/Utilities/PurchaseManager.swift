@@ -8,7 +8,7 @@ final class PurchaseManager {
     private(set) var products: [Product] = []
     private(set) var purchaseError: String?
 
-    private static let productID = "com.thorbjxrn.beartraining.premium"
+    private static let productID = "com.thorbjxrn.stronq.premium"
     private var transactionListener: Task<Void, Never>?
 
     init() {

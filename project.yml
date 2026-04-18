@@ -27,9 +27,9 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_FILE: BearTraining/Info.plist
-        INFOPLIST_KEY_CFBundleDisplayName: Bear Training
+        INFOPLIST_KEY_CFBundleDisplayName: Stronq
         CODE_SIGN_ENTITLEMENTS: BearTraining/BearTraining.entitlements
-        PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.BearTraining
+        PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.Stronq
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SUPPORTS_LIVE_ACTIVITIES: YES
     entitlements:
@@ -44,5 +44,5 @@ targets:
       - target: BearTraining
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.BearTrainingTests
+        PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.StronqTests
         GENERATE_INFOPLIST_FILE: YES
