@@ -274,7 +274,7 @@ struct WorkoutSessionView: View {
         Group {
             if allExercisesDone {
                 Button {
-                    viewModel.finishWorkout(modelContext: modelContext)
+                    viewModel.finishWorkout(program: program, modelContext: modelContext)
                 } label: {
                     Label("Finish Workout", systemImage: "flag.checkered")
                         .font(.headline)
@@ -293,7 +293,7 @@ struct WorkoutSessionView: View {
                     }
                     .alert("End workout early?", isPresented: $showingFinishConfirm) {
                         Button("End Workout", role: .destructive) {
-                            viewModel.finishWorkout(modelContext: modelContext)
+                            viewModel.finishWorkout(program: program, modelContext: modelContext)
                         }
                         Button("Cancel", role: .cancel) {}
                     }

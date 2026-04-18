@@ -189,7 +189,7 @@ final class WorkoutViewModel {
 
     // MARK: - Finish
 
-    func finishWorkout(modelContext: ModelContext) {
+    func finishWorkout(program: Program, modelContext: ModelContext) {
         guard let session = activeSession else { return }
         session.isCompleted = true
         session.duration = elapsedTime
@@ -197,11 +197,12 @@ final class WorkoutViewModel {
         stopRestTimer()
         stopElapsedTimer()
 
+        activeSession = nil
+        doneExercises = []
+
         try? modelContext.save()
 
-        activeSession = nil
-        plannedExercises = []
-        doneExercises = []
+        prepareWorkout(program: program)
         isWorkoutActive = false
     }
 

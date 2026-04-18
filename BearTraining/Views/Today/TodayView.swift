@@ -34,11 +34,6 @@ struct TodayView: View {
                 viewModel.prepareWorkout(program: program)
             }
         }
-        .onChange(of: viewModel.isWorkoutActive) {
-            if !viewModel.isWorkoutActive, let program {
-                viewModel.prepareWorkout(program: program)
-            }
-        }
     }
 
     private func workoutPreview(program: Program) -> some View {
