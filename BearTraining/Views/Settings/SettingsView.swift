@@ -185,6 +185,12 @@ struct SettingsView: View {
 
     private var aboutSection: some View {
         Section("About") {
+            NavigationLink {
+                HowItWorksView()
+            } label: {
+                Label("How It Works", systemImage: "book")
+            }
+
             HStack {
                 Text("Version")
                 Spacer()

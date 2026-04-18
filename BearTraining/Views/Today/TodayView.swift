@@ -115,20 +115,65 @@ struct TodayView: View {
     }
 
     private var restDayView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 24) {
             Spacer()
             Image(systemName: "trophy.fill")
                 .font(.system(size: 56))
                 .foregroundStyle(theme.accentColor)
             Text("Program Complete")
                 .font(.title2.bold())
-            Text("You've finished all 6 weeks.\nTime to test your new strength or start a new cycle.")
+            Text("You've finished the cycle.\nStart a new one with updated weights.")
                 .font(.subheadline)
                 .foregroundStyle(theme.textSecondary)
                 .multilineTextAlignment(.center)
+
+            if let program {
+                VStack(spacing: 1) {
+                    ForEach(program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder })) { exercise in
+                        HStack {
+                            Text(exercise.name)
+                                .foregroundStyle(theme.textSecondary)
+                            Spacer()
+                            Text(formatted(exercise.initial10RM))
+                                .fontWeight(.semibold)
+                            Text(exercise.unit.symbol)
+                                .foregroundStyle(theme.textSecondary)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(theme.cardColor)
+                    }
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                Button {
+                    startNewCycle(program: program)
+                } label: {
+                    Text("Start New Cycle")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(theme.accentColor, in: RoundedRectangle(cornerRadius: 14))
+                        .foregroundStyle(.black)
+                }
+            }
+
             Spacer()
         }
-        .padding()
+        .padding(.horizontal, 24)
+    }
+
+    private func startNewCycle(program: Program) {
+        program.currentWeek = program.introCycleEnabled ? -1 : 1
+        program.startDate = .now
+        try? modelContext.save()
+        viewModel.prepareWorkout(program: program)
+    }
+
+    private func formatted(_ value: Double) -> String {
+        value.truncatingRemainder(dividingBy: 1) == 0
+            ? String(format: "%.0f", value)
+            : String(format: "%.1f", value)
     }
 
     private var noProgram: some View {

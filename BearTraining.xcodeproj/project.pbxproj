@@ -10,6 +10,7 @@
 		04A4687890025347AA8997C8 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE94242468173CBB40EDC76 /* HealthKitManager.swift */; };
 		0C6B009E9F8A30813F1EA706 /* WorkoutSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E5AC43B802B1020856A47F /* WorkoutSession.swift */; };
 		0CA57D7AE2700DBF0DF12F17 /* ProgramOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C598BD88E19BBB16EFF81704 /* ProgramOverviewView.swift */; };
+		11F1279AD9CF5784B1DB8A2B /* HowItWorksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4C90B84DED35B90697EB71 /* HowItWorksView.swift */; };
 		201E55211E59F5376C0C2608 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1749061173358C591714C089 /* PurchaseManager.swift */; };
 		276D69CABEA03CD4695A8846 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBCD79796365AF436EF8A4E /* ThemeManager.swift */; };
 		32D35C85B5C77CC789680020 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD7AC74DC2864C023A122B51 /* SettingsView.swift */; };
@@ -65,6 +66,7 @@
 		7ADD66532BB07642F23D72F8 /* BearTrainingTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BearTrainingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E9E7E5DD8133BBD2756C89C /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		9BE94242468173CBB40EDC76 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		9E4C90B84DED35B90697EB71 /* HowItWorksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowItWorksView.swift; sourceTree = "<group>"; };
 		A4A6BAE91D8C40EA5F600412 /* BearTrainingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearTrainingApp.swift; sourceTree = "<group>"; };
 		BAA1D3F61FEAAF653F7D5237 /* WorkoutSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSessionView.swift; sourceTree = "<group>"; };
 		C12FFF95DF89281D154524C3 /* BodyweightEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyweightEntry.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				2EA3A781FEC39047C99FAA27 /* ExerciseConfigView.swift */,
+				9E4C90B84DED35B90697EB71 /* HowItWorksView.swift */,
 				5B9EB1C106CA246CE0CE8A65 /* PaywallView.swift */,
 				FD7AC74DC2864C023A122B51 /* SettingsView.swift */,
 			);
@@ -357,6 +360,7 @@
 				C5B86DE2DF373A9951FBEDA3 /* ExerciseCatalog.swift in Sources */,
 				61548D015650F5A2071BE113 /* ExerciseConfigView.swift in Sources */,
 				04A4687890025347AA8997C8 /* HealthKitManager.swift in Sources */,
+				11F1279AD9CF5784B1DB8A2B /* HowItWorksView.swift in Sources */,
 				76ABD8A828D89F00844AF869 /* OnboardingFlow.swift in Sources */,
 				68C4D2FF9324BEA56F27FB52 /* PaywallView.swift in Sources */,
 				C50EF54F9690658A516F510E /* PlannedWorkout.swift in Sources */,
