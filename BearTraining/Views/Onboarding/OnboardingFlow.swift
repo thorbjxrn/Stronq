@@ -16,6 +16,7 @@ struct OnboardingFlow: View {
     private let totalSteps = 4
 
     var body: some View {
+        NavigationStack {
         ZStack {
             theme.backgroundColor.ignoresSafeArea()
 
@@ -36,6 +37,7 @@ struct OnboardingFlow: View {
             }
         }
         .preferredColorScheme(.dark)
+        } // NavigationStack
     }
 
     @ViewBuilder
@@ -89,6 +91,14 @@ struct OnboardingFlow: View {
 
             ctaButton("Get Started") {
                 withAnimation { step = 1 }
+            }
+
+            NavigationLink {
+                HowItWorksView()
+            } label: {
+                Text("How does it work?")
+                    .font(.subheadline)
+                    .foregroundStyle(theme.textSecondary)
             }
         }
         .padding(.horizontal, 24)
