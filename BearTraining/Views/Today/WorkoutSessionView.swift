@@ -14,19 +14,22 @@ struct WorkoutSessionView: View {
             restTimerBanner
 
             ScrollView {
-                if let session = viewModel.activeSession {
-                    LazyVStack(spacing: 16) {
-                        ForEach(exerciseNames(from: session), id: \.self) { name in
-                            ExerciseSessionCard(
-                                exerciseName: name,
-                                sets: session.setsForExercise(name),
-                                viewModel: viewModel,
-                                theme: theme
-                            )
-                        }
+                LazyVStack(spacing: 16) {
+                    ForEach(viewModel.allSetsGroupedBySeries(), id: \.series) { group in
+                        SeriesCard(
+                            seriesNumber: group.series,
+                            sets: group.sets,
+                            viewModel: viewModel,
+                            theme: theme,
+                            isCurrentSeries: group.series == viewModel.currentSeriesNumber
+                        )
                     }
-                    .padding()
+
+                    if viewModel.currentSeriesComplete && viewModel.canAddMoreSeries {
+                        nextSeriesButton
+                    }
                 }
+                .padding()
             }
 
             finishButton
@@ -38,26 +41,40 @@ struct WorkoutSessionView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("You've completed \(viewModel.activeSession?.completedSetCount ?? 0) of \(viewModel.activeSession?.totalSetCount ?? 0) sets.")
+            Text("Series completed: \(viewModel.currentSeriesNumber)")
         }
     }
 
     private var sessionHeader: some View {
         HStack {
-            VStack(alignment: .leading) {
-                if let planned = viewModel.plannedWorkout {
-                    Text("Week \(planned.week) — \(planned.dayType.rawValue)")
-                        .font(.subheadline.bold())
-                }
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Week \(viewModel.weekNumber)")
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+                Text(viewModel.dayType.rawValue)
+                    .font(.headline)
             }
             Spacer()
+
+            if viewModel.seriesMode == .max {
+                Text("Series \(viewModel.currentSeriesNumber)")
+                    .font(.subheadline.bold())
+                    .foregroundStyle(theme.accentColor)
+            } else if let target = viewModel.targetSeriesCount {
+                Text("\(viewModel.currentSeriesNumber)/\(target)")
+                    .font(.subheadline.bold())
+                    .foregroundStyle(theme.accentColor)
+            }
+
+            Spacer()
+
             HStack(spacing: 4) {
                 Image(systemName: "timer")
                     .font(.caption)
                 Text(viewModel.formattedElapsed)
                     .font(.system(.body, design: .monospaced))
             }
-            .foregroundStyle(theme.accentColor)
+            .foregroundStyle(theme.textSecondary)
         }
         .padding()
         .background(theme.cardColor)
@@ -71,16 +88,29 @@ struct WorkoutSessionView: View {
                 Text("Rest: \(viewModel.formattedRest)")
                     .font(.system(.title3, design: .monospaced, weight: .bold))
                 Spacer()
-                Button("Skip") {
-                    viewModel.skipRestTimer()
-                }
-                .font(.subheadline.bold())
-                .foregroundStyle(theme.accentColor)
+                Button("Skip") { viewModel.skipRestTimer() }
+                    .font(.subheadline.bold())
+                    .foregroundStyle(theme.accentColor)
             }
             .padding()
-            .background(theme.accentColor.opacity(0.15))
-            .transition(.move(edge: .top).combined(with: .opacity))
-            .animation(.easeInOut, value: viewModel.isRestTimerRunning)
+            .background(theme.accentColor.opacity(0.12))
+        }
+    }
+
+    private var nextSeriesButton: some View {
+        Button {
+            guard let session = viewModel.activeSession else { return }
+            withAnimation { viewModel.addNextSeries(to: session) }
+        } label: {
+            Label(
+                viewModel.seriesMode == .max ? "Start Next Series" : "Next Series",
+                systemImage: "plus.circle.fill"
+            )
+            .font(.headline)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(theme.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 14))
+            .foregroundStyle(theme.accentColor)
         }
     }
 
@@ -91,46 +121,83 @@ struct WorkoutSessionView: View {
             Text("Finish Workout")
                 .font(.headline)
                 .frame(maxWidth: .infinity)
-                .padding()
-                .background(theme.completedColor)
+                .padding(.vertical, 14)
+                .background(theme.completedColor, in: RoundedRectangle(cornerRadius: 14))
                 .foregroundStyle(.black)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
         }
         .padding()
     }
-
-    private func exerciseNames(from session: WorkoutSession) -> [String] {
-        var seen = Set<String>()
-        var result: [String] = []
-        for set in session.completedSets.sorted(by: { ($0.exerciseName, $0.seriesNumber, $0.setNumber) < ($1.exerciseName, $1.seriesNumber, $1.setNumber) }) {
-            if seen.insert(set.exerciseName).inserted {
-                result.append(set.exerciseName)
-            }
-        }
-        return result
-    }
 }
 
-struct ExerciseSessionCard: View {
-    let exerciseName: String
+// MARK: - Series Card
+
+struct SeriesCard: View {
+    let seriesNumber: Int
     let sets: [CompletedSet]
     let viewModel: WorkoutViewModel
     let theme: ThemeManager
+    let isCurrentSeries: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(exerciseName)
-                .font(.headline)
-                .padding(.bottom, 4)
+            HStack {
+                Text("Series \(seriesNumber)")
+                    .font(.subheadline.bold())
+                    .foregroundStyle(isCurrentSeries ? theme.accentColor : theme.textSecondary)
+                Spacer()
+                if allComplete {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(theme.completedColor)
+                }
+            }
 
-            ForEach(sets) { set in
-                SetRowView(set: set, viewModel: viewModel, theme: theme)
+            let exerciseGroups = groupByExercise(sets)
+            ForEach(exerciseGroups, id: \.name) { group in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(group.name)
+                        .font(.caption)
+                        .foregroundStyle(theme.textSecondary)
+
+                    ForEach(group.sets) { set in
+                        SetRowView(set: set, viewModel: viewModel, theme: theme)
+                    }
+                }
             }
         }
         .padding()
-        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(theme.cardColor)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(isCurrentSeries ? theme.accentColor.opacity(0.3) : .clear, lineWidth: 1)
+                )
+        )
+        .opacity(allComplete && !isCurrentSeries ? 0.6 : 1)
+    }
+
+    private var allComplete: Bool {
+        !sets.isEmpty && sets.allSatisfy(\.isCompleted)
+    }
+
+    private struct ExerciseGroup: Identifiable {
+        let name: String
+        let sets: [CompletedSet]
+        var id: String { name }
+    }
+
+    private func groupByExercise(_ sets: [CompletedSet]) -> [ExerciseGroup] {
+        var seen: [String] = []
+        var groups: [String: [CompletedSet]] = [:]
+        for set in sets {
+            if !seen.contains(set.exerciseName) { seen.append(set.exerciseName) }
+            groups[set.exerciseName, default: []].append(set)
+        }
+        return seen.map { ExerciseGroup(name: $0, sets: groups[$0]!) }
     }
 }
+
+// MARK: - Set Row
 
 struct SetRowView: View {
     @Bindable var set: CompletedSet
@@ -149,39 +216,36 @@ struct SetRowView: View {
             } label: {
                 Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.title2)
-                    .foregroundStyle(set.isCompleted ? theme.completedColor : theme.textSecondary)
+                    .foregroundStyle(set.isCompleted ? theme.completedColor : Color.white.opacity(0.2))
             }
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("S\(set.seriesNumber + 1) — \(intensityLabel)")
-                    .font(.caption)
-                    .foregroundStyle(theme.textSecondary)
-                Text(set.displayWeight)
-                    .font(.system(.title3, design: .rounded, weight: .bold))
-            }
+            Text(intensityLabel)
+                .font(.caption2.bold())
+                .foregroundStyle(theme.textSecondary)
+                .frame(width: 36)
+
+            Text(set.displayWeight)
+                .font(.system(.title3, design: .rounded, weight: .bold))
 
             Spacer()
 
             if isEditing {
-                HStack(spacing: 8) {
-                    Stepper("", value: $set.actualReps, in: 0...10)
-                        .labelsHidden()
-                        .fixedSize()
-                    Text("\(set.actualReps)r")
-                        .font(.system(.body, design: .monospaced))
-                }
+                Stepper("", value: $set.actualReps, in: 0...10)
+                    .labelsHidden()
+                    .fixedSize()
+                Text("\(set.actualReps)")
+                    .font(.system(.body, design: .monospaced, weight: .bold))
             } else {
                 Button {
                     isEditing = true
                 } label: {
-                    Text("\(set.targetReps) reps")
+                    Text("x\(set.targetReps)")
                         .font(.subheadline)
                         .foregroundStyle(theme.textSecondary)
                 }
             }
         }
-        .padding(.vertical, 4)
-        .opacity(set.isCompleted ? 0.7 : 1)
+        .padding(.vertical, 2)
     }
 
     private var intensityLabel: String {

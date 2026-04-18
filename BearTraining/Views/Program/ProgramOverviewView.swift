@@ -129,23 +129,35 @@ struct WeekRowView: View {
 
     @ViewBuilder
     private var expandedContent: some View {
-        let seriesHistory = buildSeriesHistoryForDisplay(program: program)
         let days: [DayType] = week == 7 ? [.heavy] : DayType.allCases
 
         ForEach(days, id: \.self) { dayType in
             VStack(alignment: .leading, spacing: 4) {
-                Text(dayType.rawValue)
-                    .font(.subheadline.bold())
-                    .foregroundStyle(theme.accentColor)
+                HStack {
+                    Text(dayType.rawValue)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(theme.accentColor)
+                    Spacer()
+                    let mode = DeLormeEngine.seriesCount(week: week, dayType: dayType, mondaySeriesCount: mondaySeriesForWeek)
+                    switch mode {
+                    case .max:
+                        Text("max series")
+                            .font(.caption)
+                            .foregroundStyle(theme.textSecondary)
+                    case .fixed(let n):
+                        Text("\(n) series")
+                            .font(.caption)
+                            .foregroundStyle(theme.textSecondary)
+                    }
+                }
 
-                let workout = DeLormeEngine.generateWorkout(
+                let planned = DeLormeEngine.generateSeries(
                     exercises: program.exercises,
-                    week: week,
                     dayType: dayType,
-                    seriesHistory: seriesHistory
+                    week: week
                 )
 
-                ForEach(workout.exercises, id: \.name) { exercise in
+                ForEach(planned, id: \.name) { exercise in
                     HStack {
                         Text(exercise.name)
                             .font(.caption)
@@ -165,19 +177,11 @@ struct WeekRowView: View {
         }
     }
 
-    private func buildSeriesHistoryForDisplay(program: Program) -> [String: [Int]] {
-        var history: [String: [Int]] = [:]
-        for exercise in program.exercises {
-            var weeklyHistory: [Int] = []
-            for w in 1...6 {
-                let session = program.sessions.first {
-                    $0.weekNumber == w && $0.dayType == .heavy && $0.isCompleted
-                }
-                let completed = session?.maxSeriesCompleted(for: exercise.name) ?? 5
-                weeklyHistory.append(completed)
-            }
-            history[exercise.name] = weeklyHistory
+    private var mondaySeriesForWeek: Int? {
+        let session = program.sessions.first {
+            $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
         }
-        return history
+        guard let session else { return nil }
+        return session.completedSets.map(\.seriesNumber).max()
     }
 }

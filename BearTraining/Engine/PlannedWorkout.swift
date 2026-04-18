@@ -1,21 +1,5 @@
 import Foundation
 
-struct PlannedWorkout {
-    let week: Int
-    let dayType: DayType
-    let exercises: [PlannedExercise]
-}
-
-struct PlannedExercise {
-    let name: String
-    let type: ExerciseType
-    let sets: [PlannedSet]
-    let seriesCount: Int
-    let unit: WeightUnit
-
-    var totalSets: Int { sets.count * seriesCount }
-}
-
 struct PlannedSet {
     let intensity: Double
     let weight: Double
@@ -36,9 +20,11 @@ struct PlannedSet {
             return variant.rawValue
         }
         let formatted = String(format: "%.2f", weight)
+        if formatted.hasSuffix("00") {
+            return String(format: "%.0f", weight)
+        }
         if formatted.hasSuffix("0") {
-            let trimmed = String(format: "%.1f", weight)
-            return trimmed.hasSuffix(".0") ? String(format: "%.0f", weight) : trimmed
+            return String(format: "%.1f", weight)
         }
         return formatted
     }
