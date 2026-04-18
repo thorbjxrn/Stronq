@@ -25,6 +25,8 @@ final class WorkoutViewModel {
     // MARK: - Setup
 
     func prepareWorkout(program: Program) {
+        plannedExercises = []
+
         let calculatedWeek = DeLormeEngine.currentWeek(
             startDate: program.startDate,
             currentDate: .now,
@@ -194,9 +196,13 @@ final class WorkoutViewModel {
 
         stopRestTimer()
         stopElapsedTimer()
-        isWorkoutActive = false
 
         try? modelContext.save()
+
+        activeSession = nil
+        plannedExercises = []
+        doneExercises = []
+        isWorkoutActive = false
     }
 
     // MARK: - Timer

@@ -128,15 +128,17 @@ struct ProgressView: View {
                 Text("Bodyweight")
                     .font(.headline)
                 Spacer()
-                Button {
-                    Task {
-                        await healthKitManager.requestAuthorization()
-                        healthKitWeights = await healthKitManager.readBodyweightHistory()
+                if healthKitManager.isAvailable {
+                    Button {
+                        Task {
+                            await healthKitManager.requestAuthorization()
+                            healthKitWeights = await healthKitManager.readBodyweightHistory()
+                        }
+                    } label: {
+                        Label("Sync Health", systemImage: "heart.fill")
+                            .font(.caption)
+                            .foregroundStyle(theme.accentColor)
                     }
-                } label: {
-                    Label("Sync Health", systemImage: "heart.fill")
-                        .font(.caption)
-                        .foregroundStyle(theme.accentColor)
                 }
             }
             .padding(.horizontal)
