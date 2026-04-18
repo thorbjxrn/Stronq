@@ -9,7 +9,6 @@ struct OnboardingFlow: View {
     @State private var includeIntro = true
     @State private var benchRM: Double = 60
     @State private var deadliftRM: Double = 80
-    @State private var bodyweight: String = ""
     @State private var showingLaunch = false
 
     let onComplete: () -> Void
@@ -237,24 +236,6 @@ struct OnboardingFlow: View {
                     .multilineTextAlignment(.center)
             }
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("BODYWEIGHT")
-                    .font(.caption.bold())
-                    .foregroundStyle(theme.textSecondary)
-                    .tracking(1)
-                HStack(spacing: 12) {
-                    TextField("optional", text: $bodyweight)
-                        .keyboardType(.decimalPad)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .frame(width: 80)
-                    Text(unit.symbol)
-                        .foregroundStyle(theme.textSecondary)
-                    Spacer()
-                }
-                .padding(16)
-                .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
-            }
-
             Spacer()
 
             ctaButton("Continue") {
@@ -385,11 +366,6 @@ struct OnboardingFlow: View {
         program.exercises.append(deadlift)
 
         modelContext.insert(program)
-
-        if let bw = Double(bodyweight) {
-            modelContext.insert(BodyweightEntry(weight: bw, unit: unit))
-        }
-
         try? modelContext.save()
     }
 }
