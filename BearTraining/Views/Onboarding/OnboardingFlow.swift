@@ -29,8 +29,13 @@ struct OnboardingFlow: View {
             }
 
             VStack(spacing: 0) {
-                stepContent
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                TabView(selection: $step) {
+                    welcomeStep.tag(0)
+                    weightSetupStep.tag(1)
+                    configStep.tag(2)
+                    readyStep.tag(3)
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
 
                 dots
                     .padding(.bottom, 20)
@@ -38,17 +43,6 @@ struct OnboardingFlow: View {
         }
         .preferredColorScheme(.dark)
         } // NavigationStack
-    }
-
-    @ViewBuilder
-    private var stepContent: some View {
-        switch step {
-        case 0: welcomeStep
-        case 1: weightSetupStep
-        case 2: configStep
-        case 3: readyStep
-        default: EmptyView()
-        }
     }
 
     private var dots: some View {
