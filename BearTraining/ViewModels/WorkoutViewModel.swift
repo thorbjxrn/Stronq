@@ -18,7 +18,8 @@ final class WorkoutViewModel {
 
     private var restTimerTask: Task<Void, Never>?
     private var elapsedTimerTask: Task<Void, Never>?
-    private var restDuration: Int = 90
+    private var setRestDuration: Int = 60
+    private var seriesRestDuration: Int = 180
 
     // MARK: - Setup
 
@@ -39,7 +40,8 @@ final class WorkoutViewModel {
 
         let mondaySeries = lastMondaySeriesCount(program: program, week: weekNumber)
         seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: dt, mondaySeriesCount: mondaySeries)
-        restDuration = program.restTimerDuration
+        setRestDuration = program.setRestDuration
+        seriesRestDuration = program.seriesRestDuration
 
         plannedExercises = DeLormeEngine.generateSeries(
             exercises: program.exercises,
@@ -118,7 +120,12 @@ final class WorkoutViewModel {
         set.isCompleted = true
         set.completedAt = .now
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        startRestTimer()
+
+        if currentSeriesComplete {
+            startRestTimer(duration: seriesRestDuration)
+        } else {
+            startRestTimer(duration: setRestDuration)
+        }
     }
 
     func uncompleteSet(_ set: CompletedSet) {
@@ -148,9 +155,9 @@ final class WorkoutViewModel {
 
     func skipRestTimer() { stopRestTimer() }
 
-    private func startRestTimer() {
+    private func startRestTimer(duration: Int) {
         stopRestTimer()
-        restTimerRemaining = restDuration
+        restTimerRemaining = duration
         isRestTimerRunning = true
 
         restTimerTask = Task {

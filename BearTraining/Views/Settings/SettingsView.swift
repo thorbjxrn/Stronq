@@ -69,17 +69,15 @@ struct SettingsView: View {
                         .foregroundStyle(theme.textSecondary)
                 }
 
-                HStack {
-                    Text("Rest Timer")
-                    Spacer()
-                    Text("\(program.restTimerDuration)s")
-                        .foregroundStyle(theme.textSecondary)
-                }
+                Stepper("Set rest: \(program.setRestDuration)s", value: Binding(
+                    get: { program.setRestDuration },
+                    set: { program.setRestDuration = $0 }
+                ), in: 15...180, step: 15)
 
-                Stepper("Rest: \(program.restTimerDuration)s", value: Binding(
-                    get: { program.restTimerDuration },
-                    set: { program.restTimerDuration = $0 }
-                ), in: 30...300, step: 15)
+                Stepper("Series rest: \(program.seriesRestDuration)s", value: Binding(
+                    get: { program.seriesRestDuration },
+                    set: { program.seriesRestDuration = $0 }
+                ), in: 60...600, step: 30)
 
                 HStack {
                     Text("Unit")

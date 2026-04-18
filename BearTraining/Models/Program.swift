@@ -7,7 +7,8 @@ final class Program {
     var startDate: Date
     var currentWeek: Int
     var introCycleEnabled: Bool
-    var restTimerDuration: Int
+    var setRestDuration: Int
+    var seriesRestDuration: Int
 
     @Relationship(deleteRule: .cascade, inverse: \Exercise.program)
     var exercises: [Exercise]
@@ -19,13 +20,15 @@ final class Program {
         startDate: Date = .now,
         currentWeek: Int = 1,
         introCycleEnabled: Bool = false,
-        restTimerDuration: Int = 90
+        setRestDuration: Int = 60,
+        seriesRestDuration: Int = 180
     ) {
         self.id = UUID()
         self.startDate = startDate
         self.currentWeek = introCycleEnabled ? -1 : 1
         self.introCycleEnabled = introCycleEnabled
-        self.restTimerDuration = restTimerDuration
+        self.setRestDuration = setRestDuration
+        self.seriesRestDuration = seriesRestDuration
         self.exercises = []
         self.sessions = []
     }

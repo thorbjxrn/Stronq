@@ -32,30 +32,24 @@ final class Exercise {
     }
 
     static func defaultExercises(unit: WeightUnit = .kg) -> [Exercise] {
-        [
+        let benchIncrement: Double = unit == .kg ? 2.5 : 5
+        let deadliftIncrement: Double = unit == .kg ? 5 : 10
+        return [
             Exercise(
-                name: "Push-up",
-                type: .bodyweight,
-                initial10RM: 0,
-                weightIncrement: 0,
+                name: "Bench Press",
+                type: .weighted,
+                initial10RM: unit == .kg ? 60 : 135,
+                weightIncrement: benchIncrement,
                 unit: unit,
                 sortOrder: 0
             ),
             Exercise(
-                name: "1-Arm Pulldown",
+                name: "Deadlift",
                 type: .weighted,
-                initial10RM: 25,
-                weightIncrement: 2.5,
+                initial10RM: unit == .kg ? 80 : 175,
+                weightIncrement: deadliftIncrement,
                 unit: unit,
                 sortOrder: 1
-            ),
-            Exercise(
-                name: "Zercher Squat",
-                type: .weighted,
-                initial10RM: 45,
-                weightIncrement: 5,
-                unit: unit,
-                sortOrder: 2
             )
         ]
     }
