@@ -12,53 +12,51 @@ struct HowItWorksView: View {
                     section(
                         "The Program",
                         icon: "figure.strengthtraining.traditional",
-                        "A DeLorme-inspired hypertrophy cycle from Pavel Tsatsouline's Beyond Bodybuilding. Two exercises, three days a week, six weeks. Simple and brutally effective."
+                        "A high-volume hypertrophy cycle based on the DeLorme method, developed by Dr. Thomas DeLorme at Harvard Medical School in the 1940s for rehabilitating injured soldiers. The ascending set structure (light → medium → heavy) was later adopted by bodybuilders and strength athletes worldwide for its effectiveness in building muscle."
                     )
 
                     section(
                         "The Series",
                         icon: "arrow.triangle.2.circlepath",
-                        "Each series is three sets at increasing weight:\n\n• 50% of your 10RM × 5 reps\n• 75% of your 10RM × 5 reps\n• 100% of your 10RM × 5 reps\n\nRest about a minute between sets (while changing plates) and three minutes between series."
+                        "Each series consists of three ascending sets:\n\n• 50% of your 10RM × 5 reps\n• 75% of your 10RM × 5 reps\n• 100% of your 10RM × 5 reps\n\nRest about a minute between sets (while changing plates) and three minutes between series. The warm-up sets prepare your muscles and nervous system for the heavy set."
                     )
 
                     section(
                         "Heavy – Light – Medium",
                         icon: "calendar",
                         """
-                        Monday — Heavy
-                        Do as many full series as you can. This is the main event. Stop when you can barely complete the top set.
+                        The program uses a classic Heavy-Light-Medium weekly structure to manage fatigue and recovery:
 
-                        Wednesday — Light
-                        Only the 50% set, repeated for the same number of series you did on Monday. Quick session, aids recovery.
+                        Heavy day — Full series (all three sets). Do as many series as you can with good form. This is the main growth stimulus.
 
-                        Friday — Medium
-                        The 50% and 75% sets, repeated for Monday's series count. Building back up for next week's heavy day.
+                        Light day — Only the 50% set, repeated for the same number of series as your heavy day. A brief recovery session.
+
+                        Medium day — The 50% and 75% sets, for the same series count. Builds volume back up without the heavy top set.
                         """
                     )
 
                     section(
-                        "When to Add Weight",
+                        "Progressive Overload",
                         icon: "arrow.up.circle",
-                        "When you successfully complete 5 full series on Heavy day, add weight to your 10RM and recalculate all percentages.\n\nBench press: +5 lbs / +2.5 kg\nDeadlift: +10 lbs / +5 kg\n\nStart conservative — a rough 10RM estimate, not a max-effort test."
+                        "When you complete 5 full series on your heavy day, increase your 10RM and recalculate all percentages. This is classic progressive overload — small, consistent jumps in weight over time.\n\nStart with a conservative estimate of your 10RM. The program works by building volume at submaximal weights, not by testing your limits."
                     )
 
                     section(
                         "The Intro Cycle",
                         icon: "leaf",
-                        "An optional two-week ramp-up before the main program:\n\nWeek 1 — Only 50% and 75% sets (no heavy singles). Series count: 3 → 4 → 5 across Mon/Wed/Fri.\n\nWeek 2 — Monday adds the 100% set for the first time (2 series). Wednesday does 7 series of 50%+75%. Friday does 5."
-                    )
-
-                    section(
-                        "Exercise Order",
-                        icon: "list.number",
-                        "Bench press first, then deadlift — every session. You can switch between them using the tabs during a workout.\n\nThe only acceptable addition is a couple of heavy sets of abdominal work."
+                        "An optional two-week ramp-up to prepare for the full workload:\n\nWeek 1 — Only 50% and 75% sets (no heavy top set). Series increase across the week: 3 → 4 → 5.\n\nWeek 2 — Heavy day introduces the 100% set for the first time (2 series). Other days continue with higher volume at lighter weights."
                     )
 
                     section(
                         "Tips",
                         icon: "lightbulb",
-                        "• Medium to slow tempo on every rep\n• One second pause at the bottom — chest for bench, floor for deadlift\n• Stay tight, no bouncing\n• Never train to failure\n• You should feel stronger at the end of every workout"
+                        "• Medium to slow tempo on every rep\n• Pause briefly at the bottom of each rep — stay tight\n• Never train to failure — leave a rep in the bank\n• You should feel stronger at the end of every session\n• Keep the program simple — the magic is in the consistency"
                     )
+
+                    Text("Based on the DeLorme method (1945) with the Heavy-Light-Medium structure popularized in strength training literature.")
+                        .font(.caption)
+                        .foregroundStyle(theme.textSecondary)
+                        .padding(.horizontal, 4)
                 }
                 .padding()
             }
