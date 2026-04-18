@@ -1,5 +1,5 @@
 import Foundation
-import ActivityKit
+@preconcurrency import ActivityKit
 
 @Observable
 @MainActor
@@ -30,7 +30,7 @@ final class TimerManager {
         }
     }
 
-    func updateLiveActivity(timeRemaining: Int) {
+    func updateLiveActivity(timeRemaining: Int) async {
         guard let activity else { return }
 
         let state = RestTimerAttributes.ContentState(
@@ -38,12 +38,10 @@ final class TimerManager {
             nextSetInfo: activity.content.state.nextSetInfo
         )
 
-        Task {
-            await activity.update(.init(state: state, staleDate: nil))
-        }
+        await activity.update(.init(state: state, staleDate: nil))
     }
 
-    func endLiveActivity() {
+    func endLiveActivity() async {
         guard let activity else { return }
 
         let finalState = RestTimerAttributes.ContentState(
@@ -51,9 +49,7 @@ final class TimerManager {
             nextSetInfo: "Rest complete"
         )
 
-        Task {
-            await activity.end(.init(state: finalState, staleDate: nil), dismissalPolicy: .immediate)
-        }
+        await activity.end(.init(state: finalState, staleDate: nil), dismissalPolicy: .immediate)
         self.activity = nil
     }
 }

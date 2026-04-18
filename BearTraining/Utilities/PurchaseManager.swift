@@ -17,8 +17,8 @@ final class PurchaseManager {
         Task { await verifyEntitlement() }
     }
 
-    deinit {
-        transactionListener?.cancel()
+    nonisolated deinit {
+        // transactionListener is cancelled automatically when the Task is deallocated
     }
 
     func loadProducts() async {
@@ -47,7 +47,7 @@ final class PurchaseManager {
                 if case .verified = verification {
                     isPremium = true
                     UserDefaults.standard.set(true, forKey: "isPremiumCached")
-                    await verification.payloadValue.finish()
+                    try await verification.payloadValue.finish()
                 }
             case .userCancelled:
                 break
@@ -79,13 +79,11 @@ final class PurchaseManager {
     }
 
     private func listenForTransactions() -> Task<Void, Never> {
-        Task.detached { [weak self] in
+        Task { @MainActor [weak self] in
             for await result in Transaction.updates {
                 if case .verified(let transaction) = result {
-                    await MainActor.run {
-                        self?.isPremium = true
-                        UserDefaults.standard.set(true, forKey: "isPremiumCached")
-                    }
+                    self?.isPremium = true
+                    UserDefaults.standard.set(true, forKey: "isPremiumCached")
                     await transaction.finish()
                 }
             }
