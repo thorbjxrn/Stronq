@@ -59,40 +59,38 @@ struct OnboardingFlow: View {
     // MARK: - Welcome
 
     private var welcomeStep: some View {
-        VStack(spacing: 0) {
-            Spacer()
+        VStack(alignment: .leading, spacing: 0) {
             Spacer()
 
-            // Name — the only hero element
-            Text("Stronq")
-                .font(.system(size: 52, weight: .bold, design: .rounded))
+            Text("Stron")
+                .font(.system(size: 64, weight: .bold)) +
+            Text("q")
+                .font(.system(size: 64, weight: .bold))
+                .foregroundColor(theme.accentColor)
 
-            // Context — one line, quiet
-            Text("Two exercises. Six weeks. Become a bear.")
-                .font(.system(size: 15, weight: .regular))
+            Text("Two exercises.\nSix weeks.\nBecome a bear.")
+                .font(.system(size: 20, weight: .regular))
                 .foregroundStyle(theme.textSecondary)
-                .padding(.top, 10)
+                .lineSpacing(6)
+                .padding(.top, 16)
 
-            Spacer()
-            Spacer()
-            Spacer()
-
-            // Secondary link — honest about its role
             NavigationLink {
                 HowItWorksView()
             } label: {
-                Text("How it works")
+                Text("How it works →")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(theme.accentColor)
             }
-            .padding(.bottom, 24)
+            .padding(.top, 24)
 
-            // CTA
+            Spacer()
+            Spacer()
+
             ctaButton("Get Started") {
                 withAnimation { step = 1 }
             }
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, 28)
     }
 
     // MARK: - Weight Setup
