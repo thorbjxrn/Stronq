@@ -4,6 +4,7 @@ import SwiftData
 struct ExerciseConfigView: View {
     @Bindable var exercise: Exercise
     @Environment(ThemeManager.self) private var theme
+    @FocusState private var isEditing: Bool
 
     var body: some View {
         ZStack {
@@ -20,6 +21,7 @@ struct ExerciseConfigView: View {
 
                             HStack(spacing: 16) {
                                 Button {
+                                    isEditing = false
                                     let step = exercise.weightIncrement > 0 ? exercise.weightIncrement : 2.5
                                     if exercise.initial10RM > step {
                                         exercise.initial10RM -= step
@@ -29,14 +31,17 @@ struct ExerciseConfigView: View {
                                         .font(.system(size: 32))
                                         .foregroundStyle(theme.textSecondary)
                                 }
+                                .buttonStyle(.borderless)
 
                                 TextField("", value: $exercise.initial10RM, format: .number)
                                     .font(.system(size: 40, weight: .bold, design: .rounded))
                                     .multilineTextAlignment(.center)
                                     .keyboardType(.decimalPad)
+                                    .focused($isEditing)
                                     .frame(minWidth: 80)
 
                                 Button {
+                                    isEditing = false
                                     let step = exercise.weightIncrement > 0 ? exercise.weightIncrement : 2.5
                                     exercise.initial10RM += step
                                 } label: {
@@ -44,6 +49,7 @@ struct ExerciseConfigView: View {
                                         .font(.system(size: 32))
                                         .foregroundStyle(theme.accentColor)
                                 }
+                                .buttonStyle(.borderless)
 
                                 Text(exercise.unit.symbol)
                                     .font(.title3)
@@ -89,6 +95,12 @@ struct ExerciseConfigView: View {
         }
         .navigationTitle(exercise.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isEditing = false }
+            }
+        }
     }
 
     private func weightPreviewRow(_ label: String, weight: Double) -> some View {
