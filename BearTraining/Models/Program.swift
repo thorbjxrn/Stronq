@@ -7,9 +7,9 @@ final class Program {
     var startDate: Date
     var currentWeek: Int
     var introCycleEnabled: Bool
-    var setRestDuration: Int
-    var seriesRestDuration: Int
-    var exerciseOrder: ExerciseOrder
+    var setRestDuration: Int = 60
+    var seriesRestDuration: Int = 180
+    var exerciseOrder: ExerciseOrder = ExerciseOrder.sequential
 
     @Relationship(deleteRule: .cascade, inverse: \Exercise.program)
     var exercises: [Exercise]
