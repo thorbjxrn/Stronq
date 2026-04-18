@@ -1,0 +1,96 @@
+import HealthKit
+import SwiftUI
+
+@Observable
+@MainActor
+final class HealthKitManager {
+    private let healthStore = HKHealthStore()
+    private(set) var isAuthorized = false
+
+    var isAvailable: Bool {
+        HKHealthStore.isHealthDataAvailable()
+    }
+
+    func requestAuthorization() async {
+        guard isAvailable else { return }
+
+        let typesToWrite: Set<HKSampleType> = [
+            HKObjectType.workoutType(),
+            HKObjectType.quantityType(forIdentifier: .bodyMass)!
+        ]
+
+        let typesToRead: Set<HKObjectType> = [
+            HKObjectType.quantityType(forIdentifier: .bodyMass)!
+        ]
+
+        do {
+            try await healthStore.requestAuthorization(toShare: typesToWrite, read: typesToRead)
+            isAuthorized = true
+        } catch {
+            isAuthorized = false
+        }
+    }
+
+    func saveWorkout(
+        duration: TimeInterval,
+        date: Date,
+        totalVolume: Double
+    ) async {
+        guard isAuthorized else { return }
+
+        let workout = HKWorkout(
+            activityType: .traditionalStrengthTraining,
+            start: date.addingTimeInterval(-duration),
+            end: date
+        )
+
+        do {
+            try await healthStore.save(workout)
+        } catch {
+            // Silently fail — HealthKit write errors shouldn't block the app
+        }
+    }
+
+    func readLatestBodyweight() async -> Double? {
+        guard isAuthorized else { return nil }
+
+        let bodyMassType = HKQuantityType.quantityType(forIdentifier: .bodyMass)!
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+        let query = HKSampleQuery(
+            sampleType: bodyMassType,
+            predicate: nil,
+            limit: 1,
+            sortDescriptors: [sortDescriptor]
+        ) { _, _, _ in }
+
+        return await withCheckedContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: bodyMassType,
+                predicate: nil,
+                limit: 1,
+                sortDescriptors: [sortDescriptor]
+            ) { _, samples, _ in
+                let weight = (samples?.first as? HKQuantitySample)?
+                    .quantity
+                    .doubleValue(for: .gramUnit(with: .kilo))
+                continuation.resume(returning: weight)
+            }
+            healthStore.execute(query)
+        }
+    }
+
+    func saveBodyweight(_ weight: Double, unit: WeightUnit = .kg, date: Date = .now) async {
+        guard isAuthorized else { return }
+
+        let bodyMassType = HKQuantityType.quantityType(forIdentifier: .bodyMass)!
+        let hkUnit: HKUnit = unit == .kg ? .gramUnit(with: .kilo) : .pound()
+        let quantity = HKQuantity(unit: hkUnit, doubleValue: weight)
+        let sample = HKQuantitySample(type: bodyMassType, quantity: quantity, start: date, end: date)
+
+        do {
+            try await healthStore.save(sample)
+        } catch {
+            // Silently fail
+        }
+    }
+}
