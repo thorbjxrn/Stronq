@@ -185,9 +185,8 @@ struct WorkoutSessionView: View {
     }
 
     private func seriesCard(group: (series: Int, sets: [CompletedSet]), exerciseName: String) -> some View {
-        let currentSeries = viewModel.currentSeriesForExercise(exerciseName)
-        let isCurrent = group.series == currentSeries
         let allDone = group.sets.allSatisfy(\.isCompleted)
+        let isCurrent = !allDone && isFirstIncompleteSeries(group.series, exerciseName: exerciseName)
 
         return VStack(spacing: 6) {
             HStack {
@@ -257,6 +256,16 @@ struct WorkoutSessionView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background(theme.completedColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+    }
+
+    private func isFirstIncompleteSeries(_ series: Int, exerciseName: String) -> Bool {
+        let groups = viewModel.setsGroupedBySeries(for: exerciseName)
+        for group in groups {
+            if !group.sets.allSatisfy(\.isCompleted) {
+                return group.series == series
+            }
+        }
+        return false
     }
 
     // MARK: - Bottom Bar
