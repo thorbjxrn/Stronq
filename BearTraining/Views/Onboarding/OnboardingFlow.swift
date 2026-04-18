@@ -10,6 +10,7 @@ struct OnboardingFlow: View {
     @State private var benchRM: Double = 60
     @State private var deadliftRM: Double = 80
     @State private var bodyweight: String = ""
+    @State private var showingLaunch = false
 
     let onComplete: () -> Void
 
@@ -18,6 +19,14 @@ struct OnboardingFlow: View {
     var body: some View {
         ZStack {
             theme.backgroundColor.ignoresSafeArea()
+
+            if showingLaunch {
+                LaunchBurstView(theme: theme) {
+                    onComplete()
+                }
+                .transition(.opacity)
+                .zIndex(10)
+            }
 
             VStack(spacing: 0) {
                 stepContent
@@ -287,7 +296,9 @@ struct OnboardingFlow: View {
 
             ctaButton("Start Program") {
                 createProgram()
-                onComplete()
+                withAnimation(.easeIn(duration: 0.3)) {
+                    showingLaunch = true
+                }
             }
         }
         .padding(.horizontal, 24)
