@@ -87,14 +87,15 @@ struct OnboardingFlow: View {
             .padding(.bottom, 32)
 
             // Title
-            Text("How to Become")
-                .font(.system(size: 28, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.9))
+            Text("STRONQ")
+                .font(.system(size: 48, weight: .black, design: .rounded))
+                .tracking(3)
 
-            Text("a Bear")
-                .font(.system(size: 52, weight: .black, design: .rounded))
-                .foregroundStyle(theme.accentColor)
-                .padding(.bottom, 16)
+            Text("aka how to become a bear")
+                .font(.system(size: 15, weight: .medium, design: .serif))
+                .italic()
+                .foregroundStyle(theme.accentColor.opacity(0.7))
+                .padding(.bottom, 12)
 
             // Tagline
             Text("Get big. Get strong.\nTwo exercises. Six weeks.")
@@ -105,19 +106,27 @@ struct OnboardingFlow: View {
 
             Spacer()
 
+            // How it works
+            NavigationLink {
+                HowItWorksView()
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "book.fill")
+                        .font(.subheadline)
+                    Text("How does it work?")
+                        .font(.subheadline)
+                }
+                .foregroundStyle(theme.accentColor)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 24)
+                .background(theme.accentColor.opacity(0.12), in: Capsule())
+            }
+            .padding(.bottom, 16)
+
             // CTA
             ctaButton("Get Started") {
                 withAnimation { step = 1 }
             }
-
-            NavigationLink {
-                HowItWorksView()
-            } label: {
-                Text("Learn about the program")
-                    .font(.footnote)
-                    .foregroundStyle(theme.textSecondary)
-            }
-            .padding(.top, 4)
         }
         .padding(.horizontal, 24)
     }
