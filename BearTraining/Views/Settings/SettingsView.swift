@@ -207,6 +207,38 @@ struct SettingsView: View {
                 Text("1.0.0")
                     .foregroundStyle(theme.textSecondary)
             }
+
+            #if DEBUG
+            if let program {
+                Section {
+                    HStack {
+                        Text("Current Week")
+                        Spacer()
+                        Text("\(program.currentWeek)")
+                        Button("-") { if program.currentWeek > program.firstWeek { program.currentWeek -= 1 } }
+                        Button("+") { if program.currentWeek < 7 { program.currentWeek += 1 } }
+                    }
+
+                    Button("Reset Program (delete all sessions)") {
+                        for session in program.sessions {
+                            modelContext.delete(session)
+                        }
+                        program.currentWeek = program.firstWeek
+                        try? modelContext.save()
+                    }
+                    .foregroundStyle(.red)
+
+                    Button("Reset Onboarding") {
+                        for p in programs { modelContext.delete(p) }
+                        try? modelContext.save()
+                        UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
+                    }
+                    .foregroundStyle(.red)
+                } header: {
+                    Text("Debug")
+                }
+            }
+            #endif
         }
     }
 

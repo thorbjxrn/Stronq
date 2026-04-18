@@ -27,30 +27,34 @@ final class WorkoutViewModel {
     // MARK: - Setup
 
     func prepareWorkout(program: Program) {
-        weekNumber = DeLormeEngine.currentWeek(
+        let calculatedWeek = DeLormeEngine.currentWeek(
             startDate: program.startDate,
             currentDate: .now,
             introCycleEnabled: program.introCycleEnabled
         )
+        if calculatedWeek > program.currentWeek {
+            program.currentWeek = calculatedWeek
+        }
 
-        guard let nextDayType = DeLormeEngine.nextWorkout(program: program) else { return }
-        dayType = nextDayType
+        guard let next = DeLormeEngine.nextWorkout(program: program) else { return }
+        dayType = next.dayType
+        weekNumber = next.week
 
         let mondaySeries = lastMondaySeriesCounts(program: program, week: weekNumber)
-        seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: nextDayType, mondaySeriesCount: mondaySeries.values.min())
+        seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: next.dayType, mondaySeriesCount: mondaySeries.values.min())
         setRestDuration = program.setRestDuration
         seriesRestDuration = program.seriesRestDuration
         exerciseOrder = program.exerciseOrder
 
         plannedExercises = DeLormeEngine.generateSeries(
             exercises: program.exercises,
-            dayType: nextDayType,
+            dayType: next.dayType,
             week: weekNumber
         )
 
         for exercise in plannedExercises {
             let mondayCount = mondaySeries[exercise.name]
-            let mode = DeLormeEngine.seriesCount(week: weekNumber, dayType: nextDayType, mondaySeriesCount: mondayCount)
+            let mode = DeLormeEngine.seriesCount(week: weekNumber, dayType: next.dayType, mondaySeriesCount: mondayCount)
             switch mode {
             case .fixed(let n): seriesPerExercise[exercise.name] = n
             case .max: seriesPerExercise[exercise.name] = 0

@@ -117,12 +117,12 @@ struct TodayView: View {
     private var restDayView: some View {
         VStack(spacing: 20) {
             Spacer()
-            Image(systemName: "checkmark.seal.fill")
+            Image(systemName: "trophy.fill")
                 .font(.system(size: 56))
-                .foregroundStyle(theme.completedColor)
-            Text("Week Complete")
+                .foregroundStyle(theme.accentColor)
+            Text("Program Complete")
                 .font(.title2.bold())
-            Text("All workouts for this week are done.\nRest up — you've earned it.")
+            Text("You've finished all 6 weeks.\nTime to test your new strength or start a new cycle.")
                 .font(.subheadline)
                 .foregroundStyle(theme.textSecondary)
                 .multilineTextAlignment(.center)
