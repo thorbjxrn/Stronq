@@ -32,6 +32,7 @@ struct BearTrainingApp: App {
             } catch {
                 fatalError("Failed to create ModelContainer after reset: \(error)")
             }
+            UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
         }
 
         let pm = PurchaseManager()
@@ -41,17 +42,26 @@ struct BearTrainingApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if hasCompletedOnboarding {
-                ContentView()
-            } else {
-                OnboardingFlow(onComplete: {
-                    hasCompletedOnboarding = true
-                })
-            }
+            RootView(hasCompletedOnboarding: $hasCompletedOnboarding)
         }
         .modelContainer(modelContainer)
         .environment(purchaseManager)
         .environment(adManager)
         .environment(themeManager)
+    }
+}
+
+struct RootView: View {
+    @Binding var hasCompletedOnboarding: Bool
+    @Query private var programs: [Program]
+
+    var body: some View {
+        if hasCompletedOnboarding && !programs.isEmpty {
+            ContentView()
+        } else {
+            OnboardingFlow(onComplete: {
+                hasCompletedOnboarding = true
+            })
+        }
     }
 }
