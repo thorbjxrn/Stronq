@@ -65,42 +65,59 @@ struct OnboardingFlow: View {
     // MARK: - Welcome
 
     private var welcomeStep: some View {
-        VStack(spacing: 32) {
+        VStack(spacing: 0) {
             Spacer()
 
-            Image(systemName: "figure.strengthtraining.traditional")
-                .font(.system(size: 72, weight: .light))
-                .foregroundStyle(theme.accentColor)
-                .padding(.bottom, 8)
+            // Icon with glow
+            ZStack {
+                Circle()
+                    .fill(theme.accentColor.opacity(0.08))
+                    .frame(width: 160, height: 160)
+                    .blur(radius: 30)
 
-            VStack(spacing: 12) {
-                Text("How to Become")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                Text("a Bear")
-                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                Circle()
+                    .fill(theme.accentColor.opacity(0.05))
+                    .frame(width: 240, height: 240)
+                    .blur(radius: 50)
+
+                Image(systemName: "figure.strengthtraining.traditional")
+                    .font(.system(size: 68, weight: .light))
                     .foregroundStyle(theme.accentColor)
             }
+            .padding(.bottom, 32)
 
-            Text("DELORME HYPERTROPHY PROGRAM")
-                .font(.caption)
+            // Title
+            Text("How to Become")
+                .font(.system(size: 28, weight: .medium, design: .rounded))
+                .foregroundStyle(.white.opacity(0.9))
+
+            Text("a Bear")
+                .font(.system(size: 52, weight: .black, design: .rounded))
+                .foregroundStyle(theme.accentColor)
+                .padding(.bottom, 16)
+
+            // Tagline
+            Text("Get big. Get strong.\nTwo exercises. Six weeks.")
+                .font(.system(size: 15))
                 .foregroundStyle(theme.textSecondary)
-                .tracking(2)
+                .multilineTextAlignment(.center)
+                .lineSpacing(4)
+
+            Spacer()
+
+            // CTA
+            ctaButton("Get Started") {
+                withAnimation { step = 1 }
+            }
 
             NavigationLink {
                 HowItWorksView()
             } label: {
-                Label("How does it work?", systemImage: "info.circle")
-                    .font(.subheadline)
-                    .foregroundStyle(theme.accentColor.opacity(0.7))
+                Text("Learn about the program")
+                    .font(.footnote)
+                    .foregroundStyle(theme.textSecondary)
             }
             .padding(.top, 4)
-
-            Spacer()
-            Spacer()
-
-            ctaButton("Get Started") {
-                withAnimation { step = 1 }
-            }
         }
         .padding(.horizontal, 24)
     }
