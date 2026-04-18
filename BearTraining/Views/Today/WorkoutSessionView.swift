@@ -202,7 +202,8 @@ struct WorkoutSessionView: View {
             }
 
             ForEach(group.sets) { set in
-                SetRowView(set: set, viewModel: viewModel, theme: theme)
+                    let exerciseUnit = viewModel.plannedExercises.first(where: { $0.name == exerciseName })?.unit ?? .kg
+                    SetRowView(set: set, viewModel: viewModel, theme: theme, unit: exerciseUnit)
             }
         }
         .padding(14)
@@ -313,6 +314,7 @@ struct SetRowView: View {
     @Bindable var set: CompletedSet
     let viewModel: WorkoutViewModel
     let theme: ThemeManager
+    var unit: WeightUnit = .kg
     @State private var isEditing = false
 
     var body: some View {
@@ -337,6 +339,11 @@ struct SetRowView: View {
 
             Text(set.displayWeight)
                 .font(.system(.title3, design: .rounded, weight: .bold))
+            if set.pushUpVariant == nil {
+                Text(unit.symbol)
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+            }
 
             Spacer()
 
