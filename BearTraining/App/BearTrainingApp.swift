@@ -25,7 +25,13 @@ struct BearTrainingApp: App {
         do {
             modelContainer = try ModelContainer(for: schema, configurations: [config])
         } catch {
-            fatalError("Failed to create ModelContainer: \(error)")
+            let url = config.url
+            try? FileManager.default.removeItem(at: url)
+            do {
+                modelContainer = try ModelContainer(for: schema, configurations: [config])
+            } catch {
+                fatalError("Failed to create ModelContainer after reset: \(error)")
+            }
         }
 
         let pm = PurchaseManager()
