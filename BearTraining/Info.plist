@@ -14,6 +14,11 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>AccentColor</string>
+	</dict>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Bear Training reads your bodyweight from Health to track your progress alongside your training.</string>
 	<key>NSHealthUpdateUsageDescription</key>

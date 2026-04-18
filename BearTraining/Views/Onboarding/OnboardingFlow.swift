@@ -7,267 +7,444 @@ struct OnboardingFlow: View {
     @State private var step = 0
     @State private var unit: WeightUnit = .kg
     @State private var includeIntro = true
-    @State private var pulldownRM: Double = 25
-    @State private var zercherRM: Double = 45
-    @State private var pushUpLevel: PushUpVariant = .regular
+    @State private var selectedExercises: Set<String> = []
+    @State private var exerciseWeights: [String: Double] = [:]
     @State private var bodyweight: String = ""
 
     let onComplete: () -> Void
+
+    private let totalSteps = 5
 
     var body: some View {
         ZStack {
             theme.backgroundColor.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                TabView(selection: $step) {
-                    welcomeStep.tag(0)
-                    unitStep.tag(1)
-                    exerciseSetupStep.tag(2)
-                    configStep.tag(3)
-                    readyStep.tag(4)
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
+                stepContent
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                HStack(spacing: 8) {
-                    ForEach(0..<5) { i in
-                        Circle()
-                            .fill(i == step ? theme.accentColor : theme.textSecondary.opacity(0.4))
-                            .frame(width: 8, height: 8)
-                    }
-                }
-                .padding(.bottom, 16)
+                dots
+                    .padding(.bottom, 20)
             }
         }
         .preferredColorScheme(.dark)
     }
 
-    // MARK: - Steps
+    @ViewBuilder
+    private var stepContent: some View {
+        switch step {
+        case 0: welcomeStep
+        case 1: exercisePickerStep
+        case 2: weightEntryStep
+        case 3: configStep
+        case 4: readyStep
+        default: EmptyView()
+        }
+    }
+
+    private var dots: some View {
+        HStack(spacing: 8) {
+            ForEach(0..<totalSteps, id: \.self) { i in
+                Capsule()
+                    .fill(i == step ? theme.accentColor : Color.white.opacity(0.2))
+                    .frame(width: i == step ? 24 : 8, height: 8)
+                    .animation(.easeInOut(duration: 0.2), value: step)
+            }
+        }
+    }
+
+    // MARK: - Welcome
 
     private var welcomeStep: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 32) {
             Spacer()
 
             Image(systemName: "figure.strengthtraining.traditional")
-                .font(.system(size: 80))
+                .font(.system(size: 72, weight: .light))
                 .foregroundStyle(theme.accentColor)
+                .padding(.bottom, 8)
 
-            Text("How to Become\na Bear")
-                .font(.system(size: 34, weight: .bold))
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
+            VStack(spacing: 12) {
+                Text("How to Become")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                Text("a Bear")
+                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                    .foregroundStyle(theme.accentColor)
+            }
 
             Text("DeLorme Hypertrophy Program")
-                .font(.title3)
+                .font(.subheadline)
                 .foregroundStyle(theme.textSecondary)
+                .tracking(1)
+                .textCase(.uppercase)
 
             Spacer()
+            Spacer()
 
-            nextButton(label: "Get Started")
+            ctaButton("Get Started") {
+                withAnimation { step = 1 }
+            }
         }
-        .padding()
+        .padding(.horizontal, 24)
     }
 
-    private var unitStep: some View {
-        VStack(spacing: 24) {
-            Spacer()
+    // MARK: - Exercise Picker
 
-            Text("Weight Unit")
-                .font(.title.bold())
+    private var exercisePickerStep: some View {
+        VStack(spacing: 0) {
+            VStack(spacing: 8) {
+                Text("Choose Your Exercises")
+                    .font(.title2.bold())
+                Text("Pick 2 or 3 compound movements")
+                    .font(.subheadline)
+                    .foregroundStyle(theme.textSecondary)
+            }
+            .padding(.top, 24)
+            .padding(.bottom, 16)
+
+            ScrollView {
+                VStack(spacing: 20) {
+                    ForEach(ExerciseTemplate.ExerciseCategory.allCases, id: \.self) { category in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(category.rawValue)
+                                .font(.caption.bold())
+                                .foregroundStyle(theme.textSecondary)
+                                .textCase(.uppercase)
+                                .tracking(1)
+                                .padding(.horizontal, 4)
+
+                            let exercises = ExerciseTemplate.catalog.filter { $0.category == category }
+                            ForEach(exercises) { template in
+                                exerciseRow(template)
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+            }
+
+            ctaButton("Continue") {
+                for id in selectedExercises {
+                    if let template = ExerciseTemplate.catalog.first(where: { $0.id == id }),
+                       template.type == .weighted {
+                        exerciseWeights[id] = template.defaultIncrement * 10
+                    }
+                }
+                withAnimation { step = 2 }
+            }
+            .disabled(selectedExercises.count < 2)
+            .opacity(selectedExercises.count < 2 ? 0.5 : 1)
+            .padding(.horizontal, 24)
+            .padding(.top, 12)
+        }
+    }
+
+    private func exerciseRow(_ template: ExerciseTemplate) -> some View {
+        let isSelected = selectedExercises.contains(template.id)
+        let atLimit = selectedExercises.count >= 3 && !isSelected
+
+        return Button {
+            withAnimation(.easeInOut(duration: 0.15)) {
+                if isSelected {
+                    selectedExercises.remove(template.id)
+                } else if !atLimit {
+                    selectedExercises.insert(template.id)
+                }
+            }
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: template.icon)
+                    .font(.title3)
+                    .foregroundStyle(isSelected ? theme.accentColor : theme.textSecondary)
+                    .frame(width: 32)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(template.name)
+                        .font(.body.weight(.medium))
+                        .foregroundStyle(isSelected ? .white : theme.textSecondary)
+                    Text(template.type == .bodyweight ? "Bodyweight" : "Weighted")
+                        .font(.caption2)
+                        .foregroundStyle(theme.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(isSelected ? theme.accentColor : Color.white.opacity(0.15))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected ? theme.accentColor.opacity(0.1) : theme.cardColor)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(isSelected ? theme.accentColor.opacity(0.4) : .clear, lineWidth: 1)
+                    )
+            )
+        }
+        .disabled(atLimit)
+        .opacity(atLimit ? 0.4 : 1)
+    }
+
+    // MARK: - Weight Entry
+
+    private var weightEntryStep: some View {
+        VStack(spacing: 0) {
+            VStack(spacing: 8) {
+                Text("Starting Weights")
+                    .font(.title2.bold())
+                Text("Enter your 10RM — the most you can\nlift for 10 reps with good form")
+                    .font(.subheadline)
+                    .foregroundStyle(theme.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.top, 24)
+            .padding(.bottom, 8)
 
             Picker("Unit", selection: $unit) {
                 Text("kg").tag(WeightUnit.kg)
                 Text("lbs").tag(WeightUnit.lbs)
             }
             .pickerStyle(.segmented)
-            .frame(maxWidth: 200)
+            .frame(maxWidth: 140)
+            .padding(.bottom, 24)
 
-            Spacer()
-
-            nextButton(label: "Next")
-        }
-        .padding()
-    }
-
-    private var exerciseSetupStep: some View {
-        VStack(spacing: 20) {
-            Text("Your Starting Weights")
-                .font(.title.bold())
-                .padding(.top, 40)
-
-            Text("Enter the most weight you can lift for 10 reps with good form (your 10RM).")
-                .font(.subheadline)
-                .foregroundStyle(theme.textSecondary)
-                .multilineTextAlignment(.center)
-
-            VStack(spacing: 16) {
-                exerciseInput(
-                    name: "Push-up Level",
-                    icon: "figure.push.up"
-                ) {
-                    Picker("Level", selection: $pushUpLevel) {
-                        Text("Regular").tag(PushUpVariant.regular)
-                        Text("Archer").tag(PushUpVariant.archer)
-                        Text("One Arm").tag(PushUpVariant.oneArm)
-                    }
-                    .pickerStyle(.segmented)
-                }
-
-                exerciseInput(
-                    name: "1-Arm Pulldown",
-                    icon: "figure.rowing"
-                ) {
-                    HStack {
-                        TextField("10RM", value: $pulldownRM, format: .number)
-                            .keyboardType(.decimalPad)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 80)
-                        Text(unit.symbol)
-                            .foregroundStyle(theme.textSecondary)
+            ScrollView {
+                VStack(spacing: 16) {
+                    ForEach(selectedTemplates) { template in
+                        if template.type == .weighted {
+                            weightInputCard(template)
+                        } else {
+                            bodyweightCard(template)
+                        }
                     }
                 }
-
-                exerciseInput(
-                    name: "Zercher Squat",
-                    icon: "figure.squat"
-                ) {
-                    HStack {
-                        TextField("10RM", value: $zercherRM, format: .number)
-                            .keyboardType(.decimalPad)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 80)
-                        Text(unit.symbol)
-                            .foregroundStyle(theme.textSecondary)
-                    }
-                }
+                .padding(.horizontal, 24)
             }
-            .padding()
 
             Spacer()
 
-            nextButton(label: "Next")
+            ctaButton("Continue") {
+                withAnimation { step = 3 }
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 12)
         }
-        .padding()
     }
+
+    private func weightInputCard(_ template: ExerciseTemplate) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label(template.name, systemImage: template.icon)
+                .font(.headline)
+
+            HStack(spacing: 16) {
+                Text("10RM")
+                    .font(.subheadline)
+                    .foregroundStyle(theme.textSecondary)
+
+                Spacer()
+
+                HStack(spacing: 8) {
+                    Button {
+                        let current = exerciseWeights[template.id] ?? 0
+                        if current > 0 { exerciseWeights[template.id] = current - 2.5 }
+                    } label: {
+                        Image(systemName: "minus.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(theme.textSecondary)
+                    }
+
+                    Text(formatted(exerciseWeights[template.id] ?? 0))
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .frame(minWidth: 60)
+
+                    Button {
+                        let current = exerciseWeights[template.id] ?? 0
+                        exerciseWeights[template.id] = current + 2.5
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(theme.accentColor)
+                    }
+                }
+
+                Text(unit.symbol)
+                    .font(.subheadline)
+                    .foregroundStyle(theme.textSecondary)
+            }
+
+            HStack {
+                Text("Weekly increment")
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+                Spacer()
+                Text("+\(formatted(template.defaultIncrement)) \(unit.symbol)")
+                    .font(.caption.bold())
+                    .foregroundStyle(theme.accentColor)
+            }
+        }
+        .padding(16)
+        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    private func bodyweightCard(_ template: ExerciseTemplate) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: template.icon)
+                .font(.title3)
+                .foregroundStyle(theme.accentColor)
+                .frame(width: 32)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(template.name)
+                    .font(.headline)
+                Text("Bodyweight — progression through variants")
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+            }
+
+            Spacer()
+
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(theme.completedColor)
+        }
+        .padding(16)
+        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    // MARK: - Config
 
     private var configStep: some View {
         VStack(spacing: 24) {
             Spacer()
 
             Text("Program Setup")
-                .font(.title.bold())
+                .font(.title2.bold())
 
-            Toggle("Include 2-Week Intro Cycle", isOn: $includeIntro)
-                .padding()
-                .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
+            VStack(spacing: 12) {
+                Toggle("Include 2-Week Intro Cycle", isOn: $includeIntro)
+                    .tint(theme.accentColor)
+                    .padding(16)
+                    .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
 
-            Text("The intro cycle helps you find your 10RM and get comfortable with the exercises.")
-                .font(.caption)
-                .foregroundStyle(theme.textSecondary)
+                Text("The intro helps you dial in your 10RM and learn the movement patterns.")
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+                    .padding(.horizontal, 4)
+            }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Bodyweight (optional)")
-                    .font(.subheadline)
+                Text("BODYWEIGHT")
+                    .font(.caption.bold())
                     .foregroundStyle(theme.textSecondary)
-                HStack {
+                    .tracking(1)
+                HStack(spacing: 12) {
                     TextField("e.g. 68", text: $bodyweight)
                         .keyboardType(.decimalPad)
-                        .textFieldStyle(.roundedBorder)
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
                         .frame(width: 80)
                     Text(unit.symbol)
                         .foregroundStyle(theme.textSecondary)
+                    Spacer()
+                    Text("optional")
+                        .font(.caption)
+                        .foregroundStyle(theme.textSecondary)
                 }
+                .padding(16)
+                .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
             }
-            .padding()
-            .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
 
             Spacer()
 
-            nextButton(label: "Next")
+            ctaButton("Continue") {
+                withAnimation { step = 4 }
+            }
         }
-        .padding()
+        .padding(.horizontal, 24)
     }
+
+    // MARK: - Ready
 
     private var readyStep: some View {
         VStack(spacing: 24) {
             Spacer()
 
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 60))
+                .font(.system(size: 56))
                 .foregroundStyle(theme.completedColor)
 
             Text("Ready to Train")
-                .font(.title.bold())
+                .font(.title2.bold())
 
-            VStack(alignment: .leading, spacing: 8) {
-                summaryRow("Push-up", pushUpLevel.rawValue)
-                summaryRow("1-Arm Pulldown", "\(formatted(pulldownRM)) \(unit.symbol)")
-                summaryRow("Zercher Squat", "\(formatted(zercherRM)) \(unit.symbol)")
-                summaryRow("Intro Cycle", includeIntro ? "Included" : "Skipped")
-                if let bw = Double(bodyweight) {
-                    summaryRow("Bodyweight", "\(formatted(bw)) \(unit.symbol)")
+            VStack(spacing: 1) {
+                ForEach(Array(selectedTemplates.enumerated()), id: \.element.id) { index, template in
+                    HStack {
+                        Text(template.name)
+                            .foregroundStyle(theme.textSecondary)
+                        Spacer()
+                        if template.type == .weighted {
+                            Text("\(formatted(exerciseWeights[template.id] ?? 0)) \(unit.symbol)")
+                                .fontWeight(.semibold)
+                        } else {
+                            Text("Bodyweight")
+                                .fontWeight(.semibold)
+                                .foregroundStyle(theme.accentColor)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .background(theme.cardColor)
+
+                    if index < selectedTemplates.count - 1 {
+                        Divider().overlay(theme.backgroundColor)
+                    }
                 }
             }
-            .padding()
-            .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+
+            HStack {
+                Label(
+                    includeIntro ? "Intro + 6 weeks" : "6 weeks",
+                    systemImage: "calendar"
+                )
+                Spacer()
+                if let bw = Double(bodyweight) {
+                    Label("\(formatted(bw)) \(unit.symbol)", systemImage: "scalemass")
+                }
+            }
+            .font(.subheadline)
+            .foregroundStyle(theme.textSecondary)
+            .padding(.horizontal, 4)
 
             Spacer()
 
-            Button {
+            ctaButton("Start Program") {
                 createProgram()
                 onComplete()
-            } label: {
-                Text("Start Program")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(theme.accentColor)
-                    .foregroundStyle(.black)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
             }
         }
-        .padding()
+        .padding(.horizontal, 24)
+    }
+
+    // MARK: - Components
+
+    private func ctaButton(_ label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label)
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(theme.accentColor, in: RoundedRectangle(cornerRadius: 14))
+                .foregroundStyle(.black)
+        }
+        .padding(.bottom, 8)
     }
 
     // MARK: - Helpers
 
-    private func exerciseInput<Content: View>(
-        name: String,
-        icon: String,
-        @ViewBuilder content: () -> Content
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label(name, systemImage: icon)
-                .font(.headline)
-            content()
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
-    }
-
-    private func summaryRow(_ label: String, _ value: String) -> some View {
-        HStack {
-            Text(label)
-                .foregroundStyle(theme.textSecondary)
-            Spacer()
-            Text(value)
-                .fontWeight(.semibold)
-        }
-    }
-
-    private func nextButton(label: String) -> some View {
-        Button {
-            withAnimation { step += 1 }
-        } label: {
-            Text(label)
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(theme.accentColor)
-                .foregroundStyle(.black)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-        }
-        .padding(.bottom, 40)
+    private var selectedTemplates: [ExerciseTemplate] {
+        ExerciseTemplate.catalog.filter { selectedExercises.contains($0.id) }
     }
 
     private func formatted(_ value: Double) -> String {
@@ -282,13 +459,15 @@ struct OnboardingFlow: View {
             introCycleEnabled: includeIntro
         )
 
-        let exercises = [
-            Exercise(name: "Push-up", type: .bodyweight, initial10RM: 0, weightIncrement: 0, unit: unit, sortOrder: 0),
-            Exercise(name: "1-Arm Pulldown", type: .weighted, initial10RM: pulldownRM, weightIncrement: 2.5, unit: unit, sortOrder: 1),
-            Exercise(name: "Zercher Squat", type: .weighted, initial10RM: zercherRM, weightIncrement: 5, unit: unit, sortOrder: 2)
-        ]
-
-        for exercise in exercises {
+        for (index, template) in selectedTemplates.enumerated() {
+            let exercise = Exercise(
+                name: template.name,
+                type: template.type,
+                initial10RM: exerciseWeights[template.id] ?? 0,
+                weightIncrement: template.defaultIncrement,
+                unit: unit,
+                sortOrder: index
+            )
             exercise.program = program
             program.exercises.append(exercise)
         }
@@ -296,8 +475,7 @@ struct OnboardingFlow: View {
         modelContext.insert(program)
 
         if let bw = Double(bodyweight) {
-            let entry = BodyweightEntry(weight: bw, unit: unit)
-            modelContext.insert(entry)
+            modelContext.insert(BodyweightEntry(weight: bw, unit: unit))
         }
 
         try? modelContext.save()

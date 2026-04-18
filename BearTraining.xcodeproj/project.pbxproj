@@ -31,6 +31,7 @@
 		89E4CACA92CEE6D43D796224 /* DeLormeEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 755C4B072A7D708AB1C371EB /* DeLormeEngine.swift */; };
 		AF6DFB8D73182BC61A05AB8B /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3292F28AB124D11C4E37D2A7 /* TodayView.swift */; };
 		C50EF54F9690658A516F510E /* PlannedWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6741598CA0AD77085DF6ED /* PlannedWorkout.swift */; };
+		C5B86DE2DF373A9951FBEDA3 /* ExerciseCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E56672EF57A7F44AB08CB1 /* ExerciseCatalog.swift */; };
 		CB5C6E14DAE3ECD5155E146B /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FAFD1DD2317974C9101D6E /* ProgressView.swift */; };
 		D9C52C8DFAF7BCC723EEA79E /* BodyweightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12FFF95DF89281D154524C3 /* BodyweightEntry.swift */; };
 /* End PBXBuildFile section */
@@ -55,6 +56,7 @@
 		40E5AC43B802B1020856A47F /* WorkoutSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSession.swift; sourceTree = "<group>"; };
 		474AEE7FB8419CF46A0435CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4CF16EE87E9C5739957E68CC /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		50E56672EF57A7F44AB08CB1 /* ExerciseCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseCatalog.swift; sourceTree = "<group>"; };
 		58DC9A329E96BD49D4BF6554 /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
 		5B9EB1C106CA246CE0CE8A65 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		6FBCD79796365AF436EF8A4E /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				19B22C06F280DB963DA41682 /* CompletedSet.swift */,
 				4CF16EE87E9C5739957E68CC /* Enums.swift */,
 				8E9E7E5DD8133BBD2756C89C /* Exercise.swift */,
+				50E56672EF57A7F44AB08CB1 /* ExerciseCatalog.swift */,
 				31F3C3159AEA39E05A93FD5C /* Program.swift */,
 				40E5AC43B802B1020856A47F /* WorkoutSession.swift */,
 			);
@@ -351,6 +354,7 @@
 				89E4CACA92CEE6D43D796224 /* DeLormeEngine.swift in Sources */,
 				4A91B0F9C246104F7C7CC187 /* Enums.swift in Sources */,
 				761FA983CB95EA59EF19F0FF /* Exercise.swift in Sources */,
+				C5B86DE2DF373A9951FBEDA3 /* ExerciseCatalog.swift in Sources */,
 				61548D015650F5A2071BE113 /* ExerciseConfigView.swift in Sources */,
 				04A4687890025347AA8997C8 /* HealthKitManager.swift in Sources */,
 				76ABD8A828D89F00844AF869 /* OnboardingFlow.swift in Sources */,
