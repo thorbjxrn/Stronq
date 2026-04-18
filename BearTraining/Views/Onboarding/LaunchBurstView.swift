@@ -41,9 +41,8 @@ struct LaunchBurstView: View {
                     .opacity(iconOpacity)
 
                 VStack(spacing: 8) {
-                    Text("STRONQ")
-                        .font(.system(size: 36, weight: .black, design: .rounded))
-                        .tracking(4)
+                    Text("Stronq")
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
 
                     Text("Let's lift.")
                         .font(.subheadline)

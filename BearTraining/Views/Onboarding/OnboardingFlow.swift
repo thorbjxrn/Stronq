@@ -67,61 +67,31 @@ struct OnboardingFlow: View {
     private var welcomeStep: some View {
         VStack(spacing: 0) {
             Spacer()
-
-            // Icon with glow
-            ZStack {
-                Circle()
-                    .fill(theme.accentColor.opacity(0.08))
-                    .frame(width: 160, height: 160)
-                    .blur(radius: 30)
-
-                Circle()
-                    .fill(theme.accentColor.opacity(0.05))
-                    .frame(width: 240, height: 240)
-                    .blur(radius: 50)
-
-                Image(systemName: "figure.strengthtraining.traditional")
-                    .font(.system(size: 68, weight: .light))
-                    .foregroundStyle(theme.accentColor)
-            }
-            .padding(.bottom, 32)
-
-            // Title
-            Text("STRONQ")
-                .font(.system(size: 48, weight: .black, design: .rounded))
-                .tracking(3)
-
-            Text("aka how to become a bear")
-                .font(.system(size: 15, weight: .medium, design: .serif))
-                .italic()
-                .foregroundStyle(theme.accentColor.opacity(0.7))
-                .padding(.bottom, 12)
-
-            // Tagline
-            Text("Get big. Get strong.\nTwo exercises. Six weeks.")
-                .font(.system(size: 15))
-                .foregroundStyle(theme.textSecondary)
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-
             Spacer()
 
-            // How it works
+            // Name — the only hero element
+            Text("Stronq")
+                .font(.system(size: 52, weight: .bold, design: .rounded))
+
+            // Context — one line, quiet
+            Text("Two exercises. Six weeks. Become a bear.")
+                .font(.system(size: 15, weight: .regular))
+                .foregroundStyle(theme.textSecondary)
+                .padding(.top, 10)
+
+            Spacer()
+            Spacer()
+            Spacer()
+
+            // Secondary link — honest about its role
             NavigationLink {
                 HowItWorksView()
             } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "book.fill")
-                        .font(.subheadline)
-                    Text("How does it work?")
-                        .font(.subheadline)
-                }
-                .foregroundStyle(theme.accentColor)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 24)
-                .background(theme.accentColor.opacity(0.12), in: Capsule())
+                Text("How it works")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(theme.accentColor)
             }
-            .padding(.bottom, 16)
+            .padding(.bottom, 24)
 
             // CTA
             ctaButton("Get Started") {
