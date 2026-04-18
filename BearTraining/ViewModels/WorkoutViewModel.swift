@@ -18,6 +18,7 @@ final class WorkoutViewModel {
     var seriesPerExercise: [String: Int] = [:]
     var exerciseOrder: ExerciseOrder = .sequential
     var currentAlternatingSeries: Int = 0
+    var doneExercises: Set<String> = []
 
     private var restTimerTask: Task<Void, Never>?
     private var elapsedTimerTask: Task<Void, Never>?
@@ -93,6 +94,14 @@ final class WorkoutViewModel {
         case .max: return true
         case .fixed(let n): return current < n
         }
+    }
+
+    func isExerciseDone(_ name: String) -> Bool {
+        doneExercises.contains(name)
+    }
+
+    func markExerciseDone(_ name: String) {
+        doneExercises.insert(name)
     }
 
     func allSetsCompleteForCurrentSeries(exerciseName: String) -> Bool {
