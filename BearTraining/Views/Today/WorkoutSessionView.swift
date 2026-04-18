@@ -13,7 +13,9 @@ struct WorkoutSessionView: View {
             sessionHeader
             restTimerBanner
 
-            if let exercise = viewModel.currentExercise {
+            if viewModel.exerciseOrder == .alternating {
+                alternatingView
+            } else if let exercise = viewModel.currentExercise {
                 exerciseView(exercise)
             }
 
@@ -93,6 +95,62 @@ struct WorkoutSessionView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(theme.accentColor.opacity(0.12))
+        }
+    }
+
+    // MARK: - Alternating View
+
+    private var alternatingView: some View {
+        let allDone = viewModel.plannedExercises.allSatisfy {
+            viewModel.allSetsCompleteForCurrentSeries(exerciseName: $0.name)
+        }
+
+        return ScrollView {
+            VStack(spacing: 12) {
+                Text("Series \(viewModel.currentAlternatingSeries)")
+                    .font(.subheadline.bold())
+                    .foregroundStyle(theme.accentColor)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 4)
+
+                ForEach(viewModel.plannedExercises, id: \.name) { exercise in
+                    let groups = viewModel.setsGroupedBySeries(for: exercise.name)
+                    if let currentGroup = groups.last {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(exercise.name)
+                                .font(.headline)
+                            ForEach(currentGroup.sets) { set in
+                                SetRowView(set: set, viewModel: viewModel, theme: theme)
+                            }
+                        }
+                        .padding(14)
+                        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
+                    }
+                }
+
+                if allDone {
+                    Button {
+                        withAnimation { viewModel.addAnotherSeries() }
+                    } label: {
+                        Label("Start Next Series", systemImage: "plus.circle.fill")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(theme.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 14))
+                            .foregroundStyle(theme.accentColor)
+                    }
+
+                    Button { showingFinishConfirm = true } label: {
+                        Label("Finish Workout", systemImage: "flag.checkered")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(theme.completedColor, in: RoundedRectangle(cornerRadius: 14))
+                            .foregroundStyle(.black)
+                    }
+                }
+            }
+            .padding(16)
         }
     }
 

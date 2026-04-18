@@ -6,7 +6,10 @@ struct ProgressView: View {
     @Environment(ThemeManager.self) private var theme
     @Query(sort: \WorkoutSession.date) private var sessions: [WorkoutSession]
     @Query(sort: \BodyweightEntry.date) private var bodyweightEntries: [BodyweightEntry]
+    @Query private var programs: [Program]
     @State private var selectedChart = 0
+
+    private var program: Program? { programs.first }
 
     var body: some View {
         NavigationStack {
@@ -37,7 +40,7 @@ struct ProgressView: View {
         }
     }
 
-    // MARK: - Strength Chart
+    // MARK: - Strength
 
     private var strengthChart: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -48,22 +51,17 @@ struct ProgressView: View {
             let data = strengthData
 
             if data.isEmpty {
-                emptyState("Complete workouts to see strength progress.")
+                emptyState("Complete Heavy day workouts to track strength.")
             } else {
                 Chart(data, id: \.id) { point in
                     LineMark(
-                        x: .value("Week", point.week),
+                        x: .value("Week", "W\(point.week)"),
                         y: .value("Weight", point.weight)
                     )
                     .foregroundStyle(by: .value("Exercise", point.exercise))
-
-                    PointMark(
-                        x: .value("Week", point.week),
-                        y: .value("Weight", point.weight)
-                    )
-                    .foregroundStyle(by: .value("Exercise", point.exercise))
+                    .symbol(by: .value("Exercise", point.exercise))
                 }
-                .chartYAxisLabel("kg")
+                .chartYAxisLabel(program?.exercises.first?.unit.symbol ?? "kg")
                 .frame(height: 250)
                 .padding()
                 .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
@@ -72,7 +70,7 @@ struct ProgressView: View {
         }
     }
 
-    // MARK: - Volume Chart
+    // MARK: - Volume
 
     private var volumeChart: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -80,15 +78,24 @@ struct ProgressView: View {
                 .font(.headline)
                 .padding(.horizontal)
 
-            let completedSessions = sessions.filter(\.isCompleted)
+            let completed = sessions.filter(\.isCompleted)
 
-            if completedSessions.isEmpty {
+            if completed.isEmpty {
                 emptyState("Complete workouts to see volume trends.")
             } else {
-                Chart(completedSessions) { session in
+                let volumeData = completed.map { session in
+                    VolumePoint(
+                        id: session.id.uuidString,
+                        date: session.date,
+                        volume: session.totalVolume,
+                        dayType: session.dayType.rawValue
+                    )
+                }
+
+                Chart(volumeData, id: \.id) { point in
                     BarMark(
-                        x: .value("Date", session.date, unit: .day),
-                        y: .value("Volume", session.totalVolume)
+                        x: .value("Date", point.date, unit: .day),
+                        y: .value("Volume", point.volume)
                     )
                     .foregroundStyle(theme.accentColor.gradient)
                 }
@@ -97,11 +104,21 @@ struct ProgressView: View {
                 .padding()
                 .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal)
+
+                // Summary stats
+                let totalVol = completed.reduce(0.0) { $0 + $1.totalVolume }
+                let avgVol = totalVol / Double(max(completed.count, 1))
+                HStack(spacing: 16) {
+                    statCard("Total", formatted(totalVol), "kg")
+                    statCard("Sessions", "\(completed.count)", "")
+                    statCard("Avg/Session", formatted(avgVol), "kg")
+                }
+                .padding(.horizontal)
             }
         }
     }
 
-    // MARK: - Bodyweight Chart
+    // MARK: - Bodyweight
 
     private var bodyweightChart: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -125,7 +142,7 @@ struct ProgressView: View {
                     )
                     .foregroundStyle(theme.accentColor)
                 }
-                .chartYAxisLabel("kg")
+                .chartYAxisLabel(bodyweightEntries.first?.unit.symbol ?? "kg")
                 .frame(height: 250)
                 .padding()
                 .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
@@ -133,6 +150,8 @@ struct ProgressView: View {
             }
         }
     }
+
+    // MARK: - Helpers
 
     private func emptyState(_ text: String) -> some View {
         Text(text)
@@ -144,15 +163,38 @@ struct ProgressView: View {
             .padding(.horizontal)
     }
 
-    // MARK: - Data
+    private func statCard(_ label: String, _ value: String, _ unit: String) -> some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.system(.title3, design: .rounded, weight: .bold))
+            if !unit.isEmpty {
+                Text(unit)
+                    .font(.caption2)
+                    .foregroundStyle(theme.textSecondary)
+            }
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(theme.textSecondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func formatted(_ value: Double) -> String {
+        if value >= 1000 {
+            return String(format: "%.0fk", value / 1000)
+        }
+        return String(format: "%.0f", value)
+    }
 
     private var strengthData: [StrengthPoint] {
         let heavySessions = sessions.filter { $0.isCompleted && $0.dayType == .heavy }
         var points: [StrengthPoint] = []
 
         for session in heavySessions {
-            let exerciseNames = Set(session.completedSets.map(\.exerciseName))
-            for name in exerciseNames {
+            let names = Set(session.completedSets.map(\.exerciseName))
+            for name in names {
                 let maxWeight = session.completedSets
                     .filter { $0.exerciseName == name && $0.intensity == 1.0 && $0.isCompleted }
                     .map(\.actualWeight)
@@ -176,4 +218,11 @@ struct StrengthPoint: Identifiable {
     let week: Int
     let exercise: String
     let weight: Double
+}
+
+struct VolumePoint: Identifiable {
+    let id: String
+    let date: Date
+    let volume: Double
+    let dayType: String
 }

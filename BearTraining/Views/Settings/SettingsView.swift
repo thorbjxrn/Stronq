@@ -79,6 +79,15 @@ struct SettingsView: View {
                     set: { program.seriesRestDuration = $0 }
                 ), in: 60...600, step: 30)
 
+                Picker("Exercise Order", selection: Binding(
+                    get: { program.exerciseOrder },
+                    set: { program.exerciseOrder = $0 }
+                )) {
+                    ForEach(ExerciseOrder.allCases, id: \.self) { order in
+                        Text(order.rawValue).tag(order)
+                    }
+                }
+
                 HStack {
                     Text("Unit")
                     Spacer()

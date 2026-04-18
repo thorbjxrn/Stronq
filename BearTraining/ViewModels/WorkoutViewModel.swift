@@ -16,6 +16,8 @@ final class WorkoutViewModel {
     var weekNumber: Int = 1
     var currentExerciseIndex: Int = 0
     var seriesPerExercise: [String: Int] = [:]
+    var exerciseOrder: ExerciseOrder = .sequential
+    var currentAlternatingSeries: Int = 0
 
     private var restTimerTask: Task<Void, Never>?
     private var elapsedTimerTask: Task<Void, Never>?
@@ -38,6 +40,7 @@ final class WorkoutViewModel {
         seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: nextDayType, mondaySeriesCount: mondaySeries.values.min())
         setRestDuration = program.setRestDuration
         seriesRestDuration = program.seriesRestDuration
+        exerciseOrder = program.exerciseOrder
 
         plannedExercises = DeLormeEngine.generateSeries(
             exercises: program.exercises,
@@ -109,10 +112,16 @@ final class WorkoutViewModel {
         activeSession = session
         isWorkoutActive = true
         currentExerciseIndex = 0
+        currentAlternatingSeries = 0
         elapsedTime = 0
         startElapsedTimer()
 
-        if let exercise = currentExercise {
+        if exerciseOrder == .alternating {
+            currentAlternatingSeries = 1
+            for exercise in plannedExercises {
+                addSeries(for: exercise, to: session)
+            }
+        } else if let exercise = currentExercise {
             addSeries(for: exercise, to: session)
         }
     }
@@ -136,9 +145,19 @@ final class WorkoutViewModel {
     }
 
     func addAnotherSeries() {
-        guard let session = activeSession, let exercise = currentExercise else { return }
-        guard canAddMoreSeries(for: exercise.name) else { return }
-        addSeries(for: exercise, to: session)
+        guard let session = activeSession else { return }
+        if exerciseOrder == .alternating {
+            currentAlternatingSeries += 1
+            for exercise in plannedExercises {
+                if canAddMoreSeries(for: exercise.name) {
+                    addSeries(for: exercise, to: session)
+                }
+            }
+        } else {
+            guard let exercise = currentExercise else { return }
+            guard canAddMoreSeries(for: exercise.name) else { return }
+            addSeries(for: exercise, to: session)
+        }
     }
 
     func moveToNextExercise() {
