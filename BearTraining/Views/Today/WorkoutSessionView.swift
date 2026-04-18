@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct WorkoutSessionView: View {
-    @Bindable var viewModel: WorkoutViewModel
+    var viewModel: WorkoutViewModel
     let program: Program
     @Environment(\.modelContext) private var modelContext
     @Environment(ThemeManager.self) private var theme
