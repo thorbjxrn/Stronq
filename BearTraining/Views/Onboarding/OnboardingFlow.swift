@@ -267,9 +267,9 @@ struct OnboardingFlow: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
 
             VStack(alignment: .leading, spacing: 8) {
-                scheduleRow("Monday", "Heavy — max series", "50% → 75% → 100%")
-                scheduleRow("Wednesday", "Light", "50% only")
-                scheduleRow("Friday", "Medium", "50% → 75%")
+                scheduleRow("Mon", "Heavy — max series", "50% → 75% → 100%")
+                scheduleRow("Wed", "Light", "50% only")
+                scheduleRow("Fri", "Medium", "50% → 75%")
             }
             .padding()
             .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
