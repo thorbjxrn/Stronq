@@ -9,10 +9,14 @@ struct WorkoutSessionView: View {
     @State private var showingFinishConfirm = false
     @State private var selectedExercise: Int = 0
 
+    private var allExercisesDone: Bool {
+        viewModel.plannedExercises.allSatisfy { viewModel.isExerciseDone($0.name) }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             sessionHeader
-            exercisePicker
+            exerciseTabs
             restTimerBanner
 
             TabView(selection: $selectedExercise) {
@@ -39,9 +43,7 @@ struct WorkoutSessionView: View {
                 Text(viewModel.dayType.rawValue)
                     .font(.headline)
             }
-
             Spacer()
-
             HStack(spacing: 4) {
                 Image(systemName: "timer")
                     .font(.caption)
@@ -55,10 +57,10 @@ struct WorkoutSessionView: View {
         .background(theme.cardColor)
     }
 
-    // MARK: - Exercise Picker
+    // MARK: - Exercise Tabs
 
-    private var exercisePicker: some View {
-        HStack(spacing: 0) {
+    private var exerciseTabs: some View {
+        HStack(spacing: 2) {
             ForEach(viewModel.plannedExercises.indices, id: \.self) { index in
                 let exercise = viewModel.plannedExercises[index]
                 let isSelected = selectedExercise == index
@@ -68,31 +70,34 @@ struct WorkoutSessionView: View {
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) { selectedExercise = index }
                 } label: {
-                    VStack(spacing: 4) {
-                        HStack(spacing: 6) {
-                            if isDone {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .font(.caption2)
-                                    .foregroundStyle(theme.completedColor)
-                            }
-                            Text(exercise.name)
-                                .font(.subheadline.weight(isSelected ? .bold : .regular))
-                                .lineLimit(1)
+                    HStack(spacing: 6) {
+                        if isDone {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 14))
+                                .foregroundStyle(theme.completedColor)
                         }
-                        if seriesCount > 0 {
-                            Text("\(seriesCount) series")
-                                .font(.caption2)
-                                .foregroundStyle(theme.textSecondary)
+                        VStack(spacing: 2) {
+                            Text(exercise.name)
+                                .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
+                            if seriesCount > 0 {
+                                Text("\(seriesCount) series")
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(theme.textSecondary)
+                            }
                         }
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
-                    .background(isSelected ? theme.accentColor.opacity(0.12) : .clear)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(isSelected ? theme.accentColor.opacity(0.15) : .clear)
+                    )
                 }
                 .foregroundStyle(isSelected ? theme.accentColor : isDone ? theme.completedColor : .white)
             }
         }
-        .background(theme.cardColor.opacity(0.5))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
     }
 
     // MARK: - Rest Timer
@@ -120,97 +125,124 @@ struct WorkoutSessionView: View {
     private func exercisePage(_ exercise: PlannedSeriesExercise) -> some View {
         let groups = viewModel.setsGroupedBySeries(for: exercise.name)
         let mode = viewModel.seriesModeForExercise(exercise.name)
-        let currentSeries = viewModel.currentSeriesForExercise(exercise.name)
         let lastSeriesDone = viewModel.allSetsCompleteForCurrentSeries(exerciseName: exercise.name)
         let isDone = viewModel.isExerciseDone(exercise.name)
+        let currentSeries = viewModel.currentSeriesForExercise(exercise.name)
 
         return ScrollView {
             VStack(spacing: 12) {
-                ForEach(groups, id: \.series) { group in
-                    let isCurrent = group.series == currentSeries
-                    let allDone = group.sets.allSatisfy(\.isCompleted)
-
-                    VStack(spacing: 6) {
-                        HStack {
-                            Text("Series \(group.series)")
-                                .font(.caption.bold())
-                                .foregroundStyle(isCurrent ? theme.accentColor : theme.textSecondary)
-                            Spacer()
-                            if allDone {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .font(.caption)
-                                    .foregroundStyle(theme.completedColor)
-                            }
-                        }
-
-                        ForEach(group.sets) { set in
-                            SetRowView(set: set, viewModel: viewModel, theme: theme)
-                        }
-                    }
-                    .padding(14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(theme.cardColor)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(isCurrent && !allDone ? theme.accentColor.opacity(0.3) : .clear, lineWidth: 1)
-                            )
-                    )
-                    .opacity(allDone && !isCurrent ? 0.5 : 1)
-                }
-
-                if lastSeriesDone && !isDone {
-                    HStack(spacing: 12) {
-                        if viewModel.canAddMoreSeries(for: exercise.name) {
-                            Button {
-                                withAnimation { viewModel.addAnotherSeries() }
-                            } label: {
-                                Label("Another Series", systemImage: "plus.circle.fill")
-                                    .font(.subheadline.weight(.semibold))
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 14)
-                                    .background(theme.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                                    .foregroundStyle(theme.accentColor)
-                            }
-                        }
-
-                        Button {
-                            withAnimation { viewModel.markExerciseDone(exercise.name) }
-                        } label: {
-                            Label("Done", systemImage: "checkmark")
-                                .font(.subheadline.weight(.semibold))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(theme.completedColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                                .foregroundStyle(theme.completedColor)
-                        }
-                    }
-                }
-
-                if isDone {
-                    HStack {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(theme.completedColor)
-                        Text("\(exercise.name) done — \(currentSeries) series")
+                // Mode label
+                HStack {
+                    switch mode {
+                    case .max:
+                        Label("Max series", systemImage: "flame")
+                            .font(.caption)
+                            .foregroundStyle(theme.accentColor)
+                    case .fixed(let n):
+                        Text("\(currentSeries) of \(n) series")
+                            .font(.caption)
                             .foregroundStyle(theme.textSecondary)
                     }
-                    .font(.subheadline)
-                    .padding(.vertical, 8)
+                    Spacer()
+                }
+                .padding(.horizontal, 4)
+
+                // Series cards
+                ForEach(groups, id: \.series) { group in
+                    seriesCard(group: group, exerciseName: exercise.name)
+                }
+
+                // Action buttons
+                if isDone {
+                    doneLabel(exercise.name, seriesCount: currentSeries)
+                } else if lastSeriesDone {
+                    actionButtons(exercise: exercise)
                 }
             }
             .padding(16)
         }
     }
 
+    private func seriesCard(group: (series: Int, sets: [CompletedSet]), exerciseName: String) -> some View {
+        let currentSeries = viewModel.currentSeriesForExercise(exerciseName)
+        let isCurrent = group.series == currentSeries
+        let allDone = group.sets.allSatisfy(\.isCompleted)
+
+        return VStack(spacing: 6) {
+            HStack {
+                Text("Series \(group.series)")
+                    .font(.caption.bold())
+                    .foregroundStyle(isCurrent ? theme.accentColor : theme.textSecondary)
+                Spacer()
+                if allDone {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(theme.completedColor)
+                }
+            }
+
+            ForEach(group.sets) { set in
+                SetRowView(set: set, viewModel: viewModel, theme: theme)
+            }
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(theme.cardColor)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(isCurrent && !allDone ? theme.accentColor.opacity(0.3) : .clear, lineWidth: 1)
+                )
+        )
+        .opacity(allDone && !isCurrent ? 0.5 : 1)
+    }
+
+    private func actionButtons(exercise: PlannedSeriesExercise) -> some View {
+        HStack(spacing: 12) {
+            if viewModel.canAddMoreSeries(for: exercise.name) {
+                Button {
+                    withAnimation { viewModel.addAnotherSeriesForExercise(exercise.name) }
+                } label: {
+                    Label("Another Series", systemImage: "plus.circle.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(theme.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
+                        .foregroundStyle(theme.accentColor)
+                }
+            }
+
+            Button {
+                withAnimation { viewModel.markExerciseDone(exercise.name) }
+            } label: {
+                Label("Done", systemImage: "checkmark")
+                    .font(.subheadline.weight(.semibold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(theme.completedColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
+                    .foregroundStyle(theme.completedColor)
+            }
+        }
+    }
+
+    private func doneLabel(_ name: String, seriesCount: Int) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(theme.completedColor)
+            Text("\(name) done — \(seriesCount) series")
+                .foregroundStyle(theme.textSecondary)
+        }
+        .font(.subheadline)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background(theme.completedColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+    }
+
     // MARK: - Bottom Bar
 
     private var bottomBar: some View {
-        let allDone = viewModel.plannedExercises.allSatisfy {
-            viewModel.isExerciseDone($0.name)
-        }
-
-        return Group {
-            if allDone {
+        Group {
+            if allExercisesDone {
                 Button {
                     viewModel.finishWorkout(modelContext: modelContext)
                 } label: {
@@ -221,13 +253,10 @@ struct WorkoutSessionView: View {
                         .background(theme.completedColor, in: RoundedRectangle(cornerRadius: 14))
                         .foregroundStyle(.black)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(16)
             } else {
                 HStack {
-                    Button {
-                        showingFinishConfirm = true
-                    } label: {
+                    Button { showingFinishConfirm = true } label: {
                         Text("End Early")
                             .font(.subheadline)
                             .foregroundStyle(theme.textSecondary)
