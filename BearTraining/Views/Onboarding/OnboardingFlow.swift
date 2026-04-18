@@ -62,11 +62,8 @@ struct OnboardingFlow: View {
         VStack(alignment: .leading, spacing: 0) {
             Spacer()
 
-            Text("Stron")
-                .font(.system(size: 64, weight: .bold)) +
-            Text("q")
-                .font(.system(size: 64, weight: .bold))
-                .foregroundColor(theme.accentColor)
+            Text("Stronq")
+                .font(.system(size: 56, weight: .heavy))
 
             Text("Two exercises.\nSix weeks.\nBecome a bear.")
                 .font(.system(size: 20, weight: .regular))
