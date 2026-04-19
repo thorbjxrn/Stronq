@@ -58,7 +58,7 @@ enum AppTheme: String, CaseIterable {
     var accentColor: Color {
         switch self {
         case .stronq: Color(red: 0.96, green: 0.65, blue: 0.14)
-        case .chalk: Color(red: 0.88, green: 0.86, blue: 0.82)
+        case .chalk: Color(red: 0.45, green: 0.43, blue: 0.40)
         case .coffee: Color(red: 0.72, green: 0.58, blue: 0.42)
         case .bear: Color(red: 0.82, green: 0.52, blue: 0.22)
         case .tactical: Color(red: 0.10, green: 0.78, blue: 0.35)
