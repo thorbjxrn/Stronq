@@ -19,15 +19,16 @@ struct SettingsView: View {
                 theme.backgroundColor.ignoresSafeArea()
 
                 List {
-                    exercisesSection
-                    programSection
-                    remindersSection
-                    appearanceSection
-                    premiumSection
-                    aboutSection
+                    exercisesSection.listRowBackground(theme.cardColor)
+                    programSection.listRowBackground(theme.cardColor)
+                    remindersSection.listRowBackground(theme.cardColor)
+                    appearanceSection.listRowBackground(theme.cardColor)
+                    premiumSection.listRowBackground(theme.cardColor)
+                    aboutSection.listRowBackground(theme.cardColor)
                 }
                 .scrollContentBackground(.hidden)
                 .foregroundStyle(theme.textPrimary)
+                .tint(theme.accentColor)
             }
             .navigationTitle("Settings")
             .preferredColorScheme(theme.preferredColorScheme)

@@ -33,8 +33,8 @@ enum AppTheme: String, CaseIterable {
         switch self {
         case .bear: "Stronq (Default)"
         case .chalk: "Chalk"
-        case .crimson: "Crimson"
-        case .midnight: "Midnight"
+        case .crimson: "Infrared"
+        case .midnight: "Cryo"
         }
     }
 
@@ -52,9 +52,12 @@ enum AppTheme: String, CaseIterable {
     var accentColor: Color {
         switch self {
         case .bear: Color(red: 0.96, green: 0.65, blue: 0.14)
-        case .chalk: Color(red: 0.40, green: 0.40, blue: 0.42)
-        case .crimson: Color(red: 0.85, green: 0.20, blue: 0.22)
-        case .midnight: Color(red: 0.35, green: 0.50, blue: 0.95)
+        // Warm off-white with slight cream cast — actual gym chalk
+        case .chalk: Color(red: 0.88, green: 0.86, blue: 0.82)
+        // Deep magenta-rose — intense but not destructive
+        case .crimson: Color(red: 0.92, green: 0.28, blue: 0.50)
+        // Cyan-teal — cold, technical, high-contrast on dark
+        case .midnight: Color(red: 0.20, green: 0.82, blue: 0.88)
         }
     }
 
@@ -62,8 +65,10 @@ enum AppTheme: String, CaseIterable {
         switch self {
         case .bear: Color(red: 0.08, green: 0.08, blue: 0.10)
         case .chalk: Color(.systemBackground)
-        case .crimson: Color(red: 0.09, green: 0.06, blue: 0.06)
-        case .midnight: Color(red: 0.05, green: 0.05, blue: 0.10)
+        // Warm near-black with subtle rose undertone
+        case .crimson: Color(red: 0.08, green: 0.05, blue: 0.06)
+        // Deep navy-black — cold and inky
+        case .midnight: Color(red: 0.04, green: 0.05, blue: 0.09)
         }
     }
 
@@ -71,8 +76,10 @@ enum AppTheme: String, CaseIterable {
         switch self {
         case .bear: Color(red: 0.14, green: 0.14, blue: 0.16)
         case .chalk: Color(.secondarySystemBackground)
-        case .crimson: Color(red: 0.16, green: 0.10, blue: 0.10)
-        case .midnight: Color(red: 0.10, green: 0.10, blue: 0.18)
+        // Lifted dark with matching rose warmth
+        case .crimson: Color(red: 0.14, green: 0.09, blue: 0.11)
+        // Slightly lifted navy
+        case .midnight: Color(red: 0.08, green: 0.09, blue: 0.16)
         }
     }
 
@@ -93,18 +100,21 @@ enum AppTheme: String, CaseIterable {
     var completedColor: Color {
         switch self {
         case .bear: Color(red: 0.30, green: 0.78, blue: 0.40)
-        case .chalk: Color(red: 0.25, green: 0.70, blue: 0.35)
-        case .crimson: Color(red: 0.90, green: 0.45, blue: 0.30)
-        case .midnight: Color(red: 0.30, green: 0.80, blue: 0.70)
+        // Muted sage green — works in both light and dark mode
+        case .chalk: Color(red: 0.30, green: 0.68, blue: 0.38)
+        // Warm coral-peach — complements magenta without clashing
+        case .crimson: Color(red: 0.95, green: 0.55, blue: 0.40)
+        // Bright mint — cool complement to cyan accent
+        case .midnight: Color(red: 0.25, green: 0.85, blue: 0.60)
         }
     }
 
     var themePreviewColor: Color {
         switch self {
         case .bear: Color(red: 0.96, green: 0.65, blue: 0.14)
-        case .chalk: Color(red: 0.85, green: 0.85, blue: 0.85)
-        case .crimson: Color(red: 0.85, green: 0.20, blue: 0.22)
-        case .midnight: Color(red: 0.35, green: 0.50, blue: 0.95)
+        case .chalk: Color(red: 0.88, green: 0.86, blue: 0.82)
+        case .crimson: Color(red: 0.92, green: 0.28, blue: 0.50)
+        case .midnight: Color(red: 0.20, green: 0.82, blue: 0.88)
         }
     }
 }
