@@ -46,7 +46,7 @@ final class WorkoutViewModel {
         dayType = next.dayType
         weekNumber = next.week
 
-        let mondaySeries = lastMondaySeriesCounts(program: program, week: weekNumber)
+        let mondaySeries = lastMondaySeriesCounts(program: program, week: weekNumber, sessions: freshSessions)
         seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: next.dayType, mondaySeriesCount: mondaySeries.values.min())
         setRestDuration = program.restBetweenSets
         seriesRestDuration = program.restBetweenSeries
@@ -295,8 +295,9 @@ final class WorkoutViewModel {
 
     // MARK: - Helpers
 
-    private func lastMondaySeriesCounts(program: Program, week: Int) -> [String: Int] {
-        let mondaySession = program.sessions.first {
+    private func lastMondaySeriesCounts(program: Program, week: Int, sessions: [WorkoutSession]? = nil) -> [String: Int] {
+        let allSessions = sessions ?? program.sessions
+        let mondaySession = allSessions.first {
             $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
         }
         guard let session = mondaySession else { return [:] }
