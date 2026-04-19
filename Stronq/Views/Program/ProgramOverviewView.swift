@@ -37,25 +37,25 @@ struct ProgramOverviewView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+
+                        NavigationLink {
+                            HowItWorksView()
+                        } label: {
+                            Text("How it works →")
+                                .font(.subheadline)
+                                .foregroundStyle(theme.accentColor)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                        }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
                 } else {
                     Text("No program configured.")
                         .foregroundStyle(theme.textSecondary)
                 }
             }
             .navigationTitle("Program")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        HowItWorksView()
-                    } label: {
-                        Image(systemName: "info.circle")
-                            .foregroundStyle(theme.accentColor)
-                    }
-                }
-            }
         }
     }
 
