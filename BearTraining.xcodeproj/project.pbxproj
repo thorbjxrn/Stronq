@@ -35,6 +35,7 @@
 		C50EF54F9690658A516F510E /* PlannedWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6741598CA0AD77085DF6ED /* PlannedWorkout.swift */; };
 		C5B86DE2DF373A9951FBEDA3 /* ExerciseCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E56672EF57A7F44AB08CB1 /* ExerciseCatalog.swift */; };
 		CB5C6E14DAE3ECD5155E146B /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FAFD1DD2317974C9101D6E /* ProgressView.swift */; };
+		D48ABB78276EEC7D77929D27 /* ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B8FE94F456C9B20162447D /* ReminderManager.swift */; };
 		D9C52C8DFAF7BCC723EEA79E /* BodyweightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12FFF95DF89281D154524C3 /* BodyweightEntry.swift */; };
 /* End PBXBuildFile section */
 
@@ -80,6 +81,7 @@
 		E4F936897E7FC690DCCFAF79 /* BearTraining.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BearTraining.entitlements; sourceTree = "<group>"; };
 		EAA86523D2A3CFDEFF8E46D4 /* DeLormeEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeLormeEngineTests.swift; sourceTree = "<group>"; };
 		ED6741598CA0AD77085DF6ED /* PlannedWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedWorkout.swift; sourceTree = "<group>"; };
+		F2B8FE94F456C9B20162447D /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderManager.swift; sourceTree = "<group>"; };
 		F6E726964C0A7560F929C9D3 /* WorkoutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutViewModel.swift; sourceTree = "<group>"; };
 		FD7AC74DC2864C023A122B51 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -118,6 +120,7 @@
 				71764B1F46265B0EA492FB51 /* AdManager.swift */,
 				9BE94242468173CBB40EDC76 /* HealthKitManager.swift */,
 				1749061173358C591714C089 /* PurchaseManager.swift */,
+				F2B8FE94F456C9B20162447D /* ReminderManager.swift */,
 				6FBCD79796365AF436EF8A4E /* ThemeManager.swift */,
 				D1FA0B601434FE3F9CF0F82F /* TimerManager.swift */,
 			);
@@ -372,6 +375,7 @@
 				0CA57D7AE2700DBF0DF12F17 /* ProgramOverviewView.swift in Sources */,
 				CB5C6E14DAE3ECD5155E146B /* ProgressView.swift in Sources */,
 				201E55211E59F5376C0C2608 /* PurchaseManager.swift in Sources */,
+				D48ABB78276EEC7D77929D27 /* ReminderManager.swift in Sources */,
 				32D35C85B5C77CC789680020 /* SettingsView.swift in Sources */,
 				276D69CABEA03CD4695A8846 /* ThemeManager.swift in Sources */,
 				5FE0CE5E084DB9BAC39A774F /* TimerManager.swift in Sources */,

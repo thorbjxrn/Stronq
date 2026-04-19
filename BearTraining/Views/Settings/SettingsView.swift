@@ -9,6 +9,7 @@ struct SettingsView: View {
     @Query(sort: \BodyweightEntry.date, order: .reverse) private var bodyweightEntries: [BodyweightEntry]
     @State private var showingPaywall = false
     @State private var newBodyweight: String = ""
+    @State private var reminderManager = ReminderManager()
 
     private var program: Program? { programs.first }
 
@@ -20,6 +21,7 @@ struct SettingsView: View {
                 List {
                     exercisesSection
                     programSection
+                    remindersSection
                     bodyweightSection
                     appearanceSection
                     premiumSection
@@ -87,6 +89,42 @@ struct SettingsView: View {
                     .pickerStyle(.segmented)
                     .frame(width: 120)
                 }
+            }
+        }
+    }
+
+    // MARK: - Reminders
+
+    private var remindersSection: some View {
+        Section("Reminders") {
+            Toggle("Workout Reminders", isOn: Binding(
+                get: { reminderManager.isEnabled },
+                set: { newValue in
+                    if newValue {
+                        Task {
+                            let granted = await reminderManager.requestPermission()
+                            reminderManager.isEnabled = granted
+                        }
+                    } else {
+                        reminderManager.isEnabled = false
+                    }
+                }
+            ))
+            .tint(theme.accentColor)
+
+            if reminderManager.isEnabled {
+                Picker("Remind at", selection: Binding(
+                    get: { reminderManager.reminderHour },
+                    set: { reminderManager.reminderHour = $0 }
+                )) {
+                    ForEach(5..<22) { hour in
+                        Text("\(hour):00").tag(hour)
+                    }
+                }
+
+                Text("Mon · Wed · Fri")
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
             }
         }
     }

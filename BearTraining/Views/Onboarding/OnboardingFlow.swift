@@ -10,6 +10,8 @@ struct OnboardingFlow: View {
     @State private var benchRM: Double = 60
     @State private var deadliftRM: Double = 80
     @State private var showingLaunch = false
+    @State private var syncHealth = false
+    @State private var healthKitManager = HealthKitManager()
 
     let onComplete: () -> Void
 
@@ -220,7 +222,7 @@ struct OnboardingFlow: View {
             Text("Program Setup")
                 .font(.title2.bold())
 
-            VStack(spacing: 16) {
+            VStack(spacing: 12) {
                 Toggle("Include 2-Week Intro Cycle", isOn: $includeIntro)
                     .tint(theme.accentColor)
                     .padding(16)
@@ -230,6 +232,20 @@ struct OnboardingFlow: View {
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
                     .multilineTextAlignment(.center)
+            }
+
+            if healthKitManager.isAvailable {
+                Toggle(isOn: $syncHealth) {
+                    Label("Sync with Apple Health", systemImage: "heart.fill")
+                }
+                .tint(theme.accentColor)
+                .padding(16)
+                .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
+                .onChange(of: syncHealth) {
+                    if syncHealth {
+                        Task { await healthKitManager.requestAuthorization() }
+                    }
+                }
             }
 
             Spacer()
