@@ -13,6 +13,7 @@
 		15DAF0089963AD37729DF022 /* Program.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082358CD5AD7ABC389513246 /* Program.swift */; };
 		191846DD4B90BB2DF7CBC97F /* DeLormeEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D3164A60D94A16E61BE8F6 /* DeLormeEngineTests.swift */; };
 		1C125AF779E8A4548C0C1268 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98189A5D3FAF1B4B22909B47 /* Typography.swift */; };
+		2C09759B07081B0DC5AEE0C6 /* RestTimerAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F167D63F40F7E6FB3FA65CBF /* RestTimerAttributes.swift */; };
 		3108FE1C899360A323319CCD /* StronqLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB22863A8ED64A424B0979C1 /* StronqLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		36A7E35E9099D842E678880D /* ExerciseConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C51824852D68ED7ED341F1 /* ExerciseConfigView.swift */; };
 		47AF320DA68ACE5363B0CB49 /* PlannedWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470F6F1A05C9A2D484C0E36A /* PlannedWorkout.swift */; };
@@ -36,6 +37,7 @@
 		BE69909ABF9D9C4FFD847928 /* BodyweightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529C5AF6B1D9D4E1E3D97B22 /* BodyweightEntry.swift */; };
 		C8F55B0BCFEE479F192BF5FA /* BarbellGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FA8D23491F82B25A51AB76 /* BarbellGlyph.swift */; };
 		D8F5F4753557CFDB3448BC69 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5CEC2A8A5A0FD7B6AE4D4D /* ProgressView.swift */; };
+		D936A875D161F39E9E119901 /* RestTimerAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F167D63F40F7E6FB3FA65CBF /* RestTimerAttributes.swift */; };
 		D9CF00F118F8FC2EB66C65EE /* StronqLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA31A0C3E90E17D5C3757829 /* StronqLiveActivityBundle.swift */; };
 		E556EFFA90200544D466A993 /* ProgramTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EE76AB50532EBD34A5C189 /* ProgramTemplate.swift */; };
 		F008F7B1FDFFAC95FC564657 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA55539172EB93E72088FB6E /* Enums.swift */; };
@@ -118,6 +120,7 @@
 		DF5CEC2A8A5A0FD7B6AE4D4D /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		E4F9B80E0329DB8EBB486E6C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E9D3164A60D94A16E61BE8F6 /* DeLormeEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeLormeEngineTests.swift; sourceTree = "<group>"; };
+		F167D63F40F7E6FB3FA65CBF /* RestTimerAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestTimerAttributes.swift; sourceTree = "<group>"; };
 		F874C3C7C055AE7A03043FCA /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -151,6 +154,14 @@
 			children = (
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		28D272C72B1B9C888334F757 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				F167D63F40F7E6FB3FA65CBF /* RestTimerAttributes.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 		349C98AA21CFA313D74819E4 /* App */ = {
@@ -289,6 +300,7 @@
 		EDD00C57651ADBC37CE31973 = {
 			isa = PBXGroup;
 			children = (
+				28D272C72B1B9C888334F757 /* Shared */,
 				D9E77964265FDB6B8B112D8B /* Stronq */,
 				F055E61A4885A8E666BDC839 /* StronqLiveActivity */,
 				232446390C56D7827561BDF4 /* StronqTests */,
@@ -436,6 +448,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D936A875D161F39E9E119901 /* RestTimerAttributes.swift in Sources */,
 				D9CF00F118F8FC2EB66C65EE /* StronqLiveActivityBundle.swift in Sources */,
 				0EFDDE632580CBD9DD73C31A /* StronqLiveActivityWidget.swift in Sources */,
 			);
@@ -468,6 +481,7 @@
 				D8F5F4753557CFDB3448BC69 /* ProgressView.swift in Sources */,
 				13EDC82181567D664D73AF5E /* PurchaseManager.swift in Sources */,
 				11EB100E964426B08CCF766E /* ReminderManager.swift in Sources */,
+				2C09759B07081B0DC5AEE0C6 /* RestTimerAttributes.swift in Sources */,
 				ABD39529C22692A1C3F482AA /* SessionSummary.swift in Sources */,
 				97F2E35EFA03B7871D781C47 /* SettingsView.swift in Sources */,
 				89229D21B80F7FB88697F518 /* ThemeManager.swift in Sources */,

@@ -11,6 +11,15 @@ settings:
     DEVELOPMENT_TEAM: 228DC29L7W
     SWIFT_VERSION: "6.0"
 
+schemes:
+  Stronq:
+    build:
+      targets:
+        Stronq: all
+        StronqLiveActivity: all
+    run:
+      config: Debug
+
 targets:
   Stronq:
     type: application
@@ -19,6 +28,7 @@ targets:
       - path: Stronq
         excludes:
           - "Preview Content/**"
+      - path: Shared
     resources:
       - path: Stronq/Assets.xcassets
       - path: Stronq/Preview Content
@@ -36,6 +46,9 @@ targets:
       - target: StronqLiveActivity
     entitlements:
       path: Stronq/Stronq.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
 
   StronqLiveActivity:
     type: app-extension
@@ -44,6 +57,7 @@ targets:
       - path: StronqLiveActivity
         excludes:
           - "Info.plist"
+      - path: Shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.Stronq.LiveActivity
