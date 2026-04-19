@@ -4,6 +4,7 @@ struct ProgramTemplate: Identifiable, Sendable {
     let id: String
     let name: String
     let subtitle: String
+    let isPremium: Bool
     let exercises: [TemplateExercise]
 
     struct TemplateExercise: Sendable {
@@ -20,6 +21,7 @@ struct ProgramTemplate: Identifiable, Sendable {
         id: "classic",
         name: "Classic",
         subtitle: "Bench Press + Deadlift",
+        isPremium: false,
         exercises: [
             TemplateExercise(
                 name: "Bench Press",
@@ -42,6 +44,7 @@ struct ProgramTemplate: Identifiable, Sendable {
         id: "bear",
         name: "Yoked",
         subtitle: "Push-up + Zercher Squat + Pulldown",
+        isPremium: true,
         exercises: [
             TemplateExercise(
                 name: "Push-up",

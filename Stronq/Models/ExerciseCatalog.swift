@@ -7,10 +7,11 @@ struct ExerciseAlternative: Identifiable, Sendable {
     var isWeighted: Bool = false
     var defaultRM: Double = 0
     var defaultIncrement: Double = 2.5
+    var isFree: Bool = false
 
     static let alternatives: [String: [ExerciseAlternative]] = [
         "Bench Press": [
-            ExerciseAlternative(id: "db-bench", name: "Dumbbell Bench Press", icon: "dumbbell.fill"),
+            ExerciseAlternative(id: "db-bench", name: "Dumbbell Bench Press", icon: "dumbbell.fill", isFree: true),
             ExerciseAlternative(id: "incline-bench", name: "Incline Bench Press", icon: "figure.strengthtraining.traditional"),
             ExerciseAlternative(id: "floor-press", name: "Floor Press", icon: "figure.strengthtraining.traditional"),
             ExerciseAlternative(id: "close-grip-bench", name: "Close-Grip Bench Press", icon: "figure.strengthtraining.traditional"),

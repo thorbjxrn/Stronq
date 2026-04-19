@@ -132,6 +132,14 @@ struct OnboardingFlow: View {
                             HStack {
                                 Text(template.name)
                                     .font(Typo.heading)
+                                if template.isPremium {
+                                    Text("PRO")
+                                        .font(Typo.small)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(theme.accentColor.opacity(0.2), in: Capsule())
+                                        .foregroundStyle(theme.accentColor)
+                                }
                                 Spacer()
                                 if isSelected {
                                     Image(systemName: "checkmark.circle.fill")

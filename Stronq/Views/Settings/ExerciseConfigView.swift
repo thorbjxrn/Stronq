@@ -124,7 +124,7 @@ struct ExerciseConfigView: View {
                     Section {
                         ForEach(alternatives) { alt in
                             Button {
-                                if purchaseManager.isPremium {
+                                if alt.isFree || purchaseManager.isPremium {
                                     exercise.name = alt.name
                                     if alt.isWeighted && exercise.type == .bodyweight {
                                         exercise.type = .weighted
@@ -148,7 +148,7 @@ struct ExerciseConfigView: View {
                                     Text(alt.name)
                                         .foregroundStyle(.white)
                                     Spacer()
-                                    if !purchaseManager.isPremium {
+                                    if !alt.isFree && !purchaseManager.isPremium {
                                         Image(systemName: "lock.fill")
                                             .font(Typo.caption)
                                             .foregroundStyle(theme.textSecondary)
