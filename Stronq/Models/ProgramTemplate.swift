@@ -41,7 +41,7 @@ struct ProgramTemplate: Identifiable {
     static let bear = ProgramTemplate(
         id: "bear",
         name: "Yolked",
-        subtitle: "Push-up + Zercher Squat + HK Pulldown",
+        subtitle: "Push-up + Zercher Squat + Pulldown",
         exercises: [
             TemplateExercise(
                 name: "Push-up",

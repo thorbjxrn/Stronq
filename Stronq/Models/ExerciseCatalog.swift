@@ -28,10 +28,10 @@ struct ExerciseAlternative: Identifiable {
             ExerciseAlternative(id: "goblet-squat", name: "Goblet Squat", icon: "figure.squat"),
         ],
         "Half-Kneeling Pulldown": [
-            ExerciseAlternative(id: "pull-up", name: "Pull-up", icon: "figure.climbing"),
-            ExerciseAlternative(id: "lat-pulldown", name: "Lat Pulldown", icon: "figure.rowing"),
-            ExerciseAlternative(id: "cable-row", name: "Cable Row", icon: "figure.rowing"),
+            ExerciseAlternative(id: "seated-cable-row", name: "Seated Cable Row", icon: "figure.rowing"),
             ExerciseAlternative(id: "db-row", name: "Dumbbell Row", icon: "figure.rowing"),
+            ExerciseAlternative(id: "barbell-row", name: "Barbell Row", icon: "figure.rowing"),
+            ExerciseAlternative(id: "lat-pulldown", name: "Lat Pulldown", icon: "figure.rowing"),
         ],
     ]
 
