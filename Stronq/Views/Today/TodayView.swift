@@ -42,64 +42,72 @@ struct TodayView: View {
         }
     }
 
+    @State private var showingSeriesInfo = false
+
     private func workoutPreview(program: Program) -> some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: 12) {
                 // Day header
-                VStack(spacing: 6) {
-                    Text("Week \(viewModel.weekNumber)")
-                        .font(.caption)
-                        .foregroundStyle(theme.textSecondary)
-                    Text(viewModel.dayType.rawValue)
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                    Text(DeLormeEngine.suggestedDay(for: viewModel.dayType))
-                        .font(.caption)
-                        .foregroundStyle(theme.textSecondary)
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Week \(viewModel.weekNumber) · \(DeLormeEngine.suggestedDay(for: viewModel.dayType))")
+                            .font(.caption)
+                            .foregroundStyle(theme.textSecondary)
+                        Text(viewModel.dayType.rawValue)
+                            .font(.title2.bold())
+                    }
+                    Spacer()
+                    // Series info
+                    HStack(spacing: 4) {
+                        switch viewModel.seriesMode {
+                        case .max:
+                            Image(systemName: "flame")
+                                .foregroundStyle(theme.accentColor)
+                            Text("Max series")
+                        case .fixed(let n):
+                            Text("\(n) series")
+                        }
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(theme.textSecondary)
+
+                    Button {
+                        showingSeriesInfo = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .font(.subheadline)
+                            .foregroundStyle(theme.accentColor)
+                    }
                 }
                 .padding(.top, 8)
 
-                // Series info
-                HStack {
-                    Image(systemName: viewModel.seriesMode == .max ? "flame" : "arrow.triangle.2.circlepath")
-                        .foregroundStyle(theme.accentColor)
-                    switch viewModel.seriesMode {
-                    case .max:
-                        Text("As many series as possible")
-                    case .fixed(let n):
-                        Text("\(n) series")
-                    }
-                    Spacer()
-                }
-                .font(.subheadline)
-                .padding(14)
-                .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
-
                 // Exercise preview
                 ForEach(viewModel.plannedExercises, id: \.name) { exercise in
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text(exercise.name)
-                            .font(.headline)
+                            .font(.subheadline.bold())
 
                         ForEach(exercise.sets, id: \.intensity) { set in
                             HStack {
                                 Text(set.intensityLabel)
-                                    .font(.caption.bold())
+                                    .font(.caption2.bold())
                                     .foregroundStyle(theme.textSecondary)
-                                    .frame(width: 40, alignment: .leading)
+                                    .frame(width: 36, alignment: .leading)
                                 Text(set.displayWeight)
-                                    .font(.system(.title3, design: .rounded, weight: .bold))
+                                    .font(.system(.body, design: .rounded, weight: .bold))
                                 if exercise.type == .weighted {
                                     Text(exercise.unit.symbol)
-                                        .font(.caption)
+                                        .font(.caption2)
                                         .foregroundStyle(theme.textSecondary)
                                 }
                                 Spacer()
                                 Text("x5")
+                                    .font(.caption)
                                     .foregroundStyle(theme.textSecondary)
                             }
                         }
                     }
-                    .padding()
+                    .padding(12)
                     .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
                 }
 
@@ -117,6 +125,11 @@ struct TodayView: View {
                 .padding(.top, 8)
             }
             .padding()
+        }
+        .alert("What's a series?", isPresented: $showingSeriesInfo) {
+            Button("Got it", role: .cancel) {}
+        } message: {
+            Text("A series is one round of all your sets (50% → 75% → 100%). On Heavy day, do as many series as you can. When you hit 5 full series, your weights go up.")
         }
     }
 
