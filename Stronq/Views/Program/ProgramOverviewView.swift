@@ -128,8 +128,10 @@ struct WeekCard: View {
             ForEach(days, id: \.self) { dayType in
                 let session = program.session(week: week, dayType: dayType)
                 let done = session?.isCompleted == true
-                let allSetsComplete = done && (session?.completedSets.allSatisfy(\.isCompleted) ?? false)
-                let isPartial = done && !allSetsComplete
+                let sets = session?.completedSets ?? []
+                let hasUncompletedSets = sets.contains { !$0.isCompleted }
+                let allSetsComplete = done && !sets.isEmpty && !hasUncompletedSets
+                let isPartial = done && (sets.isEmpty || hasUncompletedSets)
 
                 VStack(spacing: 3) {
                     Circle()
@@ -182,8 +184,10 @@ struct WeekCard: View {
         )
         let session = program.session(week: week, dayType: dayType)
         let isDone = session?.isCompleted == true
-        let allSetsComplete = isDone && (session?.completedSets.allSatisfy(\.isCompleted) ?? false)
-        let isPartial = isDone && !allSetsComplete
+        let sets = session?.completedSets ?? []
+        let hasUncompletedSets = sets.contains { !$0.isCompleted }
+        let allSetsComplete = isDone && !sets.isEmpty && !hasUncompletedSets
+        let isPartial = isDone && (sets.isEmpty || hasUncompletedSets)
         let completedSeries = session?.completedSets.filter(\.isCompleted).map(\.seriesNumber).max() ?? 0
 
         return VStack(alignment: .leading, spacing: 8) {
