@@ -208,12 +208,16 @@ final class WorkoutViewModel {
         set.completedAt = .now
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-        let isSeries = allSetsCompleteInSeries(set.seriesNumber, exerciseName: set.exerciseName)
-        startRestTimer(
-            duration: isSeries ? seriesRestDuration : setRestDuration,
-            exerciseName: set.exerciseName,
-            isSeriesRest: isSeries
-        )
+        let seriesNum = set.seriesNumber
+        let name = set.exerciseName
+        Task { @MainActor in
+            let isSeries = allSetsCompleteInSeries(seriesNum, exerciseName: name)
+            startRestTimer(
+                duration: isSeries ? seriesRestDuration : setRestDuration,
+                exerciseName: name,
+                isSeriesRest: isSeries
+            )
+        }
     }
 
     private func allSetsCompleteInSeries(_ series: Int, exerciseName: String) -> Bool {
