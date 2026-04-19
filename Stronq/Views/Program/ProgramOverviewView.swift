@@ -221,7 +221,7 @@ struct WeekCard: View {
                 Spacer()
 
                 if isDone {
-                    Text("\(completedSeries) series\(isPartial ? " (partial)" : "")")
+                    Text("\(completedSeries) series\(isPartial ? " done" : "")")
                         .font(.caption2)
                         .foregroundStyle(allSetsComplete ? theme.completedColor : theme.accentColor)
                 } else {
