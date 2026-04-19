@@ -48,14 +48,14 @@ struct ProgramTemplate: Identifiable {
                 type: .bodyweight,
                 defaultRM: 0, defaultRMLbs: 0,
                 increment: 0, incrementLbs: 0,
-                icon: "figure.push.up"
+                icon: "figure.core.training"
             ),
             TemplateExercise(
                 name: "Zercher Squat",
                 type: .weighted,
                 defaultRM: 45, defaultRMLbs: 95,
                 increment: 5, incrementLbs: 10,
-                icon: "figure.squat"
+                icon: "figure.strengthtraining.functional"
             ),
             TemplateExercise(
                 name: "Half-Kneeling Pulldown",

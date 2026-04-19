@@ -19,13 +19,13 @@ struct ExerciseAlternative: Identifiable {
         ],
         "Push-up": [
             ExerciseAlternative(id: "dips", name: "Dips", icon: "figure.cooldown"),
-            ExerciseAlternative(id: "pike-pushup", name: "Pike Push-up", icon: "figure.push.up"),
-            ExerciseAlternative(id: "handstand-pushup", name: "Handstand Push-up", icon: "figure.push.up"),
+            ExerciseAlternative(id: "pike-pushup", name: "Pike Push-up", icon: "figure.core.training"),
+            ExerciseAlternative(id: "handstand-pushup", name: "Handstand Push-up", icon: "figure.core.training"),
         ],
         "Zercher Squat": [
-            ExerciseAlternative(id: "back-squat", name: "Back Squat", icon: "figure.squat"),
-            ExerciseAlternative(id: "front-squat", name: "Front Squat", icon: "figure.squat"),
-            ExerciseAlternative(id: "goblet-squat", name: "Goblet Squat", icon: "figure.squat"),
+            ExerciseAlternative(id: "back-squat", name: "Back Squat", icon: "figure.strengthtraining.functional"),
+            ExerciseAlternative(id: "front-squat", name: "Front Squat", icon: "figure.strengthtraining.functional"),
+            ExerciseAlternative(id: "goblet-squat", name: "Goblet Squat", icon: "figure.strengthtraining.functional"),
         ],
         "Half-Kneeling Pulldown": [
             ExerciseAlternative(id: "seated-cable-row", name: "Seated Cable Row", icon: "figure.rowing"),
@@ -36,11 +36,17 @@ struct ExerciseAlternative: Identifiable {
     ]
 
     static func alternatives(for exerciseName: String) -> [ExerciseAlternative] {
+        let name = exerciseName.lowercased()
         for (key, alts) in alternatives {
-            if key == exerciseName { return alts }
-            if alts.contains(where: { $0.name == exerciseName }) {
-                var result = alts.filter { $0.name != exerciseName }
-                result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: ""), at: 0)
+            let keyMatch = key.lowercased() == name || name.contains(key.lowercased().prefix(4))
+            let altMatch = alts.contains { $0.name.lowercased() == name }
+
+            if keyMatch {
+                return alts
+            }
+            if altMatch {
+                var result = alts.filter { $0.name.lowercased() != name }
+                result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: "figure.strengthtraining.traditional"), at: 0)
                 return result
             }
         }
