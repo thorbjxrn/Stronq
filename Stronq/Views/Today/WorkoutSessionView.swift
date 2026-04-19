@@ -224,8 +224,16 @@ struct WorkoutSessionView: View {
                 )
         )
         .onTapGesture(count: 2) {
-            for set in group.sets where !set.isCompleted {
-                viewModel.completeSet(set)
+            if allDone {
+                for set in group.sets where set.isCompleted {
+                    viewModel.uncompleteSet(set)
+                }
+            } else {
+                for set in group.sets where !set.isCompleted {
+                    set.isCompleted = true
+                    set.completedAt = .now
+                }
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             }
         }
         .opacity(allDone && !isCurrent ? 0.5 : 1)
