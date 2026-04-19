@@ -4,55 +4,58 @@ import Foundation
 @Observable
 @MainActor
 final class TimerManager {
-    private var activity: Activity<RestTimerAttributes>?
+    private var activityID: String?
 
     func startLiveActivity(
         exerciseName: String,
         nextSetInfo: String,
         duration: Int
     ) {
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
-
-        // End existing
-        if let existing = activity {
-            let a = existing
-            activity = nil
-            Task { await a.end(nil, dismissalPolicy: .immediate) }
-        }
-
-        let attributes = RestTimerAttributes(exerciseName: exerciseName)
+        let attrs = RestTimerAttributes(exerciseName: exerciseName)
         let state = RestTimerAttributes.ContentState(
             timeRemaining: duration,
             nextSetInfo: nextSetInfo
         )
 
-        do {
-            activity = try Activity.request(
-                attributes: attributes,
-                content: .init(state: state, staleDate: nil),
-                pushType: nil
-            )
-        } catch {
-            print("[LiveActivity] Failed: \(error)")
+        Task {
+            guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+
+            for activity in Activity<RestTimerAttributes>.activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+
+            do {
+                let newActivity = try Activity.request(
+                    attributes: attrs,
+                    content: .init(state: state, staleDate: nil),
+                    pushType: nil
+                )
+                activityID = newActivity.id
+            } catch {
+                print("[LiveActivity] Failed: \(error)")
+            }
         }
     }
 
     func updateLiveActivity(timeRemaining: Int) {
-        guard let activity else { return }
+        guard let id = activityID else { return }
+        guard let activity = Activity<RestTimerAttributes>.activities.first(where: { $0.id == id }) else { return }
 
         let state = RestTimerAttributes.ContentState(
             timeRemaining: timeRemaining,
             nextSetInfo: activity.content.state.nextSetInfo
         )
 
-        let a = activity
-        Task { await a.update(.init(state: state, staleDate: nil)) }
+        Task { await activity.update(.init(state: state, staleDate: nil)) }
     }
 
     func endLiveActivity() {
-        guard let activity else { return }
-        let a = activity
-        self.activity = nil
-        Task { await a.end(nil, dismissalPolicy: .immediate) }
+        activityID = nil
+
+        Task {
+            for activity in Activity<RestTimerAttributes>.activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+        }
     }
 }
