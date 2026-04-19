@@ -4,6 +4,9 @@ struct ExerciseAlternative: Identifiable {
     let id: String
     let name: String
     let icon: String
+    var isWeighted: Bool = false
+    var defaultRM: Double = 0
+    var defaultIncrement: Double = 2.5
 
     static let alternatives: [String: [ExerciseAlternative]] = [
         "Bench Press": [
@@ -18,9 +21,9 @@ struct ExerciseAlternative: Identifiable {
             ExerciseAlternative(id: "trap-bar", name: "Trap Bar Deadlift", icon: "figure.strengthtraining.functional"),
         ],
         "Push-up": [
-            ExerciseAlternative(id: "dips", name: "Dips", icon: "figure.cooldown"),
-            ExerciseAlternative(id: "pike-pushup", name: "Pike Push-up", icon: "figure.core.training"),
-            ExerciseAlternative(id: "handstand-pushup", name: "Handstand Push-up", icon: "figure.core.training"),
+            ExerciseAlternative(id: "dips", name: "Dips", icon: "figure.cooldown", isWeighted: true, defaultRM: 0, defaultIncrement: 5),
+            ExerciseAlternative(id: "db-bench-alt", name: "Dumbbell Bench Press", icon: "dumbbell.fill", isWeighted: true, defaultRM: 20, defaultIncrement: 2),
+            ExerciseAlternative(id: "bench-press-alt", name: "Bench Press", icon: "figure.strengthtraining.traditional", isWeighted: true, defaultRM: 60, defaultIncrement: 2.5),
         ],
         "Zercher Squat": [
             ExerciseAlternative(id: "back-squat", name: "Back Squat", icon: "figure.strengthtraining.functional"),
@@ -49,7 +52,8 @@ struct ExerciseAlternative: Identifiable {
         for (key, alts) in alternatives {
             if alts.contains(where: { $0.name == canonicalName }) {
                 var result = alts.filter { $0.name != canonicalName }
-                result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: "figure.strengthtraining.traditional"), at: 0)
+                let isBodyweight = key == "Push-up"
+                result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: isBodyweight ? "figure.core.training" : "figure.strengthtraining.traditional", isWeighted: !isBodyweight), at: 0)
                 return result
             }
         }
