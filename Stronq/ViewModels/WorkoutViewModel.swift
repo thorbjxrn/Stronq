@@ -24,7 +24,7 @@ final class WorkoutViewModel {
 
     // MARK: - Setup
 
-    func prepareWorkout(program: Program) {
+    func prepareWorkout(program: Program, modelContext: ModelContext? = nil) {
         plannedExercises = []
 
         let calculatedWeek = DeLormeEngine.currentWeek(
@@ -36,7 +36,13 @@ final class WorkoutViewModel {
             program.currentWeek = calculatedWeek
         }
 
-        guard let next = DeLormeEngine.nextWorkout(program: program) else { return }
+        var freshSessions: [WorkoutSession]?
+        if let modelContext {
+            let descriptor = FetchDescriptor<WorkoutSession>()
+            freshSessions = try? modelContext.fetch(descriptor)
+        }
+
+        guard let next = DeLormeEngine.nextWorkout(program: program, sessions: freshSessions) else { return }
         dayType = next.dayType
         weekNumber = next.week
 
@@ -189,7 +195,7 @@ final class WorkoutViewModel {
         doneExercises = []
         isWorkoutActive = false
 
-        prepareWorkout(program: program)
+        prepareWorkout(program: program, modelContext: modelContext)
     }
 
     // MARK: - Set Actions
@@ -240,7 +246,7 @@ final class WorkoutViewModel {
         plannedExercises = []
         isWorkoutActive = false
 
-        prepareWorkout(program: program)
+        prepareWorkout(program: program, modelContext: modelContext)
     }
 
     // MARK: - Timer

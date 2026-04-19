@@ -37,7 +37,7 @@ struct TodayView: View {
         }
         .onAppear {
             if let program {
-                viewModel.prepareWorkout(program: program)
+                viewModel.prepareWorkout(program: program, modelContext: modelContext)
             }
         }
     }
@@ -173,7 +173,7 @@ struct TodayView: View {
         program.currentWeek = program.introCycleEnabled ? -1 : 1
         program.startDate = .now
         try? modelContext.save()
-        viewModel.prepareWorkout(program: program)
+        viewModel.prepareWorkout(program: program, modelContext: modelContext)
     }
 
     private func formatted(_ value: Double) -> String {
@@ -217,7 +217,7 @@ struct TodayView: View {
                 withAnimation {
                     showingComplete = false
                     lastSessionSummary = nil
-                    viewModel.prepareWorkout(program: program)
+                    viewModel.prepareWorkout(program: program, modelContext: modelContext)
                 }
             } label: {
                 Text(viewModel.hasWorkoutToday ? "Next Workout →" : "Done")
