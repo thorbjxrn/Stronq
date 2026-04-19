@@ -50,6 +50,7 @@ enum PushUpVariant: String, Codable, CaseIterable {
     case diamond = "Diamond"
     case archer = "Archer"
     case oneArm = "One Arm"
+    case oneArmOneLeg = "One Arm One Leg"
 
     var index: Int {
         Self.allCases.firstIndex(of: self) ?? 0
