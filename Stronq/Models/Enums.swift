@@ -56,7 +56,12 @@ enum PushUpVariant: String, Codable, CaseIterable {
         Self.allCases.firstIndex(of: self) ?? 0
     }
 
-    static let selectableMaxLevels: [PushUpVariant] = [.diamond, .archer, .oneArm, .oneArmOneLeg]
+    static let selectableMaxLevels: [(variant: PushUpVariant, label: String)] = [
+        (.diamond, "Beginner"),
+        (.archer, "Intermediate"),
+        (.oneArm, "Advanced"),
+        (.oneArmOneLeg, "Expert"),
+    ]
 
     static func forIntensity(_ intensity: Double, maxLevel: PushUpVariant) -> PushUpVariant {
         let maxIdx = maxLevel.index

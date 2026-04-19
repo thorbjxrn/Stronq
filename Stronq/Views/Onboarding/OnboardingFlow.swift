@@ -281,12 +281,12 @@ struct OnboardingFlow: View {
                 .foregroundStyle(theme.textSecondary)
 
             HStack(spacing: 6) {
-                ForEach(PushUpVariant.selectableMaxLevels, id: \.self) { variant in
-                    let isSelected = pushUpStart == variant
+                ForEach(PushUpVariant.selectableMaxLevels, id: \.variant) { level in
+                    let isSelected = pushUpStart == level.variant
                     Button {
-                        pushUpStart = variant
+                        pushUpStart = level.variant
                     } label: {
-                        Text(variant.rawValue)
+                        Text(level.label)
                             .font(.caption2.weight(.medium))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
