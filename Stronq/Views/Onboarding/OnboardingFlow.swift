@@ -9,7 +9,7 @@ struct OnboardingFlow: View {
     @State private var includeIntro = true
     @State private var selectedTemplate: ProgramTemplate = .classic
     @State private var exerciseWeights: [String: Double] = [:]
-    @State private var pushUpStart: PushUpVariant = .oneArm
+    @State private var pushUpStart: PushUpVariant = .archer
     @State private var syncHealth = false
     @State private var healthKitManager = HealthKitManager()
 
@@ -66,7 +66,7 @@ struct OnboardingFlow: View {
                 .opacity(titleVisible ? 1 : 0)
                 .offset(y: titleVisible ? 0 : 12)
 
-            Text("Two exercises.\nSix weeks.\nSeriously strong.")
+            Text("Simple program.\nSix weeks.\nSeriously strong.")
                 .font(.system(size: 20, weight: .regular))
                 .foregroundStyle(theme.textSecondary)
                 .lineSpacing(6)

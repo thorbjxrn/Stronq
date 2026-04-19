@@ -239,33 +239,7 @@ struct WorkoutSessionView: View {
         .opacity(allDone && !isCurrent ? 0.5 : 1)
     }
 
-    private func actionButtons(exercise: PlannedSeriesExercise) -> some View {
-        HStack(spacing: 12) {
-            if viewModel.canAddMoreSeries(for: exercise.name) {
-                Button {
-                    withAnimation { viewModel.addAnotherSeriesForExercise(exercise.name) }
-                } label: {
-                    Label("Another Series", systemImage: "plus.circle.fill")
-                        .font(.subheadline.weight(.semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(theme.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                        .foregroundStyle(theme.accentColor)
-                }
-            }
 
-            Button {
-                withAnimation { viewModel.markExerciseDone(exercise.name) }
-            } label: {
-                Label("Done", systemImage: "checkmark")
-                    .font(.subheadline.weight(.semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(theme.completedColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                    .foregroundStyle(theme.completedColor)
-            }
-        }
-    }
 
     private func doneLabel(_ name: String, seriesCount: Int) -> some View {
         HStack(spacing: 8) {

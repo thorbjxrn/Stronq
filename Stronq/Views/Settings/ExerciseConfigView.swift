@@ -130,10 +130,12 @@ struct ExerciseConfigView: View {
                                         exercise.type = .weighted
                                         exercise.initial10RM = alt.defaultRM
                                         exercise.weightIncrement = alt.defaultIncrement
+                                        exercise.pushUpStartLevel = nil
                                     } else if !alt.isWeighted && exercise.type == .weighted {
                                         exercise.type = .bodyweight
                                         exercise.initial10RM = 0
                                         exercise.weightIncrement = 0
+                                        exercise.startingPushUpVariant = .oneArm
                                     }
                                 } else {
                                     showingPaywall = true

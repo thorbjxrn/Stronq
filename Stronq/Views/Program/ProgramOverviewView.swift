@@ -315,16 +315,8 @@ struct WeekCard: View {
     }
 
     private var mondaySeriesForWeek: Int? {
-        let session = allSessions.first {
-            $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
-        }
-        guard let session else { return nil }
-        let allSets = session.completedSets
-        let seriesNumbers = Set(allSets.map(\.seriesNumber))
-        let completedCount = seriesNumbers.filter { series in
-            let setsInSeries = allSets.filter { $0.seriesNumber == series }
-            return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
-        }.count
-        return completedCount
+        let perExercise = mondaySeriesPerExercise
+        guard !perExercise.isEmpty else { return nil }
+        return perExercise.values.min()
     }
 }
