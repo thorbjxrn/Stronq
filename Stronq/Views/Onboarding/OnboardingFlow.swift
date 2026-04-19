@@ -174,25 +174,24 @@ struct OnboardingFlow: View {
         VStack(alignment: .leading, spacing: 0) {
             Spacer().frame(height: 60)
 
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
-                Text("Your 10RM")
-                    .font(.system(size: 28, weight: .bold))
-
-                Picker("Unit", selection: $unit) {
-                    Text("kg").tag(WeightUnit.kg)
-                    Text("lbs").tag(WeightUnit.lbs)
-                }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: 120)
-                .onChange(of: unit) { initWeights() }
-            }
+            Text("Your 10RM")
+                .font(.system(size: 28, weight: .bold))
 
             Text("A conservative estimate of the most\nyou can lift for 10 reps with good form.")
                 .font(.subheadline)
                 .foregroundStyle(theme.textSecondary)
                 .lineSpacing(4)
                 .padding(.top, 8)
-                .padding(.bottom, 32)
+
+            Picker("Unit", selection: $unit) {
+                Text("kg").tag(WeightUnit.kg)
+                Text("lbs").tag(WeightUnit.lbs)
+            }
+            .pickerStyle(.segmented)
+            .frame(maxWidth: 120)
+            .padding(.top, 16)
+            .padding(.bottom, 24)
+            .onChange(of: unit) { initWeights() }
 
             VStack(spacing: 16) {
                 ForEach(selectedTemplate.exercises, id: \.name) { exercise in
