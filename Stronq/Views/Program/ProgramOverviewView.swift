@@ -196,11 +196,23 @@ struct WeekCard: View {
     }
 
     private func dayRow(_ dayType: DayType) -> some View {
+        let mondayPerExercise = mondaySeriesPerExercise
         let mode = DeLormeEngine.seriesCount(
             week: week,
             dayType: dayType,
             mondaySeriesCount: mondaySeriesForWeek
         )
+        let perExerciseModes: [(name: String, count: Int)] = program.exercises
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map { ex in
+                let mc = mondayPerExercise[ex.name]
+                let m = DeLormeEngine.seriesCount(week: week, dayType: dayType, mondaySeriesCount: mc)
+                switch m {
+                case .fixed(let n): return (name: ex.name, count: n)
+                case .max: return (name: ex.name, count: 0)
+                }
+            }
+        let hasVariableSeries = Set(perExerciseModes.map(\.count)).count > 1
         let planned = DeLormeEngine.generateSeries(
             exercises: program.exercises,
             dayType: dayType,
@@ -239,6 +251,17 @@ struct WeekCard: View {
                                 .foregroundStyle(es.count >= 5 ? theme.completedColor : theme.accentColor)
                         }
                     }
+                } else if hasVariableSeries {
+                    HStack(spacing: 6) {
+                        ForEach(perExerciseModes, id: \.name) { em in
+                            Text("\(em.count)")
+                                .font(.caption2.bold())
+                                .foregroundStyle(theme.textSecondary)
+                        }
+                        Text("series")
+                            .font(.caption2)
+                            .foregroundStyle(theme.textSecondary)
+                    }
                 } else {
                     switch mode {
                     case .max:
@@ -272,6 +295,23 @@ struct WeekCard: View {
         }
         .padding(12)
         .background(theme.backgroundColor.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private var mondaySeriesPerExercise: [String: Int] {
+        let session = allSessions.first {
+            $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
+        }
+        guard let session else { return [:] }
+        var result: [String: Int] = [:]
+        for exercise in program.exercises {
+            let allSets = session.completedSets.filter { $0.exerciseName == exercise.name }
+            let seriesNumbers = Set(allSets.map(\.seriesNumber))
+            result[exercise.name] = seriesNumbers.filter { series in
+                let setsInSeries = allSets.filter { $0.seriesNumber == series }
+                return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
+            }.count
+        }
+        return result
     }
 
     private var mondaySeriesForWeek: Int? {
