@@ -81,8 +81,21 @@ struct SettingsView: View {
                     Spacer()
                     Picker("", selection: Binding(
                         get: { program.exercises.first?.unit ?? .kg },
-                        set: { unit in
-                            program.exercises.forEach { $0.unit = unit }
+                        set: { newUnit in
+                            let oldUnit = program.exercises.first?.unit ?? .kg
+                            guard newUnit != oldUnit else { return }
+                            program.exercises.forEach { exercise in
+                                if exercise.type == .weighted {
+                                    if newUnit == .lbs {
+                                        exercise.initial10RM = (exercise.initial10RM * 2.20462).rounded()
+                                        exercise.weightIncrement = (exercise.weightIncrement * 2.20462 * 2).rounded() / 2
+                                    } else {
+                                        exercise.initial10RM = (exercise.initial10RM / 2.20462 * 2).rounded() / 2
+                                        exercise.weightIncrement = (exercise.weightIncrement / 2.20462 * 2).rounded() / 2
+                                    }
+                                }
+                                exercise.unit = newUnit
+                            }
                         }
                     )) {
                         Text("kg").tag(WeightUnit.kg)
