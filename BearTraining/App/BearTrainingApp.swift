@@ -54,14 +54,26 @@ struct BearTrainingApp: App {
 struct RootView: View {
     @Binding var hasCompletedOnboarding: Bool
     @Query private var programs: [Program]
+    @Environment(ThemeManager.self) private var theme
+    @State private var showingLaunchBurst = false
 
     var body: some View {
-        if hasCompletedOnboarding && !programs.isEmpty {
-            ContentView()
-        } else {
-            OnboardingFlow(onComplete: {
-                hasCompletedOnboarding = true
-            })
+        ZStack {
+            if hasCompletedOnboarding && !programs.isEmpty {
+                ContentView()
+            } else {
+                OnboardingFlow(onComplete: {
+                    hasCompletedOnboarding = true
+                    showingLaunchBurst = true
+                })
+            }
+
+            if showingLaunchBurst {
+                LaunchBurstView(theme: theme) {
+                    showingLaunchBurst = false
+                }
+                .zIndex(100)
+            }
         }
     }
 }

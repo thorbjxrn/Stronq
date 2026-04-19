@@ -9,7 +9,6 @@ struct OnboardingFlow: View {
     @State private var includeIntro = true
     @State private var benchRM: Double = 60
     @State private var deadliftRM: Double = 80
-    @State private var showingLaunch = false
     @State private var syncHealth = false
     @State private var healthKitManager = HealthKitManager()
 
@@ -21,14 +20,6 @@ struct OnboardingFlow: View {
         NavigationStack {
         ZStack {
             theme.backgroundColor.ignoresSafeArea()
-
-            if showingLaunch {
-                LaunchBurstView(theme: theme) {
-                    onComplete()
-                }
-                .transition(.opacity)
-                .zIndex(10)
-            }
 
             VStack(spacing: 0) {
                 TabView(selection: $step) {
@@ -68,11 +59,9 @@ struct OnboardingFlow: View {
         VStack(alignment: .leading, spacing: 0) {
             Spacer()
 
-            // Amber accent line
-            RoundedRectangle(cornerRadius: 1.5)
-                .fill(theme.accentColor)
-                .frame(width: 32, height: 3)
-                .padding(.bottom, 20)
+            // Barbell glyph
+            BarbellGlyph(color: theme.accentColor)
+                .padding(.bottom, 24)
                 .opacity(titleVisible ? 1 : 0)
 
             Text("Stronq")
@@ -316,9 +305,7 @@ struct OnboardingFlow: View {
 
             ctaButton("Start Program") {
                 createProgram()
-                withAnimation(.easeIn(duration: 0.3)) {
-                    showingLaunch = true
-                }
+                onComplete()
             }
         }
         .padding(.horizontal, 24)
