@@ -96,7 +96,7 @@ struct WorkoutSessionView: View {
                             .fill(isSelected ? theme.accentColor.opacity(0.15) : .clear)
                     )
                 }
-                .foregroundStyle(isSelected ? theme.accentColor : isDone ? theme.completedColor : .white)
+                .foregroundStyle(isSelected ? theme.accentColor : isDone ? theme.completedColor : theme.textPrimary)
             }
         }
         .padding(.horizontal, 12)
@@ -352,7 +352,7 @@ struct SetRowView: View {
             } label: {
                 Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.title2)
-                    .foregroundStyle(set.isCompleted ? theme.completedColor : Color.white.opacity(0.2))
+                    .foregroundStyle(set.isCompleted ? theme.completedColor : theme.textSecondary.opacity(0.4))
             }
 
             Text(intensityLabel)
