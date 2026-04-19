@@ -1,12 +1,12 @@
 import Foundation
 
-struct ProgramTemplate: Identifiable {
+struct ProgramTemplate: Identifiable, Sendable {
     let id: String
     let name: String
     let subtitle: String
     let exercises: [TemplateExercise]
 
-    struct TemplateExercise {
+    struct TemplateExercise: Sendable {
         let name: String
         let type: ExerciseType
         let defaultRM: Double

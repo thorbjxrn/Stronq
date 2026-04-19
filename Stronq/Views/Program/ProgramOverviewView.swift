@@ -220,11 +220,8 @@ struct WeekCard: View {
         )
         let session = findSession(dayType)
         let isDone = session?.isCompleted == true
-        let exerciseSeries: [(name: String, count: Int)] = isDone ? program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder }).map { ex in
-            let count = (session?.completedSets ?? [])
-                .filter { $0.exerciseName == ex.name && $0.isCompleted }
-                .map(\.seriesNumber).max() ?? 0
-            return (name: ex.name, count: count)
+        let exerciseSeries: [(name: String, count: Int)] = isDone && session != nil ? program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder }).map { ex in
+            (name: ex.name, count: session!.fullyCompletedSeriesCount(for: ex.name))
         } : []
         let allHitFive = isDone && !exerciseSeries.isEmpty && exerciseSeries.allSatisfy { $0.count >= 5 }
 
@@ -304,12 +301,7 @@ struct WeekCard: View {
         guard let session else { return [:] }
         var result: [String: Int] = [:]
         for exercise in program.exercises {
-            let allSets = session.completedSets.filter { $0.exerciseName == exercise.name }
-            let seriesNumbers = Set(allSets.map(\.seriesNumber))
-            result[exercise.name] = seriesNumbers.filter { series in
-                let setsInSeries = allSets.filter { $0.seriesNumber == series }
-                return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
-            }.count
+            result[exercise.name] = session.fullyCompletedSeriesCount(for: exercise.name)
         }
         return result
     }

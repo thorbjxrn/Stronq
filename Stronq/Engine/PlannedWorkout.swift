@@ -1,6 +1,6 @@
 import Foundation
 
-struct PlannedSet {
+struct PlannedSet: Sendable {
     let intensity: Double
     let weight: Double
     let reps: Int

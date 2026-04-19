@@ -1,6 +1,6 @@
 import Foundation
 
-struct SessionSummary {
+struct SessionSummary: Sendable {
     let dayType: DayType
     let duration: String
     let seriesCounts: [Int]

@@ -38,7 +38,10 @@ final class WorkoutViewModel {
 
         var freshSessions: [WorkoutSession]?
         if let modelContext {
-            let descriptor = FetchDescriptor<WorkoutSession>()
+            let programID = program.id
+            let descriptor = FetchDescriptor<WorkoutSession>(
+                predicate: #Predicate { $0.program?.id == programID }
+            )
             freshSessions = try? modelContext.fetch(descriptor)
         }
 
@@ -85,13 +88,7 @@ final class WorkoutViewModel {
     }
 
     func completedSeriesCount(for name: String) -> Int {
-        guard let session = activeSession else { return 0 }
-        let allSets = session.completedSets.filter { $0.exerciseName == name }
-        let seriesNumbers = Set(allSets.map(\.seriesNumber))
-        return seriesNumbers.filter { series in
-            let setsInSeries = allSets.filter { $0.seriesNumber == series }
-            return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
-        }.count
+        activeSession?.fullyCompletedSeriesCount(for: name) ?? 0
     }
 
     func canAddMoreSeries(for name: String) -> Bool {
@@ -304,12 +301,7 @@ final class WorkoutViewModel {
 
         var counts: [String: Int] = [:]
         for exercise in program.exercises {
-            let allSets = session.completedSets.filter { $0.exerciseName == exercise.name }
-            let seriesNumbers = Set(allSets.map(\.seriesNumber))
-            counts[exercise.name] = seriesNumbers.filter { series in
-                let setsInSeries = allSets.filter { $0.seriesNumber == series }
-                return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
-            }.count
+            counts[exercise.name] = session.fullyCompletedSeriesCount(for: exercise.name)
         }
         return counts
     }

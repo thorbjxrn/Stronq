@@ -141,7 +141,7 @@ enum SeriesMode: Equatable {
     case max
 }
 
-struct PlannedSeriesExercise {
+struct PlannedSeriesExercise: Sendable {
     let name: String
     let type: ExerciseType
     let sets: [PlannedSet]
