@@ -25,8 +25,9 @@ final class ThemeManager {
 
 enum AppTheme: String, CaseIterable {
     case stronq
+    case amber
+    case champagne
     case chalk
-    case coffee
     case bear
     case tactical
     case infrared
@@ -35,8 +36,9 @@ enum AppTheme: String, CaseIterable {
     var displayName: String {
         switch self {
         case .stronq: "Stronq (Default)"
+        case .amber: "Amber"
+        case .champagne: "Champagne"
         case .chalk: "Chalk"
-        case .coffee: "Coffee"
         case .bear: "Bear"
         case .tactical: "Tactical"
         case .infrared: "Infrared"
@@ -57,23 +59,31 @@ enum AppTheme: String, CaseIterable {
 
     var accentColor: Color {
         switch self {
-        // Champagne gold — desaturated, premium metal
-        case .stronq: Color(red: 0.85, green: 0.75, blue: 0.55)
+        // Muted bronze on pure black — the original Coffee
+        case .stronq: Color(red: 0.72, green: 0.58, blue: 0.42)
+        // Classic saturated orange-amber
+        case .amber: Color(red: 0.96, green: 0.65, blue: 0.14)
+        // Desaturated pink-gold, brushed metal
+        case .champagne: Color(red: 0.85, green: 0.75, blue: 0.55)
+        // Warm off-white, system adaptive
         case .chalk: Color(red: 0.45, green: 0.43, blue: 0.40)
-        case .coffee: Color(red: 0.72, green: 0.58, blue: 0.42)
+        // Burnt orange, honey and fur
         case .bear: Color(red: 0.82, green: 0.52, blue: 0.22)
+        // Phosphor green, night vision
         case .tactical: Color(red: 0.10, green: 0.78, blue: 0.35)
+        // Magenta-rose, hot
         case .infrared: Color(red: 0.92, green: 0.28, blue: 0.50)
+        // Cyan-teal, cold
         case .cryo: Color(red: 0.20, green: 0.82, blue: 0.88)
         }
     }
 
     var backgroundColor: Color {
         switch self {
-        // Deep violet-black
-        case .stronq: Color(red: 0.07, green: 0.06, blue: 0.10)
+        case .stronq: Color(red: 0.04, green: 0.04, blue: 0.04)
+        case .amber: Color(red: 0.08, green: 0.08, blue: 0.10)
+        case .champagne: Color(red: 0.07, green: 0.06, blue: 0.10)
         case .chalk: Color(.systemBackground)
-        case .coffee: Color(red: 0.04, green: 0.04, blue: 0.04)
         case .bear: Color(red: 0.08, green: 0.06, blue: 0.04)
         case .tactical: Color(red: 0.03, green: 0.05, blue: 0.03)
         case .infrared: Color(red: 0.08, green: 0.05, blue: 0.06)
@@ -83,10 +93,10 @@ enum AppTheme: String, CaseIterable {
 
     var cardColor: Color {
         switch self {
-        // Lifted violet-dark
-        case .stronq: Color(red: 0.12, green: 0.11, blue: 0.16)
+        case .stronq: Color(red: 0.10, green: 0.09, blue: 0.08)
+        case .amber: Color(red: 0.14, green: 0.14, blue: 0.16)
+        case .champagne: Color(red: 0.12, green: 0.11, blue: 0.16)
         case .chalk: Color(.secondarySystemBackground)
-        case .coffee: Color(red: 0.10, green: 0.09, blue: 0.08)
         case .bear: Color(red: 0.14, green: 0.11, blue: 0.08)
         case .tactical: Color(red: 0.06, green: 0.10, blue: 0.07)
         case .infrared: Color(red: 0.14, green: 0.09, blue: 0.11)
@@ -97,7 +107,7 @@ enum AppTheme: String, CaseIterable {
     var textPrimary: Color {
         switch self {
         case .chalk: Color(.label)
-        case .coffee: Color(red: 0.90, green: 0.88, blue: 0.84)
+        case .stronq: Color(red: 0.90, green: 0.88, blue: 0.84)
         case .bear: Color(red: 0.95, green: 0.92, blue: 0.86)
         case .tactical: Color(red: 0.80, green: 0.92, blue: 0.82)
         default: .white
@@ -107,7 +117,7 @@ enum AppTheme: String, CaseIterable {
     var textSecondary: Color {
         switch self {
         case .chalk: Color(.secondaryLabel)
-        case .coffee: Color(red: 0.50, green: 0.47, blue: 0.42)
+        case .stronq: Color(red: 0.50, green: 0.47, blue: 0.42)
         case .bear: Color(red: 0.58, green: 0.48, blue: 0.38)
         case .tactical: Color(red: 0.35, green: 0.50, blue: 0.38)
         default: Color(white: 0.6)
@@ -116,9 +126,10 @@ enum AppTheme: String, CaseIterable {
 
     var completedColor: Color {
         switch self {
-        case .stronq: Color(red: 0.30, green: 0.78, blue: 0.40)
+        case .stronq: Color(red: 0.75, green: 0.65, blue: 0.35)
+        case .amber: Color(red: 0.30, green: 0.78, blue: 0.40)
+        case .champagne: Color(red: 0.30, green: 0.78, blue: 0.40)
         case .chalk: Color(red: 0.30, green: 0.68, blue: 0.38)
-        case .coffee: Color(red: 0.75, green: 0.65, blue: 0.35)
         case .bear: Color(red: 0.65, green: 0.78, blue: 0.32)
         case .tactical: Color(red: 0.15, green: 0.85, blue: 0.40)
         case .infrared: Color(red: 0.95, green: 0.55, blue: 0.40)
