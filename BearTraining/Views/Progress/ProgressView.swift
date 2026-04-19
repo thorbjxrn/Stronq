@@ -7,9 +7,11 @@ struct ProgressView: View {
     @Query(sort: \WorkoutSession.date) private var sessions: [WorkoutSession]
     @Query(sort: \BodyweightEntry.date) private var bodyweightEntries: [BodyweightEntry]
     @Query private var programs: [Program]
+    @Environment(\.modelContext) private var modelContext
     @State private var selectedChart = 0
     @State private var healthKitWeights: [(date: Date, weight: Double)] = []
     @State private var healthKitManager = HealthKitManager()
+    @State private var newWeight: String = ""
 
     private var program: Program? { programs.first }
 
@@ -147,10 +149,39 @@ struct ProgressView: View {
             }
             .padding(.horizontal)
 
+            // Quick add
+            let unit = program?.exercises.first?.unit ?? .kg
+            HStack(spacing: 10) {
+                TextField("Add weight", text: $newWeight)
+                    .keyboardType(.decimalPad)
+                    .font(.system(.body, design: .rounded, weight: .medium))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 10))
+
+                Text(unit.symbol)
+                    .font(.subheadline)
+                    .foregroundStyle(theme.textSecondary)
+
+                Button {
+                    if let weight = Double(newWeight) {
+                        modelContext.insert(BodyweightEntry(weight: weight, unit: unit))
+                        try? modelContext.save()
+                        newWeight = ""
+                    }
+                } label: {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(Double(newWeight) != nil ? theme.accentColor : theme.textSecondary)
+                }
+                .disabled(Double(newWeight) == nil)
+            }
+            .padding(.horizontal)
+
             let allWeights = mergedBodyweightData
 
             if allWeights.isEmpty {
-                emptyState("Log bodyweight in Settings or sync from Apple Health.")
+                emptyState("Log your first weigh-in above.")
             } else {
                 Chart(allWeights, id: \.id) { point in
                     LineMark(
