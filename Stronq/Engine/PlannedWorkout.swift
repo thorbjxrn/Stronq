@@ -17,9 +17,9 @@ struct PlannedSet: Sendable {
 
     var shortDisplayWeight: String {
         if let variant = pushUpVariant {
-            return String(format: "%6s", variant.shortName as NSString)
+            return variant.shortName.padding(toLength: 6, withPad: " ", startingAt: 0)
         }
-        return String(format: "%6.2f", weight)
+        return String(format: "%.2f", weight)
     }
 
     var displayWeight: String {
