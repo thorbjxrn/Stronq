@@ -7,14 +7,14 @@ struct OnboardingFlow: View {
     @State private var step = 0
     @State private var unit: WeightUnit = .kg
     @State private var includeIntro = true
-    @State private var benchRM: Double = 60
-    @State private var deadliftRM: Double = 80
+    @State private var selectedTemplate: ProgramTemplate = .classic
+    @State private var exerciseWeights: [String: Double] = [:]
     @State private var syncHealth = false
     @State private var healthKitManager = HealthKitManager()
 
     let onComplete: () -> Void
 
-    private let totalSteps = 4
+    private let totalSteps = 5
 
     var body: some View {
         NavigationStack {
@@ -24,9 +24,10 @@ struct OnboardingFlow: View {
             VStack(spacing: 0) {
                 TabView(selection: $step) {
                     welcomeStep.tag(0)
-                    weightSetupStep.tag(1)
-                    configStep.tag(2)
-                    readyStep.tag(3)
+                    programPickerStep.tag(1)
+                    weightSetupStep.tag(2)
+                    configStep.tag(3)
+                    readyStep.tag(4)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
 
@@ -95,16 +96,83 @@ struct OnboardingFlow: View {
         }
         .padding(.horizontal, 28)
         .onAppear {
-            withAnimation(.easeOut(duration: 0.6).delay(0.1)) {
-                titleVisible = true
+            withAnimation(.easeOut(duration: 0.6).delay(0.1)) { titleVisible = true }
+            withAnimation(.easeOut(duration: 0.5).delay(0.35)) { subtitleVisible = true }
+            withAnimation(.easeOut(duration: 0.4).delay(0.6)) { linkVisible = true }
+        }
+    }
+
+    // MARK: - Program Picker
+
+    private var programPickerStep: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Spacer().frame(height: 60)
+
+            Text("Choose Your\nProgram")
+                .font(.system(size: 28, weight: .bold))
+
+            Text("Same method, different exercises.")
+                .font(.subheadline)
+                .foregroundStyle(theme.textSecondary)
+                .padding(.top, 8)
+                .padding(.bottom, 32)
+
+            VStack(spacing: 12) {
+                ForEach(ProgramTemplate.all) { template in
+                    let isSelected = selectedTemplate.id == template.id
+
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            selectedTemplate = template
+                            initWeights()
+                        }
+                    } label: {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text(template.name)
+                                    .font(.headline)
+                                Spacer()
+                                if isSelected {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(theme.accentColor)
+                                }
+                            }
+
+                            Text(template.subtitle)
+                                .font(.caption)
+                                .foregroundStyle(theme.textSecondary)
+
+                            HStack(spacing: 12) {
+                                ForEach(template.exercises, id: \.name) { ex in
+                                    Label(ex.name, systemImage: ex.icon)
+                                        .font(.caption2)
+                                        .foregroundStyle(theme.textSecondary)
+                                }
+                            }
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(theme.cardColor)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .strokeBorder(isSelected ? theme.accentColor.opacity(0.5) : .clear, lineWidth: 1.5)
+                                )
+                        )
+                    }
+                    .foregroundStyle(.white)
+                }
             }
-            withAnimation(.easeOut(duration: 0.5).delay(0.35)) {
-                subtitleVisible = true
-            }
-            withAnimation(.easeOut(duration: 0.4).delay(0.6)) {
-                linkVisible = true
+
+            Spacer()
+
+            ctaButton("Continue") {
+                initWeights()
+                withAnimation { step = 2 }
             }
         }
+        .padding(.horizontal, 28)
     }
 
     // MARK: - Weight Setup
@@ -123,15 +191,7 @@ struct OnboardingFlow: View {
                 }
                 .pickerStyle(.segmented)
                 .frame(maxWidth: 120)
-                .onChange(of: unit) {
-                    if unit == .lbs {
-                        benchRM = 135
-                        deadliftRM = 175
-                    } else {
-                        benchRM = 60
-                        deadliftRM = 80
-                    }
-                }
+                .onChange(of: unit) { initWeights() }
             }
 
             Text("A conservative estimate of the most\nyou can lift for 10 reps with good form.")
@@ -142,63 +202,57 @@ struct OnboardingFlow: View {
                 .padding(.bottom, 32)
 
             VStack(spacing: 16) {
-                weightCard(
-                    name: "Bench Press",
-                    icon: "figure.strengthtraining.traditional",
-                    weight: $benchRM,
-                    increment: unit == .kg ? 2.5 : 5
-                )
-
-                weightCard(
-                    name: "Deadlift",
-                    icon: "figure.strengthtraining.functional",
-                    weight: $deadliftRM,
-                    increment: unit == .kg ? 5 : 10
-                )
+                ForEach(selectedTemplate.exercises, id: \.name) { exercise in
+                    if exercise.type == .weighted {
+                        weightCard(exercise: exercise)
+                    } else {
+                        bodyweightCard(exercise: exercise)
+                    }
+                }
             }
 
             Spacer()
 
             ctaButton("Continue") {
-                withAnimation { step = 2 }
+                withAnimation { step = 3 }
             }
         }
         .padding(.horizontal, 28)
     }
 
-    private func weightCard(
-        name: String,
-        icon: String,
-        weight: Binding<Double>,
-        increment: Double
-    ) -> some View {
-        VStack(spacing: 16) {
+    private func weightCard(exercise: ProgramTemplate.TemplateExercise) -> some View {
+        let increment = unit == .kg ? exercise.increment : exercise.incrementLbs
+        let weight = Binding(
+            get: { exerciseWeights[exercise.name] ?? (unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs) },
+            set: { exerciseWeights[exercise.name] = $0 }
+        )
+
+        return VStack(spacing: 12) {
             HStack {
-                Image(systemName: icon)
+                Image(systemName: exercise.icon)
                     .font(.title3)
                     .foregroundStyle(theme.accentColor)
-                Text(name)
+                Text(exercise.name)
                     .font(.headline)
                 Spacer()
-                Text("+\(formatted(increment)) \(unit.symbol)/cycle")
+                Text("+\(formatted(increment)) \(unit.symbol)")
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             }
 
             HStack(spacing: 16) {
                 Button {
-                    if weight.wrappedValue > 0 {
-                        weight.wrappedValue -= increment
-                    }
+                    if weight.wrappedValue > increment { weight.wrappedValue -= increment }
                 } label: {
                     Image(systemName: "minus.circle.fill")
                         .font(.system(size: 32))
                         .foregroundStyle(theme.textSecondary)
                 }
+                .buttonStyle(.borderless)
 
                 Text(formatted(weight.wrappedValue))
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
-                    .frame(minWidth: 80)
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .frame(minWidth: 60)
 
                 Button {
                     weight.wrappedValue += increment
@@ -207,13 +261,34 @@ struct OnboardingFlow: View {
                         .font(.system(size: 32))
                         .foregroundStyle(theme.accentColor)
                 }
+                .buttonStyle(.borderless)
 
                 Text(unit.symbol)
                     .font(.title3)
                     .foregroundStyle(theme.textSecondary)
             }
         }
-        .padding(20)
+        .padding(16)
+        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func bodyweightCard(exercise: ProgramTemplate.TemplateExercise) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: exercise.icon)
+                .font(.title3)
+                .foregroundStyle(theme.accentColor)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(exercise.name)
+                    .font(.headline)
+                Text("Regular → Archer → One Arm")
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+            }
+
+            Spacer()
+        }
+        .padding(16)
         .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 16))
     }
 
@@ -221,9 +296,10 @@ struct OnboardingFlow: View {
 
     private var configStep: some View {
         VStack(alignment: .leading, spacing: 0) {
+            Spacer().frame(height: 60)
+
             Text("Setup")
                 .font(.system(size: 28, weight: .bold))
-                .padding(.top, 32)
 
             Text("A few options before you start.")
                 .font(.subheadline)
@@ -262,7 +338,7 @@ struct OnboardingFlow: View {
             Spacer()
 
             ctaButton("Continue") {
-                withAnimation { step = 3 }
+                withAnimation { step = 4 }
             }
         }
         .padding(.horizontal, 28)
@@ -271,30 +347,49 @@ struct OnboardingFlow: View {
     // MARK: - Ready
 
     private var readyStep: some View {
-        VStack(spacing: 24) {
-            Spacer()
-
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 56))
-                .foregroundStyle(theme.completedColor)
+        VStack(alignment: .leading, spacing: 0) {
+            Spacer().frame(height: 60)
 
             Text("Ready to Train")
-                .font(.title2.bold())
+                .font(.system(size: 28, weight: .bold))
+
+            Text(selectedTemplate.name)
+                .font(.subheadline)
+                .foregroundStyle(theme.accentColor)
+                .padding(.top, 4)
+                .padding(.bottom, 24)
 
             VStack(spacing: 1) {
-                summaryRow("Bench Press", "\(formatted(benchRM)) \(unit.symbol)")
-                summaryRow("Deadlift", "\(formatted(deadliftRM)) \(unit.symbol)")
-                summaryRow("Program", includeIntro ? "Intro + 6 weeks" : "6 weeks")
+                ForEach(selectedTemplate.exercises, id: \.name) { exercise in
+                    HStack {
+                        Text(exercise.name)
+                            .foregroundStyle(theme.textSecondary)
+                        Spacer()
+                        if exercise.type == .weighted {
+                            let w = exerciseWeights[exercise.name] ?? (unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs)
+                            Text("\(formatted(w)) \(unit.symbol)")
+                                .fontWeight(.semibold)
+                        } else {
+                            Text("Bodyweight")
+                                .fontWeight(.semibold)
+                                .foregroundStyle(theme.accentColor)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .background(theme.cardColor)
+                }
             }
             .clipShape(RoundedRectangle(cornerRadius: 14))
 
             VStack(alignment: .leading, spacing: 8) {
-                scheduleRow("Mon", "Heavy — max series", "50% → 75% → 100%")
+                scheduleRow("Mon", "Heavy — max series", selectedTemplate.exercises.count == 2 ? "50% → 75% → 100%" : "50/75/100%")
                 scheduleRow("Wed", "Light", "50% only")
                 scheduleRow("Fri", "Medium", "50% → 75%")
             }
-            .padding()
+            .padding(16)
             .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
+            .padding(.top, 12)
 
             Spacer()
 
@@ -303,27 +398,14 @@ struct OnboardingFlow: View {
                 onComplete()
             }
         }
-        .padding(.horizontal, 24)
-    }
-
-    private func summaryRow(_ label: String, _ value: String) -> some View {
-        HStack {
-            Text(label)
-                .foregroundStyle(theme.textSecondary)
-            Spacer()
-            Text(value)
-                .fontWeight(.semibold)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .background(theme.cardColor)
+        .padding(.horizontal, 28)
     }
 
     private func scheduleRow(_ day: String, _ type: String, _ detail: String) -> some View {
         HStack {
             Text(day)
                 .font(.caption.bold())
-                .frame(width: 40, alignment: .leading)
+                .frame(width: 32, alignment: .leading)
             Text(type)
                 .font(.caption)
             Spacer()
@@ -349,6 +431,14 @@ struct OnboardingFlow: View {
 
     // MARK: - Helpers
 
+    private func initWeights() {
+        for exercise in selectedTemplate.exercises where exercise.type == .weighted {
+            if exerciseWeights[exercise.name] == nil {
+                exerciseWeights[exercise.name] = unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs
+            }
+        }
+    }
+
     private func formatted(_ value: Double) -> String {
         value.truncatingRemainder(dividingBy: 1) == 0
             ? String(format: "%.0f", value)
@@ -356,35 +446,26 @@ struct OnboardingFlow: View {
     }
 
     private func createProgram() {
-        let benchIncrement: Double = unit == .kg ? 2.5 : 5
-        let deadliftIncrement: Double = unit == .kg ? 5 : 10
-
         let program = Program(
             startDate: .now,
             introCycleEnabled: includeIntro
         )
 
-        let bench = Exercise(
-            name: "Bench Press",
-            type: .weighted,
-            initial10RM: benchRM,
-            weightIncrement: benchIncrement,
-            unit: unit,
-            sortOrder: 0
-        )
-        let deadlift = Exercise(
-            name: "Deadlift",
-            type: .weighted,
-            initial10RM: deadliftRM,
-            weightIncrement: deadliftIncrement,
-            unit: unit,
-            sortOrder: 1
-        )
+        for (index, templateEx) in selectedTemplate.exercises.enumerated() {
+            let increment = unit == .kg ? templateEx.increment : templateEx.incrementLbs
+            let rm = exerciseWeights[templateEx.name] ?? (unit == .kg ? templateEx.defaultRM : templateEx.defaultRMLbs)
 
-        bench.program = program
-        deadlift.program = program
-        program.exercises.append(bench)
-        program.exercises.append(deadlift)
+            let exercise = Exercise(
+                name: templateEx.name,
+                type: templateEx.type,
+                initial10RM: rm,
+                weightIncrement: increment,
+                unit: unit,
+                sortOrder: index
+            )
+            exercise.program = program
+            program.exercises.append(exercise)
+        }
 
         modelContext.insert(program)
         try? modelContext.save()
