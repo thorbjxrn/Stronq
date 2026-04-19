@@ -208,7 +208,9 @@ struct OnboardingFlow: View {
             .frame(maxWidth: 120)
             .padding(.top, 16)
             .padding(.bottom, 24)
-            .onChange(of: unit) { initWeights() }
+            .onChange(of: unit) { oldUnit, newUnit in
+                convertWeights(from: oldUnit, to: newUnit)
+            }
 
             VStack(spacing: 16) {
                 ForEach(selectedTemplate.exercises, id: \.name) { exercise in
@@ -462,6 +464,21 @@ struct OnboardingFlow: View {
     }
 
     // MARK: - Helpers
+
+    private func convertWeights(from oldUnit: WeightUnit, to newUnit: WeightUnit) {
+        guard oldUnit != newUnit else { return }
+        for key in exerciseWeights.keys {
+            if let weight = exerciseWeights[key] {
+                if newUnit == .lbs {
+                    exerciseWeights[key] = (weight * 2.20462).rounded()
+                } else {
+                    exerciseWeights[key] = (weight / 2.20462 * 2).rounded() / 2
+                }
+            }
+        }
+        // Init any missing weights with the new unit's defaults
+        initWeights()
+    }
 
     private func initWeights() {
         for exercise in selectedTemplate.exercises where exercise.type == .weighted {
