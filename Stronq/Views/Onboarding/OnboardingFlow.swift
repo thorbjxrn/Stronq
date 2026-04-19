@@ -4,6 +4,7 @@ import SwiftData
 struct OnboardingFlow: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(ThemeManager.self) private var theme
+    @Environment(PurchaseManager.self) private var purchaseManager
     @State private var step = 0
     @State private var unit: WeightUnit = .kg
     @State private var includeIntro = true
@@ -12,6 +13,7 @@ struct OnboardingFlow: View {
     @State private var pushUpStart: PushUpVariant = .archer
     @State private var syncHealth = false
     @State private var healthKitManager = HealthKitManager()
+    @State private var showingPaywall = false
 
     let onComplete: () -> Void
 
@@ -37,6 +39,9 @@ struct OnboardingFlow: View {
             }
         }
         .preferredColorScheme(theme.preferredColorScheme)
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+        }
         } // NavigationStack
     }
 
@@ -123,9 +128,13 @@ struct OnboardingFlow: View {
                     let isSelected = selectedTemplate.id == template.id
 
                     Button {
-                        withAnimation(.easeInOut(duration: 0.15)) {
-                            selectedTemplate = template
-                            initWeights()
+                        if template.isPremium && !purchaseManager.isPremium {
+                            showingPaywall = true
+                        } else {
+                            withAnimation(.easeInOut(duration: 0.15)) {
+                                selectedTemplate = template
+                                initWeights()
+                            }
                         }
                     } label: {
                         VStack(alignment: .leading, spacing: 8) {
