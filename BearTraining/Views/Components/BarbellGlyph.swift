@@ -11,11 +11,11 @@ struct BarbellGlyph: View {
                 .fill(color.opacity(0.3))
                 .frame(width: 8, height: 3)
 
-            // Left plates
+            // Left plates — small change plate then 3 big plates
             HStack(spacing: 1.5) {
-                plate(ratio: 0.6)
-                plate(ratio: 0.75)
-                plate(ratio: 0.9)
+                plate(ratio: 0.45)
+                plate(ratio: 1.0)
+                plate(ratio: 1.0)
                 plate(ratio: 1.0)
             }
 
@@ -24,12 +24,12 @@ struct BarbellGlyph: View {
                 .fill(color.opacity(0.3))
                 .frame(width: 40, height: 3)
 
-            // Right plates
+            // Right plates — 3 big plates then small change plate
             HStack(spacing: 1.5) {
                 plate(ratio: 1.0)
-                plate(ratio: 0.9)
-                plate(ratio: 0.75)
-                plate(ratio: 0.6)
+                plate(ratio: 1.0)
+                plate(ratio: 1.0)
+                plate(ratio: 0.45)
             }
 
             // Right collar
