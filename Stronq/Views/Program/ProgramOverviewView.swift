@@ -165,12 +165,12 @@ struct WeekCard: View {
                         .frame(width: 20, height: 20)
                         .overlay {
                             if allHitFive {
-                                Image(systemName: "checkmark")
+                                Image(systemName: "arrow.up")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(.black)
                             } else if done {
-                                Image(systemName: "circle.fill")
-                                    .font(.system(size: 6))
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(.black)
                             }
                         }
