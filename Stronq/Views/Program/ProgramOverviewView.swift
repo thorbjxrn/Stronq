@@ -279,6 +279,12 @@ struct WeekCard: View {
             $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
         }
         guard let session else { return nil }
-        return session.completedSets.map(\.seriesNumber).max()
+        let allSets = session.completedSets
+        let seriesNumbers = Set(allSets.map(\.seriesNumber))
+        let completedCount = seriesNumbers.filter { series in
+            let setsInSeries = allSets.filter { $0.seriesNumber == series }
+            return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
+        }.count
+        return completedCount
     }
 }
