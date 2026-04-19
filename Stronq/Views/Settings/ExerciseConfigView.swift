@@ -4,7 +4,13 @@ import SwiftData
 struct ExerciseConfigView: View {
     @Bindable var exercise: Exercise
     @Environment(ThemeManager.self) private var theme
+    @Environment(PurchaseManager.self) private var purchaseManager
     @FocusState private var isEditing: Bool
+    @State private var showingPaywall = false
+
+    private var alternatives: [ExerciseAlternative] {
+        ExerciseAlternative.alternatives(for: exercise.name)
+    }
 
     var body: some View {
         ZStack {
@@ -84,11 +90,38 @@ struct ExerciseConfigView: View {
                     }
                 }
 
-                Section {
-                    TextField("Exercise Name", text: $exercise.name)
-                        .listRowBackground(theme.cardColor)
-                } header: {
-                    Text("Name")
+                if !alternatives.isEmpty {
+                    Section {
+                        ForEach(alternatives) { alt in
+                            Button {
+                                if purchaseManager.isPremium {
+                                    exercise.name = alt.name
+                                } else {
+                                    showingPaywall = true
+                                }
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: alt.icon)
+                                        .foregroundStyle(theme.accentColor)
+                                        .frame(width: 24)
+                                    Text(alt.name)
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    if !purchaseManager.isPremium {
+                                        Image(systemName: "lock.fill")
+                                            .font(.caption)
+                                            .foregroundStyle(theme.textSecondary)
+                                    }
+                                }
+                            }
+                            .listRowBackground(theme.cardColor)
+                        }
+                    } header: {
+                        Text("Swap Exercise")
+                    } footer: {
+                        Text("Same weight and increment. Adjust above if needed.")
+                            .font(.caption2)
+                    }
                 }
             }
             .scrollContentBackground(.hidden)
@@ -100,6 +133,9 @@ struct ExerciseConfigView: View {
                 Spacer()
                 Button("Done") { isEditing = false }
             }
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
         }
     }
 
