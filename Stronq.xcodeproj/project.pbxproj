@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0EFDDE632580CBD9DD73C31A /* StronqLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7EA2F66D30ACE9F9719DF4 /* StronqLiveActivityWidget.swift */; };
 		11EB100E964426B08CCF766E /* ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D24A38734A905A21FF6B48F /* ReminderManager.swift */; };
 		13EDC82181567D664D73AF5E /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D489585F4838BBA41E4FB9D /* PurchaseManager.swift */; };
 		15DAF0089963AD37729DF022 /* Program.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082358CD5AD7ABC389513246 /* Program.swift */; };
 		191846DD4B90BB2DF7CBC97F /* DeLormeEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D3164A60D94A16E61BE8F6 /* DeLormeEngineTests.swift */; };
 		1C125AF779E8A4548C0C1268 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98189A5D3FAF1B4B22909B47 /* Typography.swift */; };
+		3108FE1C899360A323319CCD /* StronqLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB22863A8ED64A424B0979C1 /* StronqLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		36A7E35E9099D842E678880D /* ExerciseConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C51824852D68ED7ED341F1 /* ExerciseConfigView.swift */; };
 		47AF320DA68ACE5363B0CB49 /* PlannedWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470F6F1A05C9A2D484C0E36A /* PlannedWorkout.swift */; };
 		5442585F242DBFAAF6305BC2 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BAE0F7BF42C9280051F6AA /* HealthKitManager.swift */; };
@@ -34,6 +36,7 @@
 		BE69909ABF9D9C4FFD847928 /* BodyweightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529C5AF6B1D9D4E1E3D97B22 /* BodyweightEntry.swift */; };
 		C8F55B0BCFEE479F192BF5FA /* BarbellGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FA8D23491F82B25A51AB76 /* BarbellGlyph.swift */; };
 		D8F5F4753557CFDB3448BC69 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5CEC2A8A5A0FD7B6AE4D4D /* ProgressView.swift */; };
+		D9CF00F118F8FC2EB66C65EE /* StronqLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA31A0C3E90E17D5C3757829 /* StronqLiveActivityBundle.swift */; };
 		E556EFFA90200544D466A993 /* ProgramTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EE76AB50532EBD34A5C189 /* ProgramTemplate.swift */; };
 		F008F7B1FDFFAC95FC564657 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA55539172EB93E72088FB6E /* Enums.swift */; };
 		F10E99219E69860D57B8E28C /* AdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977F7F57A4AD697E47674987 /* AdManager.swift */; };
@@ -44,6 +47,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		08F036D8AA4738802767FE58 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F5727BAFD7CB3156BA2953D7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A5D2E284FB54A05CDB1A684F;
+			remoteInfo = StronqLiveActivity;
+		};
 		AB92815DADB07803B5955EDC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F5727BAFD7CB3156BA2953D7 /* Project object */;
@@ -53,6 +63,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		FE3E4312C87D00EFF79B3DBE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3108FE1C899360A323319CCD /* StronqLiveActivity.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		02FA8D23491F82B25A51AB76 /* BarbellGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbellGlyph.swift; sourceTree = "<group>"; };
 		082358CD5AD7ABC389513246 /* Program.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Program.swift; sourceTree = "<group>"; };
@@ -61,6 +85,7 @@
 		2214F00690B639441B5075BA /* WorkoutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutViewModel.swift; sourceTree = "<group>"; };
 		243DC283DE3E8E1D9DDDB2F9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		28BAE0F7BF42C9280051F6AA /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		2E7EA2F66D30ACE9F9719DF4 /* StronqLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StronqLiveActivityWidget.swift; sourceTree = "<group>"; };
 		3B494F8FBF804AB405546F65 /* HowItWorksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowItWorksView.swift; sourceTree = "<group>"; };
 		3D24A38734A905A21FF6B48F /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderManager.swift; sourceTree = "<group>"; };
 		470F6F1A05C9A2D484C0E36A /* PlannedWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedWorkout.swift; sourceTree = "<group>"; };
@@ -84,8 +109,10 @@
 		BE273821247AA091E3326C40 /* ProgramOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramOverviewView.swift; sourceTree = "<group>"; };
 		C070DD3599C314979085F8A2 /* SessionSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSummary.swift; sourceTree = "<group>"; };
 		C4B5EAF7CFDE28A2147BEA6C /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
+		CA31A0C3E90E17D5C3757829 /* StronqLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StronqLiveActivityBundle.swift; sourceTree = "<group>"; };
 		D1EE76AB50532EBD34A5C189 /* ProgramTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramTemplate.swift; sourceTree = "<group>"; };
 		DA55539172EB93E72088FB6E /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		DB22863A8ED64A424B0979C1 /* StronqLiveActivity.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = StronqLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB88F98DF2816CD0CECDDB6C /* StronqTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StronqTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC708DD6AB0C8267C257454C /* LaunchBurstView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchBurstView.swift; sourceTree = "<group>"; };
 		DF5CEC2A8A5A0FD7B6AE4D4D /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
@@ -179,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				97408B9B15B7120E8D44791D /* Stronq.app */,
+				DB22863A8ED64A424B0979C1 /* StronqLiveActivity.appex */,
 				DB88F98DF2816CD0CECDDB6C /* StronqTests.xctest */,
 			);
 			name = Products;
@@ -262,9 +290,19 @@
 			isa = PBXGroup;
 			children = (
 				D9E77964265FDB6B8B112D8B /* Stronq */,
+				F055E61A4885A8E666BDC839 /* StronqLiveActivity */,
 				232446390C56D7827561BDF4 /* StronqTests */,
 				498CF6D190811194BBF1EC75 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		F055E61A4885A8E666BDC839 /* StronqLiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				CA31A0C3E90E17D5C3757829 /* StronqLiveActivityBundle.swift */,
+				2E7EA2F66D30ACE9F9719DF4 /* StronqLiveActivityWidget.swift */,
+			);
+			path = StronqLiveActivity;
 			sourceTree = "<group>";
 		};
 		F27B90A0535EB8A2B9FFE1C6 /* Progress */ = {
@@ -284,10 +322,12 @@
 			buildPhases = (
 				7C4B5DF70D67B598A162D5E4 /* Sources */,
 				87158EA7D4A711AA1A60C13A /* Resources */,
+				FE3E4312C87D00EFF79B3DBE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				46667777B9FBA87E009DA5A3 /* PBXTargetDependency */,
 			);
 			name = Stronq;
 			packageProductDependencies = (
@@ -314,6 +354,23 @@
 			productReference = DB88F98DF2816CD0CECDDB6C /* StronqTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A5D2E284FB54A05CDB1A684F /* StronqLiveActivity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C8665F42C63FAD9480CECFBD /* Build configuration list for PBXNativeTarget "StronqLiveActivity" */;
+			buildPhases = (
+				6876E2FC8FBC4298CA22C549 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StronqLiveActivity;
+			packageProductDependencies = (
+			);
+			productName = StronqLiveActivity;
+			productReference = DB22863A8ED64A424B0979C1 /* StronqLiveActivity.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -327,6 +384,9 @@
 						DevelopmentTeam = 228DC29L7W;
 					};
 					65342890605BF3565C211514 = {
+						DevelopmentTeam = 228DC29L7W;
+					};
+					A5D2E284FB54A05CDB1A684F = {
 						DevelopmentTeam = 228DC29L7W;
 					};
 				};
@@ -346,6 +406,7 @@
 			projectRoot = "";
 			targets = (
 				1282E7A88B9EC5CE6CCF731F /* Stronq */,
+				A5D2E284FB54A05CDB1A684F /* StronqLiveActivity */,
 				65342890605BF3565C211514 /* StronqTests */,
 			);
 		};
@@ -368,6 +429,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				191846DD4B90BB2DF7CBC97F /* DeLormeEngineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6876E2FC8FBC4298CA22C549 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9CF00F118F8FC2EB66C65EE /* StronqLiveActivityBundle.swift in Sources */,
+				0EFDDE632580CBD9DD73C31A /* StronqLiveActivityWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,6 +483,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		46667777B9FBA87E009DA5A3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A5D2E284FB54A05CDB1A684F /* StronqLiveActivity */;
+			targetProxy = 08F036D8AA4738802767FE58 /* PBXContainerItemProxy */;
+		};
 		82E7EF3092AE9FFA2FD0D1A6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1282E7A88B9EC5CE6CCF731F /* Stronq */;
@@ -437,6 +512,19 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Stronq.app/Stronq";
 			};
 			name = Release;
+		};
+		197BCA72AE0516D7C2E19099 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Stronq Live Activity";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.Stronq.LiveActivity;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		21EADBE3A66D93F9BB6EB08D /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -559,6 +647,19 @@
 			};
 			name = Release;
 		};
+		83CD558EF0B2DF0C8A7D4C6E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Stronq Live Activity";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.Stronq.LiveActivity;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		8E7EC9C02ABDD30BDB4DD733 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -633,6 +734,15 @@
 			buildConfigurations = (
 				21EADBE3A66D93F9BB6EB08D /* Debug */,
 				6D0AFE8C4BA85ECAF5C318D9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C8665F42C63FAD9480CECFBD /* Build configuration list for PBXNativeTarget "StronqLiveActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				197BCA72AE0516D7C2E19099 /* Debug */,
+				83CD558EF0B2DF0C8A7D4C6E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

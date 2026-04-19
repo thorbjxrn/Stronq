@@ -32,8 +32,23 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.Stronq
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SUPPORTS_LIVE_ACTIVITIES: YES
+    dependencies:
+      - target: StronqLiveActivity
     entitlements:
       path: Stronq/Stronq.entitlements
+
+  StronqLiveActivity:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: StronqLiveActivity
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.Stronq.LiveActivity
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Stronq Live Activity
+        INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
 
   StronqTests:
     type: bundle.unit-test

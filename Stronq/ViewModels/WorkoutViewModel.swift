@@ -21,6 +21,7 @@ final class WorkoutViewModel {
     private var elapsedTimerTask: Task<Void, Never>?
     private var setRestDuration: Int = 60
     private var seriesRestDuration: Int = 180
+    private let timerManager = TimerManager()
 
     // MARK: - Setup
 
@@ -207,11 +208,12 @@ final class WorkoutViewModel {
         set.completedAt = .now
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-        if allSetsCompleteInSeries(set.seriesNumber, exerciseName: set.exerciseName) {
-            startRestTimer(duration: seriesRestDuration)
-        } else {
-            startRestTimer(duration: setRestDuration)
-        }
+        let isSeries = allSetsCompleteInSeries(set.seriesNumber, exerciseName: set.exerciseName)
+        startRestTimer(
+            duration: isSeries ? seriesRestDuration : setRestDuration,
+            exerciseName: set.exerciseName,
+            isSeriesRest: isSeries
+        )
     }
 
     private func allSetsCompleteInSeries(_ series: Int, exerciseName: String) -> Bool {
@@ -255,18 +257,27 @@ final class WorkoutViewModel {
 
     func skipRestTimer() { stopRestTimer() }
 
-    private func startRestTimer(duration: Int) {
+    private func startRestTimer(duration: Int, exerciseName: String? = nil, isSeriesRest: Bool = false) {
         stopRestTimer()
         restTimerRemaining = duration
         isRestTimerRunning = true
+
+        let nextInfo = isSeriesRest ? "Series rest — \(exerciseName ?? "")" : "Set rest — \(exerciseName ?? "")"
+        timerManager.startLiveActivity(
+            exerciseName: exerciseName ?? "",
+            nextSetInfo: nextInfo,
+            duration: duration
+        )
 
         restTimerTask = Task {
             while restTimerRemaining > 0 && !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { return }
                 restTimerRemaining -= 1
+                await timerManager.updateLiveActivity(timeRemaining: restTimerRemaining)
             }
             isRestTimerRunning = false
+            await timerManager.endLiveActivity()
             if restTimerRemaining == 0 {
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
             }
@@ -278,6 +289,7 @@ final class WorkoutViewModel {
         restTimerTask = nil
         isRestTimerRunning = false
         restTimerRemaining = 0
+        Task { await timerManager.endLiveActivity() }
     }
 
     private func startElapsedTimer() {
