@@ -223,11 +223,6 @@ struct WorkoutSessionView: View {
                         .strokeBorder(isCurrent && !allDone ? theme.accentColor.opacity(0.3) : .clear, lineWidth: 1)
                 )
         )
-        .onTapGesture(count: 1) {
-            if let nextSet = group.sets.first(where: { !$0.isCompleted }) {
-                viewModel.completeSet(nextSet)
-            }
-        }
         .onTapGesture(count: 2) {
             if allDone {
                 for set in group.sets where set.isCompleted {
@@ -239,6 +234,11 @@ struct WorkoutSessionView: View {
                     set.completedAt = .now
                 }
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            }
+        }
+        .onTapGesture(count: 1) {
+            if let nextSet = group.sets.first(where: { !$0.isCompleted }) {
+                viewModel.completeSet(nextSet)
             }
         }
         .opacity(allDone && !isCurrent ? 0.5 : 1)
