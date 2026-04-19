@@ -292,11 +292,11 @@ struct WorkoutSessionView: View {
                             .font(.subheadline)
                             .foregroundStyle(theme.textSecondary)
                     }
-                    .confirmationDialog("End workout early?", isPresented: $showingFinishConfirm) {
+                    .alert("End workout early?", isPresented: $showingFinishConfirm) {
                         Button("Save & End") {
                             viewModel.finishWorkout(program: program, modelContext: modelContext)
                         }
-                        Button("Discard Workout", role: .destructive) {
+                        Button("Discard", role: .destructive) {
                             viewModel.cancelWorkout(program: program, modelContext: modelContext)
                         }
                         Button("Keep Training", role: .cancel) {}
