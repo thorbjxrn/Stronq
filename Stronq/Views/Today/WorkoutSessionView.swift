@@ -79,10 +79,12 @@ struct WorkoutSessionView: View {
                         }
                         VStack(spacing: 2) {
                             Text(exercise.name)
-                                .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
+                                .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
                             if seriesCount > 0 {
                                 Text("\(seriesCount) series")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: 10))
                                     .foregroundStyle(theme.textSecondary)
                             }
                         }
