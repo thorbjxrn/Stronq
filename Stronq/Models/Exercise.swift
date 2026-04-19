@@ -14,6 +14,11 @@ final class Exercise {
     var pushUpStartLevel: String?
     var program: Program?
 
+    var displayName: String {
+        let aliases = ["HK Pulldown": "Half-Kneeling Pulldown"]
+        return aliases[name] ?? name
+    }
+
     var startingPushUpVariant: PushUpVariant {
         get { PushUpVariant(rawValue: pushUpStartLevel ?? "") ?? .regular }
         set { pushUpStartLevel = newValue.rawValue }

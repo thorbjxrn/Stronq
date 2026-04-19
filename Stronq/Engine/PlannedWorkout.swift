@@ -26,13 +26,6 @@ struct PlannedSet: Sendable {
         if let variant = pushUpVariant {
             return variant.rawValue
         }
-        let formatted = String(format: "%.2f", weight)
-        if formatted.hasSuffix("00") {
-            return String(format: "%.0f", weight)
-        }
-        if formatted.hasSuffix("0") {
-            return String(format: "%.1f", weight)
-        }
-        return formatted
+        return String(format: "%.2f", weight)
     }
 }

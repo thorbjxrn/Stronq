@@ -88,7 +88,7 @@ struct DeLormeEngine {
                     )
                 }
                 return PlannedSeriesExercise(
-                    name: exercise.name,
+                    name: exercise.displayName,
                     type: exercise.type,
                     sets: sets,
                     unit: exercise.unit
