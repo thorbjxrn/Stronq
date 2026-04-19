@@ -385,7 +385,7 @@ struct OnboardingFlow: View {
                             Text("\(formatted(w)) \(unit.symbol)")
                                 .fontWeight(.semibold)
                         } else {
-                            Text("Bodyweight")
+                            Text(PushUpVariant.forIntensity(1.0, maxLevel: pushUpStart).rawValue)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(theme.accentColor)
                         }
