@@ -37,7 +37,7 @@ enum AppTheme: String, CaseIterable {
         switch self {
         case .stronq: "Stronq (Default)"
         case .amber: "Amber"
-        case .champagne: "Champagne"
+        case .champagne: "Copper"
         case .chalk: "Chalk"
         case .testo: "Testo"
         case .tactical: "Tactical"
@@ -52,7 +52,7 @@ enum AppTheme: String, CaseIterable {
 
     var preferredColorScheme: ColorScheme? {
         switch self {
-        case .chalk, .cryo, .infrared, .champagne: nil
+        case .stronq, .chalk, .cryo, .infrared: nil
         default: .dark
         }
     }
@@ -63,32 +63,25 @@ enum AppTheme: String, CaseIterable {
 
     var accentColor: Color {
         switch self {
-        // Copper-amber — warm but crisp
-        case .stronq: Color(red: 0.82, green: 0.60, blue: 0.36)
-        // Classic saturated orange-amber
+        // Champagne pink-gold — the clean one
+        case .stronq: Color(red: 0.85, green: 0.75, blue: 0.55)
         case .amber: Color(red: 0.96, green: 0.65, blue: 0.14)
-        // Desaturated pink-gold, brushed metal
-        case .champagne: Color(red: 0.85, green: 0.75, blue: 0.55)
-        // Warm off-white, system adaptive
+        // Copper-brown — dark only
+        case .champagne: Color(red: 0.82, green: 0.60, blue: 0.36)
         case .chalk: Color(red: 0.45, green: 0.43, blue: 0.40)
-        // Deep crimson-burgundy — intense but not destructive
         case .testo: Color(red: 0.75, green: 0.18, blue: 0.18)
-        // Phosphor green, night vision
         case .tactical: Color(red: 0.10, green: 0.78, blue: 0.35)
-        // Magenta-rose, hot
         case .infrared: Color(red: 0.92, green: 0.28, blue: 0.50)
-        // Cyan-teal, cold
         case .cryo: Color(red: 0.20, green: 0.82, blue: 0.88)
         }
     }
 
     var backgroundColor: Color {
         switch self {
-        case .stronq: Color(red: 0.05, green: 0.04, blue: 0.04)
+        case .stronq: Color(.systemBackground)
         case .amber: Color(red: 0.08, green: 0.08, blue: 0.10)
-        case .champagne: Color(.systemBackground)
+        case .champagne: Color(red: 0.05, green: 0.04, blue: 0.04)
         case .chalk: Color(.systemBackground)
-        // Pitch black
         case .testo: Color(red: 0.03, green: 0.02, blue: 0.02)
         case .tactical: Color(red: 0.03, green: 0.05, blue: 0.03)
         case .infrared: Color(.systemBackground)
@@ -98,12 +91,10 @@ enum AppTheme: String, CaseIterable {
 
     var cardColor: Color {
         switch self {
-        // More lift from background
-        case .stronq: Color(red: 0.13, green: 0.11, blue: 0.10)
+        case .stronq: Color(.secondarySystemBackground)
         case .amber: Color(red: 0.14, green: 0.14, blue: 0.16)
-        case .champagne: Color(.secondarySystemBackground)
+        case .champagne: Color(red: 0.13, green: 0.11, blue: 0.10)
         case .chalk: Color(.secondarySystemBackground)
-        // Dark blood-tinged charcoal
         case .testo: Color(red: 0.10, green: 0.05, blue: 0.05)
         case .tactical: Color(red: 0.06, green: 0.10, blue: 0.07)
         case .infrared: Color(.secondarySystemBackground)
@@ -113,10 +104,8 @@ enum AppTheme: String, CaseIterable {
 
     var textPrimary: Color {
         switch self {
-        case .chalk, .champagne, .infrared, .cryo: Color(.label)
-        // Cool warm white — crisp, not sepia
-        case .stronq: Color(red: 0.94, green: 0.93, blue: 0.91)
-        // Bone white
+        case .stronq, .chalk, .infrared, .cryo: Color(.label)
+        case .champagne: Color(red: 0.94, green: 0.93, blue: 0.91)
         case .testo: Color(red: 0.95, green: 0.93, blue: 0.90)
         case .tactical: Color(red: 0.80, green: 0.92, blue: 0.82)
         default: .white
@@ -125,8 +114,8 @@ enum AppTheme: String, CaseIterable {
 
     var textSecondary: Color {
         switch self {
-        case .chalk, .champagne, .infrared, .cryo: Color(.secondaryLabel)
-        case .stronq: Color(red: 0.58, green: 0.54, blue: 0.50)
+        case .stronq, .chalk, .infrared, .cryo: Color(.secondaryLabel)
+        case .champagne: Color(red: 0.58, green: 0.54, blue: 0.50)
         case .testo: Color(red: 0.55, green: 0.35, blue: 0.32)
         case .tactical: Color(red: 0.35, green: 0.50, blue: 0.38)
         default: Color(white: 0.6)
@@ -135,12 +124,10 @@ enum AppTheme: String, CaseIterable {
 
     var completedColor: Color {
         switch self {
-        // Bright gold — clear success
-        case .stronq: Color(red: 0.85, green: 0.72, blue: 0.30)
+        case .stronq: Color(red: 0.30, green: 0.78, blue: 0.40)
         case .amber: Color(red: 0.30, green: 0.78, blue: 0.40)
-        case .champagne: Color(red: 0.30, green: 0.78, blue: 0.40)
+        case .champagne: Color(red: 0.85, green: 0.72, blue: 0.30)
         case .chalk: Color(red: 0.30, green: 0.68, blue: 0.38)
-        // Sickly green-yellow — veins popping
         case .testo: Color(red: 0.70, green: 0.85, blue: 0.15)
         case .tactical: Color(red: 0.15, green: 0.85, blue: 0.40)
         case .infrared: Color(red: 0.95, green: 0.55, blue: 0.40)
