@@ -52,9 +52,13 @@ enum AppTheme: String, CaseIterable {
 
     var preferredColorScheme: ColorScheme? {
         switch self {
-        case .chalk: nil
+        case .chalk, .cryo, .infrared, .champagne: nil
         default: .dark
         }
+    }
+
+    var isDynamic: Bool {
+        preferredColorScheme == nil
     }
 
     var accentColor: Color {
@@ -82,13 +86,13 @@ enum AppTheme: String, CaseIterable {
         switch self {
         case .stronq: Color(red: 0.04, green: 0.04, blue: 0.04)
         case .amber: Color(red: 0.08, green: 0.08, blue: 0.10)
-        case .champagne: Color(red: 0.07, green: 0.06, blue: 0.10)
+        case .champagne: Color(.systemBackground)
         case .chalk: Color(.systemBackground)
         // Pitch black
         case .testo: Color(red: 0.03, green: 0.02, blue: 0.02)
         case .tactical: Color(red: 0.03, green: 0.05, blue: 0.03)
-        case .infrared: Color(red: 0.08, green: 0.05, blue: 0.06)
-        case .cryo: Color(red: 0.04, green: 0.05, blue: 0.09)
+        case .infrared: Color(.systemBackground)
+        case .cryo: Color(.systemBackground)
         }
     }
 
@@ -96,19 +100,19 @@ enum AppTheme: String, CaseIterable {
         switch self {
         case .stronq: Color(red: 0.10, green: 0.09, blue: 0.08)
         case .amber: Color(red: 0.14, green: 0.14, blue: 0.16)
-        case .champagne: Color(red: 0.12, green: 0.11, blue: 0.16)
+        case .champagne: Color(.secondarySystemBackground)
         case .chalk: Color(.secondarySystemBackground)
         // Dark blood-tinged charcoal
         case .testo: Color(red: 0.10, green: 0.05, blue: 0.05)
         case .tactical: Color(red: 0.06, green: 0.10, blue: 0.07)
-        case .infrared: Color(red: 0.14, green: 0.09, blue: 0.11)
-        case .cryo: Color(red: 0.08, green: 0.09, blue: 0.16)
+        case .infrared: Color(.secondarySystemBackground)
+        case .cryo: Color(.secondarySystemBackground)
         }
     }
 
     var textPrimary: Color {
         switch self {
-        case .chalk: Color(.label)
+        case .chalk, .champagne, .infrared, .cryo: Color(.label)
         case .stronq: Color(red: 0.90, green: 0.88, blue: 0.84)
         // Bone white
         case .testo: Color(red: 0.95, green: 0.93, blue: 0.90)
@@ -119,7 +123,7 @@ enum AppTheme: String, CaseIterable {
 
     var textSecondary: Color {
         switch self {
-        case .chalk: Color(.secondaryLabel)
+        case .chalk, .champagne, .infrared, .cryo: Color(.secondaryLabel)
         case .stronq: Color(red: 0.50, green: 0.47, blue: 0.42)
         case .testo: Color(red: 0.55, green: 0.35, blue: 0.32)
         case .tactical: Color(red: 0.35, green: 0.50, blue: 0.38)

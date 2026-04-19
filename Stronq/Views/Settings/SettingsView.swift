@@ -200,7 +200,26 @@ struct SettingsView: View {
                         Circle()
                             .fill(appTheme.themePreviewColor)
                             .frame(width: 24, height: 24)
-                        Text(appTheme.displayName)
+                            .overlay {
+                                if appTheme.isDynamic {
+                                    Circle()
+                                        .fill(.white)
+                                        .frame(width: 10, height: 10)
+                                        .offset(x: -3, y: -3)
+                                    Circle()
+                                        .fill(.black)
+                                        .frame(width: 10, height: 10)
+                                        .offset(x: 3, y: 3)
+                                }
+                            }
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(appTheme.displayName)
+                            if appTheme.isDynamic {
+                                Text("Light & Dark")
+                                    .font(.caption2)
+                                    .foregroundStyle(theme.textSecondary)
+                            }
+                        }
                         Spacer()
                         if appTheme.isPremium && !purchaseManager.isPremium {
                             Image(systemName: "lock.fill")
