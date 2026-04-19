@@ -44,16 +44,34 @@ enum WeightUnit: String, Codable, CaseIterable {
     var symbol: String { rawValue }
 }
 
-enum PushUpVariant: String, Codable {
+enum PushUpVariant: String, Codable, CaseIterable {
+    case kneeling = "Kneeling"
     case regular = "Regular"
+    case diamond = "Diamond"
     case archer = "Archer"
     case oneArm = "One Arm"
 
-    static func from(intensity: Double) -> PushUpVariant {
+    var index: Int {
+        Self.allCases.firstIndex(of: self) ?? 0
+    }
+
+    static func forIntensity(_ intensity: Double, startingLevel: PushUpVariant) -> PushUpVariant {
+        let start = startingLevel.index
+        let offset: Int
         switch intensity {
-        case 0.75: .archer
-        case 1.0: .oneArm
-        default: .regular
+        case 0.75: offset = 1
+        case 1.0: offset = 2
+        default: offset = 0
         }
+        let target = min(start + offset, allCases.count - 1)
+        return allCases[target]
+    }
+
+    static func progressionLabel(from start: PushUpVariant) -> String {
+        let levels = (0...2).map { offset in
+            let idx = min(start.index + offset, allCases.count - 1)
+            return allCases[idx].rawValue
+        }
+        return levels.joined(separator: " → ")
     }
 }

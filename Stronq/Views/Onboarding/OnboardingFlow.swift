@@ -9,6 +9,7 @@ struct OnboardingFlow: View {
     @State private var includeIntro = true
     @State private var selectedTemplate: ProgramTemplate = .classic
     @State private var exerciseWeights: [String: Double] = [:]
+    @State private var pushUpStart: PushUpVariant = .regular
     @State private var syncHealth = false
     @State private var healthKitManager = HealthKitManager()
 
@@ -265,20 +266,43 @@ struct OnboardingFlow: View {
     }
 
     private func bodyweightCard(exercise: ProgramTemplate.TemplateExercise) -> some View {
-        HStack(spacing: 14) {
-            Image(systemName: exercise.icon)
-                .font(.title3)
-                .foregroundStyle(theme.accentColor)
-
-            VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: exercise.icon)
+                    .font(.title3)
+                    .foregroundStyle(theme.accentColor)
                 Text(exercise.name)
                     .font(.headline)
-                Text("Regular → Archer → One Arm")
-                    .font(.caption)
-                    .foregroundStyle(theme.textSecondary)
+                Spacer()
             }
 
-            Spacer()
+            Text("Starting level")
+                .font(.caption)
+                .foregroundStyle(theme.textSecondary)
+
+            HStack(spacing: 6) {
+                ForEach(PushUpVariant.allCases, id: \.self) { variant in
+                    let isSelected = pushUpStart == variant
+                    Button {
+                        pushUpStart = variant
+                    } label: {
+                        Text(variant.rawValue)
+                            .font(.caption2.weight(.medium))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(
+                                isSelected ? theme.accentColor : Color.white.opacity(0.08),
+                                in: RoundedRectangle(cornerRadius: 8)
+                            )
+                            .foregroundStyle(isSelected ? .black : theme.textSecondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            Text(PushUpVariant.progressionLabel(from: pushUpStart))
+                .font(.caption)
+                .foregroundStyle(theme.accentColor)
         }
         .padding(16)
         .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 16))
@@ -453,7 +477,8 @@ struct OnboardingFlow: View {
                 initial10RM: rm,
                 weightIncrement: increment,
                 unit: unit,
-                sortOrder: index
+                sortOrder: index,
+                pushUpStart: templateEx.type == .bodyweight ? pushUpStart : .regular
             )
             exercise.program = program
             program.exercises.append(exercise)
