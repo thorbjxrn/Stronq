@@ -42,12 +42,13 @@ targets:
     platform: iOS
     sources:
       - path: StronqLiveActivity
-    info:
-      path: StronqLiveActivity/Info.plist
+        excludes:
+          - "Info.plist"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.Stronq.LiveActivity
         GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: StronqLiveActivity/Info.plist
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
 
   StronqTests:

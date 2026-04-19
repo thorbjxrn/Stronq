@@ -81,7 +81,6 @@
 		02FA8D23491F82B25A51AB76 /* BarbellGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbellGlyph.swift; sourceTree = "<group>"; };
 		082358CD5AD7ABC389513246 /* Program.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Program.swift; sourceTree = "<group>"; };
 		0D489585F4838BBA41E4FB9D /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
-		1600952889EC2AC1E84FBEA2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		177E03AB36B1E231D1D863D4 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		2214F00690B639441B5075BA /* WorkoutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutViewModel.swift; sourceTree = "<group>"; };
 		243DC283DE3E8E1D9DDDB2F9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -300,7 +299,6 @@
 		F055E61A4885A8E666BDC839 /* StronqLiveActivity */ = {
 			isa = PBXGroup;
 			children = (
-				1600952889EC2AC1E84FBEA2 /* Info.plist */,
 				CA31A0C3E90E17D5C3757829 /* StronqLiveActivityBundle.swift */,
 				2E7EA2F66D30ACE9F9719DF4 /* StronqLiveActivityWidget.swift */,
 			);
