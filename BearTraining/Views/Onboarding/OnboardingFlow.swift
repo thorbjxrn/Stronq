@@ -111,17 +111,16 @@ struct OnboardingFlow: View {
     // MARK: - Weight Setup
 
     private var weightSetupStep: some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 8) {
-                Text("Your 10RM")
-                    .font(.title2.bold())
-                Text("A conservative estimate of the most you can\nlift for 10 reps with good form.")
-                    .font(.subheadline)
-                    .foregroundStyle(theme.textSecondary)
-                    .multilineTextAlignment(.center)
-            }
-            .padding(.top, 32)
-            .padding(.bottom, 8)
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Your 10RM")
+                .font(.system(size: 28, weight: .bold))
+                .padding(.top, 32)
+
+            Text("A conservative estimate of the most\nyou can lift for 10 reps with good form.")
+                .font(.subheadline)
+                .foregroundStyle(theme.textSecondary)
+                .lineSpacing(4)
+                .padding(.top, 8)
 
             Picker("Unit", selection: $unit) {
                 Text("kg").tag(WeightUnit.kg)
@@ -129,7 +128,7 @@ struct OnboardingFlow: View {
             }
             .pickerStyle(.segmented)
             .frame(maxWidth: 140)
-            .padding(.bottom, 24)
+            .padding(.top, 16)
             .onChange(of: unit) {
                 if unit == .lbs {
                     benchRM = 135
@@ -142,7 +141,7 @@ struct OnboardingFlow: View {
 
             Spacer()
 
-            VStack(spacing: 24) {
+            VStack(spacing: 16) {
                 weightCard(
                     name: "Bench Press",
                     icon: "figure.strengthtraining.traditional",
@@ -157,25 +156,14 @@ struct OnboardingFlow: View {
                     increment: unit == .kg ? 5 : 10
                 )
             }
-            .padding(.horizontal, 24)
 
             Spacer()
-
-            VStack(spacing: 4) {
-                Text("Bench first, then deadlift — every session.")
-                    .font(.caption)
-                    .foregroundStyle(theme.textSecondary)
-                Text("No arms, no calves. Just these two.")
-                    .font(.caption)
-                    .foregroundStyle(theme.textSecondary)
-            }
-            .padding(.bottom, 8)
 
             ctaButton("Continue") {
                 withAnimation { step = 2 }
             }
-            .padding(.horizontal, 24)
         }
+        .padding(.horizontal, 28)
     }
 
     private func weightCard(
@@ -232,37 +220,44 @@ struct OnboardingFlow: View {
     // MARK: - Config
 
     private var configStep: some View {
-        VStack(spacing: 24) {
-            Spacer()
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Setup")
+                .font(.system(size: 28, weight: .bold))
+                .padding(.top, 32)
 
-            Text("Program Setup")
-                .font(.title2.bold())
+            Text("A few options before you start.")
+                .font(.subheadline)
+                .foregroundStyle(theme.textSecondary)
+                .padding(.top, 8)
 
             VStack(spacing: 12) {
-                Toggle("Include 2-Week Intro Cycle", isOn: $includeIntro)
+                VStack(alignment: .leading, spacing: 8) {
+                    Toggle("Include 2-Week Intro Cycle", isOn: $includeIntro)
+                        .tint(theme.accentColor)
+                        .padding(16)
+                        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
+
+                    Text("Builds up tonnage gradually before the\nfull Heavy-Light-Medium cycle.")
+                        .font(.caption)
+                        .foregroundStyle(theme.textSecondary)
+                        .padding(.leading, 4)
+                }
+
+                if healthKitManager.isAvailable {
+                    Toggle(isOn: $syncHealth) {
+                        Label("Sync with Apple Health", systemImage: "heart.fill")
+                    }
                     .tint(theme.accentColor)
                     .padding(16)
                     .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
-
-                Text("The intro builds up tonnage gradually before\nthe full Heavy-Light-Medium cycle begins.")
-                    .font(.caption)
-                    .foregroundStyle(theme.textSecondary)
-                    .multilineTextAlignment(.center)
-            }
-
-            if healthKitManager.isAvailable {
-                Toggle(isOn: $syncHealth) {
-                    Label("Sync with Apple Health", systemImage: "heart.fill")
-                }
-                .tint(theme.accentColor)
-                .padding(16)
-                .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
-                .onChange(of: syncHealth) {
-                    if syncHealth {
-                        Task { await healthKitManager.requestAuthorization() }
+                    .onChange(of: syncHealth) {
+                        if syncHealth {
+                            Task { await healthKitManager.requestAuthorization() }
+                        }
                     }
                 }
             }
+            .padding(.top, 32)
 
             Spacer()
 
@@ -270,7 +265,7 @@ struct OnboardingFlow: View {
                 withAnimation { step = 3 }
             }
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, 28)
     }
 
     // MARK: - Ready
