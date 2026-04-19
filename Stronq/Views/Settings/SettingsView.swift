@@ -22,7 +22,6 @@ struct SettingsView: View {
                     exercisesSection
                     programSection
                     remindersSection
-                    bodyweightSection
                     appearanceSection
                     premiumSection
                     aboutSection
@@ -140,6 +139,12 @@ struct SettingsView: View {
                         }
                         .buttonStyle(.plain)
                     }
+                }
+
+                if reminderManager.reminderDays.count != 3 {
+                    Text("The program is designed for 3 days per week.")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
                 }
             }
         }
