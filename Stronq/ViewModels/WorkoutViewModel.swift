@@ -303,10 +303,12 @@ final class WorkoutViewModel {
 
         var counts: [String: Int] = [:]
         for exercise in program.exercises {
-            counts[exercise.name] = session.completedSets
-                .filter { $0.exerciseName == exercise.name }
-                .map(\.seriesNumber)
-                .max() ?? 0
+            let allSets = session.completedSets.filter { $0.exerciseName == exercise.name }
+            let seriesNumbers = Set(allSets.map(\.seriesNumber))
+            counts[exercise.name] = seriesNumbers.filter { series in
+                let setsInSeries = allSets.filter { $0.seriesNumber == series }
+                return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
+            }.count
         }
         return counts
     }
