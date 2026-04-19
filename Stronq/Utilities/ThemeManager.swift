@@ -57,7 +57,8 @@ enum AppTheme: String, CaseIterable {
 
     var accentColor: Color {
         switch self {
-        case .stronq: Color(red: 0.96, green: 0.65, blue: 0.14)
+        // Warm brass-gold — shifted from orange toward yellow
+        case .stronq: Color(red: 0.92, green: 0.72, blue: 0.22)
         case .chalk: Color(red: 0.45, green: 0.43, blue: 0.40)
         case .coffee: Color(red: 0.72, green: 0.58, blue: 0.42)
         case .bear: Color(red: 0.82, green: 0.52, blue: 0.22)
@@ -69,7 +70,8 @@ enum AppTheme: String, CaseIterable {
 
     var backgroundColor: Color {
         switch self {
-        case .stronq: Color(red: 0.08, green: 0.08, blue: 0.10)
+        // Subtle cool-blue undertone — breaks the orange+black combo
+        case .stronq: Color(red: 0.07, green: 0.07, blue: 0.12)
         case .chalk: Color(.systemBackground)
         case .coffee: Color(red: 0.04, green: 0.04, blue: 0.04)
         case .bear: Color(red: 0.08, green: 0.06, blue: 0.04)
@@ -81,7 +83,7 @@ enum AppTheme: String, CaseIterable {
 
     var cardColor: Color {
         switch self {
-        case .stronq: Color(red: 0.14, green: 0.14, blue: 0.16)
+        case .stronq: Color(red: 0.12, green: 0.12, blue: 0.17)
         case .chalk: Color(.secondarySystemBackground)
         case .coffee: Color(red: 0.10, green: 0.09, blue: 0.08)
         case .bear: Color(red: 0.14, green: 0.11, blue: 0.08)
