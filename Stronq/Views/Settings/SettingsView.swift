@@ -195,7 +195,7 @@ struct SettingsView: View {
                 } label: {
                     HStack {
                         Circle()
-                            .fill(appTheme.accentColor)
+                            .fill(appTheme.themePreviewColor)
                             .frame(width: 24, height: 24)
                         Text(appTheme.displayName)
                         Spacer()
