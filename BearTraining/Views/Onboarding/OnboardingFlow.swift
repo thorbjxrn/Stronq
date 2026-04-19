@@ -60,18 +60,33 @@ struct OnboardingFlow: View {
 
     // MARK: - Welcome
 
+    @State private var titleVisible = false
+    @State private var subtitleVisible = false
+    @State private var linkVisible = false
+
     private var welcomeStep: some View {
         VStack(alignment: .leading, spacing: 0) {
             Spacer()
 
+            // Amber accent line
+            RoundedRectangle(cornerRadius: 1.5)
+                .fill(theme.accentColor)
+                .frame(width: 32, height: 3)
+                .padding(.bottom, 20)
+                .opacity(titleVisible ? 1 : 0)
+
             Text("Stronq")
                 .font(.system(size: 56, weight: .heavy))
+                .opacity(titleVisible ? 1 : 0)
+                .offset(y: titleVisible ? 0 : 12)
 
             Text("Two exercises.\nSix weeks.\nSeriously strong.")
                 .font(.system(size: 20, weight: .regular))
                 .foregroundStyle(theme.textSecondary)
                 .lineSpacing(6)
                 .padding(.top, 16)
+                .opacity(subtitleVisible ? 1 : 0)
+                .offset(y: subtitleVisible ? 0 : 8)
 
             NavigationLink {
                 HowItWorksView()
@@ -81,6 +96,7 @@ struct OnboardingFlow: View {
                     .foregroundStyle(theme.accentColor)
             }
             .padding(.top, 24)
+            .opacity(linkVisible ? 1 : 0)
 
             Spacer()
             Spacer()
@@ -90,6 +106,17 @@ struct OnboardingFlow: View {
             }
         }
         .padding(.horizontal, 28)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.6).delay(0.1)) {
+                titleVisible = true
+            }
+            withAnimation(.easeOut(duration: 0.5).delay(0.35)) {
+                subtitleVisible = true
+            }
+            withAnimation(.easeOut(duration: 0.4).delay(0.6)) {
+                linkVisible = true
+            }
+        }
     }
 
     // MARK: - Weight Setup

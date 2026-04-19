@@ -12,6 +12,8 @@ struct LaunchBurstView: View {
     @State private var textOffset: CGFloat = 20
     @State private var bgBrightness: Double = 0
     @State private var pulseScale: CGFloat = 1
+    @State private var exitOpacity: Double = 1
+    @State private var exitScale: CGFloat = 1
 
     var body: some View {
         ZStack {
@@ -19,19 +21,16 @@ struct LaunchBurstView: View {
                 .brightness(bgBrightness)
                 .ignoresSafeArea()
 
-            // Expanding ring
             Circle()
                 .strokeBorder(theme.accentColor, lineWidth: 3)
                 .scaleEffect(ringScale)
                 .opacity(ringOpacity)
 
-            // Second ring, delayed
             Circle()
                 .strokeBorder(theme.accentColor.opacity(0.4), lineWidth: 2)
                 .scaleEffect(ringScale * 0.7)
                 .opacity(ringOpacity)
 
-            // Center content
             VStack(spacing: 20) {
                 Image(systemName: "figure.strengthtraining.traditional")
                     .font(.system(size: 64, weight: .light))
@@ -42,7 +41,7 @@ struct LaunchBurstView: View {
 
                 VStack(spacing: 8) {
                     Text("Stronq")
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .font(.system(size: 36, weight: .bold))
 
                     Text("Let's lift.")
                         .font(.subheadline)
@@ -51,7 +50,9 @@ struct LaunchBurstView: View {
                 .opacity(textOpacity)
                 .offset(y: textOffset)
             }
+            .scaleEffect(exitScale)
         }
+        .opacity(exitOpacity)
         .onAppear {
             // Ring burst
             withAnimation(.easeOut(duration: 0.6)) {
@@ -84,8 +85,16 @@ struct LaunchBurstView: View {
                 textOffset = 0
             }
 
-            // Dismiss after animation
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.2) {
+            // Exit animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                withAnimation(.easeIn(duration: 0.5)) {
+                    exitOpacity = 0
+                    exitScale = 1.1
+                }
+            }
+
+            // Dismiss after exit completes
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 onFinish()
             }
         }
