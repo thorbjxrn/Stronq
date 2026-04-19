@@ -23,6 +23,15 @@ enum DayType: String, Codable, CaseIterable {
         }
     }
 
+    static func sortOrder(_ rawValue: String) -> Int {
+        switch rawValue {
+        case "Heavy": 0
+        case "Light": 1
+        case "Medium": 2
+        default: 3
+        }
+    }
+
     var shortLabel: String {
         switch self {
         case .heavy: "H"

@@ -58,7 +58,7 @@ struct ProgramTemplate: Identifiable {
                 icon: "figure.squat"
             ),
             TemplateExercise(
-                name: "HK Pulldown",
+                name: "Half-Kneeling Pulldown",
                 type: .weighted,
                 defaultRM: 25, defaultRMLbs: 55,
                 increment: 2.5, incrementLbs: 5,
