@@ -35,17 +35,20 @@ struct ExerciseAlternative: Identifiable {
         ],
     ]
 
-    static func alternatives(for exerciseName: String) -> [ExerciseAlternative] {
-        let name = exerciseName.lowercased()
-        for (key, alts) in alternatives {
-            let keyMatch = key.lowercased() == name || name.contains(key.lowercased().prefix(4))
-            let altMatch = alts.contains { $0.name.lowercased() == name }
+    private static let aliases: [String: String] = [
+        "HK Pulldown": "Half-Kneeling Pulldown",
+    ]
 
-            if keyMatch {
-                return alts
-            }
-            if altMatch {
-                var result = alts.filter { $0.name.lowercased() != name }
+    static func alternatives(for exerciseName: String) -> [ExerciseAlternative] {
+        let canonicalName = aliases[exerciseName] ?? exerciseName
+
+        if let alts = alternatives[canonicalName] {
+            return alts
+        }
+
+        for (key, alts) in alternatives {
+            if alts.contains(where: { $0.name == canonicalName }) {
+                var result = alts.filter { $0.name != canonicalName }
                 result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: "figure.strengthtraining.traditional"), at: 0)
                 return result
             }
