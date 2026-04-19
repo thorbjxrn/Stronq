@@ -64,11 +64,11 @@ enum PushUpVariant: String, Codable, CaseIterable {
     var shortName: String {
         switch self {
         case .kneeling: "Kneel"
-        case .regular: "Reg"
-        case .diamond: "Diamd"
-        case .archer: "Archr"
+        case .regular: "  Reg"
+        case .diamond: " Diam"
+        case .archer: " Arch"
         case .oneArm: "1-Arm"
-        case .oneArmOneLeg: "1A-1L"
+        case .oneArmOneLeg: "1A1Lg"
         }
     }
 

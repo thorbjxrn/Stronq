@@ -42,100 +42,84 @@ struct TodayView: View {
         }
     }
 
-    @State private var showingSeriesInfo = false
-
     private func workoutPreview(program: Program) -> some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                // Day header
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Week \(viewModel.weekNumber) · \(DeLormeEngine.suggestedDay(for: viewModel.dayType))")
-                            .font(.caption)
-                            .foregroundStyle(theme.textSecondary)
-                        Text(viewModel.dayType.rawValue)
-                            .font(.title2.bold())
-                    }
-                    Spacer()
-                    // Series info
-                    HStack(spacing: 4) {
-                        if viewModel.seriesMode == .max {
-                            Image(systemName: "flame")
-                                .foregroundStyle(theme.accentColor)
-                            Text("Max series")
-                        } else {
-                            let counts = viewModel.plannedExercises.map { ex in
-                                viewModel.seriesPerExerciseCount(ex.name)
-                            }
-                            if Set(counts).count == 1 {
-                                Text("\(counts.first ?? 5) series")
-                            } else {
-                                Text(counts.map(String.init).joined(separator: "/") + " series")
-                            }
-                        }
-                    }
-                    .font(.subheadline)
-                    .foregroundStyle(theme.textSecondary)
-
-                    Button {
-                        showingSeriesInfo = true
-                    } label: {
-                        Image(systemName: "info.circle")
-                            .font(.subheadline)
-                            .foregroundStyle(theme.accentColor)
-                    }
+        VStack(spacing: 0) {
+            // Day header
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Week \(viewModel.weekNumber) · \(DeLormeEngine.suggestedDay(for: viewModel.dayType))")
+                        .font(.caption)
+                        .foregroundStyle(theme.textSecondary)
+                    Text(viewModel.dayType.rawValue)
+                        .font(.title2.bold())
                 }
-                .padding(.top, 8)
+                Spacer()
+            }
+            .padding(.horizontal)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
 
-                // Exercise preview
-                ForEach(viewModel.plannedExercises, id: \.name) { exercise in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(exercise.name)
-                            .font(.subheadline.bold())
+            ScrollView {
+                VStack(spacing: 10) {
+                    ForEach(viewModel.plannedExercises, id: \.name) { exercise in
+                        let seriesCount = viewModel.seriesPerExerciseCount(exercise.name)
+                        let isMax = viewModel.seriesModeForExercise(exercise.name) == .max
 
-                        ForEach(exercise.sets, id: \.intensity) { set in
+                        VStack(alignment: .leading, spacing: 6) {
                             HStack {
-                                Text(set.intensityLabel)
-                                    .font(.caption2.bold())
-                                    .foregroundStyle(theme.textSecondary)
-                                    .frame(width: 36, alignment: .leading)
-                                Text(set.displayWeight)
-                                    .font(.system(.body, design: .rounded, weight: .bold))
-                                if exercise.type == .weighted {
-                                    Text(exercise.unit.symbol)
+                                Text(exercise.name)
+                                    .font(.subheadline.bold())
+                                Spacer()
+                                if isMax {
+                                    Label("max series", systemImage: "flame")
+                                        .font(.caption2)
+                                        .foregroundStyle(theme.accentColor)
+                                } else {
+                                    Text("\(seriesCount) series")
                                         .font(.caption2)
                                         .foregroundStyle(theme.textSecondary)
                                 }
-                                Spacer()
-                                Text("x5")
-                                    .font(.caption)
-                                    .foregroundStyle(theme.textSecondary)
+                            }
+
+                            ForEach(exercise.sets, id: \.intensity) { set in
+                                HStack {
+                                    Text(set.intensityLabel)
+                                        .font(.caption2.bold())
+                                        .foregroundStyle(theme.textSecondary)
+                                        .frame(width: 36, alignment: .leading)
+                                    Text(set.displayWeight)
+                                        .font(.system(.body, design: .rounded, weight: .bold))
+                                    if exercise.type == .weighted {
+                                        Text(exercise.unit.symbol)
+                                            .font(.caption2)
+                                            .foregroundStyle(theme.textSecondary)
+                                    }
+                                    Spacer()
+                                    Text("x5")
+                                        .font(.caption)
+                                        .foregroundStyle(theme.textSecondary)
+                                }
                             }
                         }
+                        .padding(12)
+                        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
                     }
-                    .padding(12)
-                    .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
                 }
+                .padding(.horizontal)
+            }
 
-                // Start button
-                Button {
-                    viewModel.startWorkout(program: program, modelContext: modelContext)
-                } label: {
-                    Text("Start Workout")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(theme.accentColor, in: RoundedRectangle(cornerRadius: 14))
-                        .foregroundStyle(.black)
-                }
-                .padding(.top, 8)
+            // Start button
+            Button {
+                viewModel.startWorkout(program: program, modelContext: modelContext)
+            } label: {
+                Text("Start Workout")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(theme.accentColor, in: RoundedRectangle(cornerRadius: 14))
+                    .foregroundStyle(.black)
             }
             .padding()
-        }
-        .alert("What's a series?", isPresented: $showingSeriesInfo) {
-            Button("Got it", role: .cancel) {}
-        } message: {
-            Text("A series is one round of all your sets (50% → 75% → 100%). On Heavy day, do as many series as you can. When you hit 5 full series, your weights go up.")
         }
     }
 
