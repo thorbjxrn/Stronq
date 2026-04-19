@@ -252,7 +252,7 @@ struct WeekCard: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     ForEach(exercise.sets, id: \.intensity) { set in
-                        Text(set.displayWeight)
+                        Text(set.shortDisplayWeight)
                             .font(.system(.caption, design: .monospaced, weight: .semibold))
                             .foregroundStyle(.white.opacity(0.85))
                             .frame(width: 44, alignment: .trailing)

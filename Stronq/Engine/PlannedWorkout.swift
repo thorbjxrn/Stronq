@@ -15,6 +15,13 @@ struct PlannedSet {
         }
     }
 
+    var shortDisplayWeight: String {
+        if let variant = pushUpVariant {
+            return variant.shortName
+        }
+        return displayWeight
+    }
+
     var displayWeight: String {
         if let variant = pushUpVariant {
             return variant.rawValue

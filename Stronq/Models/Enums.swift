@@ -52,6 +52,17 @@ enum PushUpVariant: String, Codable, CaseIterable {
     case oneArm = "One Arm"
     case oneArmOneLeg = "One Arm One Leg"
 
+    var shortName: String {
+        switch self {
+        case .kneeling: "Kneel"
+        case .regular: "Reg"
+        case .diamond: "Diam"
+        case .archer: "Arch"
+        case .oneArm: "1-Arm"
+        case .oneArmOneLeg: "1A1L"
+        }
+    }
+
     var index: Int {
         Self.allCases.firstIndex(of: self) ?? 0
     }
