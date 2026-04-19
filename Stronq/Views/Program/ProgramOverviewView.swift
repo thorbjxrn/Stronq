@@ -139,23 +139,28 @@ struct WeekCard: View {
             ForEach(days, id: \.self) { dayType in
                 let session = findSession(dayType)
                 let done = session?.isCompleted == true
-                let seriesCount = session?.completedSets.filter(\.isCompleted).map(\.seriesNumber).max() ?? 0
-                let hitFive = done && seriesCount >= 5
+                let exerciseNames = Set((session?.completedSets ?? []).map(\.exerciseName))
+                let allHitFive = done && !exerciseNames.isEmpty && exerciseNames.allSatisfy { name in
+                    let max = (session?.completedSets ?? [])
+                        .filter { $0.exerciseName == name && $0.isCompleted }
+                        .map(\.seriesNumber).max() ?? 0
+                    return max >= 5
+                }
 
                 VStack(spacing: 3) {
                     Circle()
-                        .fill(hitFive ? theme.completedColor :
+                        .fill(allHitFive ? theme.completedColor :
                               done ? theme.accentColor :
                               Color.white.opacity(0.1))
                         .frame(width: 20, height: 20)
                         .overlay {
-                            if hitFive {
+                            if allHitFive {
                                 Image(systemName: "checkmark")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(.black)
                             } else if done {
-                                Text("\(seriesCount)")
-                                    .font(.system(size: 9, weight: .bold))
+                                Image(systemName: "circle.fill")
+                                    .font(.system(size: 6))
                                     .foregroundStyle(.black)
                             }
                         }
@@ -193,32 +198,37 @@ struct WeekCard: View {
         )
         let session = findSession(dayType)
         let isDone = session?.isCompleted == true
-        let completedSeries = session?.completedSets.filter(\.isCompleted).map(\.seriesNumber).max() ?? 0
-        let hitFive = isDone && completedSeries >= 5
+        let exerciseSeries: [(name: String, count: Int)] = isDone ? program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder }).map { ex in
+            let count = (session?.completedSets ?? [])
+                .filter { $0.exerciseName == ex.name && $0.isCompleted }
+                .map(\.seriesNumber).max() ?? 0
+            return (name: ex.name, count: count)
+        } : []
+        let allHitFive = isDone && !exerciseSeries.isEmpty && exerciseSeries.allSatisfy { $0.count >= 5 }
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(dayType.rawValue)
                     .font(.subheadline.bold())
-                    .foregroundStyle(hitFive ? theme.completedColor :
+                    .foregroundStyle(allHitFive ? theme.completedColor :
                                      isDone ? theme.accentColor : theme.accentColor)
 
-                if hitFive {
+                if allHitFive {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.caption)
                         .foregroundStyle(theme.completedColor)
-                } else if isDone {
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 6))
-                        .foregroundStyle(theme.accentColor)
                 }
 
                 Spacer()
 
                 if isDone {
-                    Text("\(completedSeries) series")
-                        .font(.caption2)
-                        .foregroundStyle(hitFive ? theme.completedColor : theme.accentColor)
+                    HStack(spacing: 8) {
+                        ForEach(exerciseSeries, id: \.name) { es in
+                            Text("\(es.count)")
+                                .font(.caption2.bold())
+                                .foregroundStyle(es.count >= 5 ? theme.completedColor : theme.accentColor)
+                        }
+                    }
                 } else {
                     switch mode {
                     case .max:
