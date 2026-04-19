@@ -170,25 +170,39 @@ struct WeekCard: View {
             dayType: dayType,
             week: week
         )
+        let session = program.session(week: week, dayType: dayType)
+        let isDone = session?.isCompleted == true
+        let completedSeries = session?.completedSets.map(\.seriesNumber).max() ?? 0
 
         return VStack(alignment: .leading, spacing: 8) {
-            // Day header
             HStack {
                 Text(dayType.rawValue)
                     .font(.subheadline.bold())
-                    .foregroundStyle(theme.accentColor)
+                    .foregroundStyle(isDone ? theme.completedColor : theme.accentColor)
+
+                if isDone {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(theme.completedColor)
+                }
 
                 Spacer()
 
-                switch mode {
-                case .max:
-                    Label("max series", systemImage: "flame")
+                if isDone {
+                    Text("\(completedSeries) series done")
                         .font(.caption2)
-                        .foregroundStyle(theme.accentColor.opacity(0.8))
-                case .fixed(let n):
-                    Text("\(n) series")
-                        .font(.caption2)
-                        .foregroundStyle(theme.textSecondary)
+                        .foregroundStyle(theme.completedColor)
+                } else {
+                    switch mode {
+                    case .max:
+                        Label("max series", systemImage: "flame")
+                            .font(.caption2)
+                            .foregroundStyle(theme.accentColor.opacity(0.8))
+                    case .fixed(let n):
+                        Text("\(n) series")
+                            .font(.caption2)
+                            .foregroundStyle(theme.textSecondary)
+                    }
                 }
             }
 
