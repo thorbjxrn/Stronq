@@ -13,6 +13,13 @@ final class TimerManager {
     ) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
 
+        // End existing
+        if let existing = activity {
+            let a = existing
+            activity = nil
+            Task { await a.end(nil, dismissalPolicy: .immediate) }
+        }
+
         let attributes = RestTimerAttributes(exerciseName: exerciseName)
         let state = RestTimerAttributes.ContentState(
             timeRemaining: duration,
@@ -26,10 +33,11 @@ final class TimerManager {
                 pushType: nil
             )
         } catch {
+            print("[LiveActivity] Failed: \(error)")
         }
     }
 
-    func updateLiveActivity(timeRemaining: Int) async {
+    func updateLiveActivity(timeRemaining: Int) {
         guard let activity else { return }
 
         let state = RestTimerAttributes.ContentState(
@@ -37,18 +45,14 @@ final class TimerManager {
             nextSetInfo: activity.content.state.nextSetInfo
         )
 
-        await activity.update(.init(state: state, staleDate: nil))
+        let a = activity
+        Task { await a.update(.init(state: state, staleDate: nil)) }
     }
 
-    func endLiveActivity() async {
+    func endLiveActivity() {
         guard let activity else { return }
-
-        let finalState = RestTimerAttributes.ContentState(
-            timeRemaining: 0,
-            nextSetInfo: "Rest complete"
-        )
-
-        await activity.end(.init(state: finalState, staleDate: nil), dismissalPolicy: .immediate)
+        let a = activity
         self.activity = nil
+        Task { await a.end(nil, dismissalPolicy: .immediate) }
     }
 }
