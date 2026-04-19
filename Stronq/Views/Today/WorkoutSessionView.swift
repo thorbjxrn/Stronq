@@ -4,6 +4,7 @@ import SwiftData
 struct WorkoutSessionView: View {
     var viewModel: WorkoutViewModel
     let program: Program
+    var onFinish: ((SessionSummary) -> Void)?
     @Environment(\.modelContext) private var modelContext
     @Environment(ThemeManager.self) private var theme
     @State private var showingFinishConfirm = false
@@ -269,13 +270,21 @@ struct WorkoutSessionView: View {
         return false
     }
 
+    private func finishAndShow() {
+        let summary = viewModel.activeSession.map { SessionSummary(session: $0) }
+        viewModel.finishWorkout(program: program, modelContext: modelContext)
+        if let summary, let onFinish {
+            onFinish(summary)
+        }
+    }
+
     // MARK: - Bottom Bar
 
     private var bottomBar: some View {
         Group {
             if allExercisesDone {
                 Button {
-                    viewModel.finishWorkout(program: program, modelContext: modelContext)
+                    finishAndShow()
                 } label: {
                     Label("Finish Workout", systemImage: "flag.checkered")
                         .font(.headline)
@@ -294,7 +303,7 @@ struct WorkoutSessionView: View {
                     }
                     .alert("End workout early?", isPresented: $showingFinishConfirm) {
                         Button("Save & End") {
-                            viewModel.finishWorkout(program: program, modelContext: modelContext)
+                            finishAndShow()
                         }
                         Button("Discard", role: .destructive) {
                             viewModel.cancelWorkout(program: program, modelContext: modelContext)

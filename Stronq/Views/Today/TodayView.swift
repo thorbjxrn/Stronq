@@ -6,6 +6,8 @@ struct TodayView: View {
     @Environment(ThemeManager.self) private var theme
     @Query private var programs: [Program]
     @State private var viewModel = WorkoutViewModel()
+    @State private var showingComplete = false
+    @State private var lastSessionSummary: SessionSummary?
 
     private var program: Program? { programs.first }
 
@@ -15,8 +17,13 @@ struct TodayView: View {
                 theme.backgroundColor.ignoresSafeArea()
 
                 if let program {
-                    if viewModel.isWorkoutActive {
-                        WorkoutSessionView(viewModel: viewModel, program: program)
+                    if showingComplete, let summary = lastSessionSummary {
+                        workoutCompleteView(summary: summary, program: program)
+                    } else if viewModel.isWorkoutActive {
+                        WorkoutSessionView(viewModel: viewModel, program: program, onFinish: { summary in
+                            lastSessionSummary = summary
+                            withAnimation { showingComplete = true }
+                        })
                     } else if viewModel.hasWorkoutToday {
                         workoutPreview(program: program)
                     } else {
@@ -174,6 +181,69 @@ struct TodayView: View {
         value.truncatingRemainder(dividingBy: 1) == 0
             ? String(format: "%.0f", value)
             : String(format: "%.1f", value)
+    }
+
+    // MARK: - Workout Complete
+
+    private func workoutCompleteView(summary: SessionSummary, program: Program) -> some View {
+        VStack(spacing: 0) {
+            Spacer()
+
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 56))
+                .foregroundStyle(theme.completedColor)
+                .padding(.bottom, 20)
+
+            Text("Well done")
+                .font(.system(size: 32, weight: .bold))
+                .padding(.bottom, 8)
+
+            Text(summary.dayType.rawValue)
+                .font(.subheadline)
+                .foregroundStyle(theme.textSecondary)
+
+            VStack(spacing: 12) {
+                HStack(spacing: 24) {
+                    statBubble(value: summary.duration, label: "Time")
+                    statBubble(value: "\(summary.seriesCount)", label: "Series")
+                    statBubble(value: formatted(summary.volume), label: "Volume")
+                }
+            }
+            .padding(.top, 32)
+
+            Spacer()
+            Spacer()
+
+            Button {
+                withAnimation {
+                    showingComplete = false
+                    lastSessionSummary = nil
+                    viewModel.prepareWorkout(program: program)
+                }
+            } label: {
+                Text(viewModel.hasWorkoutToday ? "Next Workout" : "Done")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(theme.accentColor, in: RoundedRectangle(cornerRadius: 14))
+                    .foregroundStyle(.black)
+            }
+            .padding(.bottom, 8)
+        }
+        .padding(.horizontal, 28)
+    }
+
+    private func statBubble(value: String, label: String) -> some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.system(.title3, design: .rounded, weight: .bold))
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(theme.textSecondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
     }
 
     private var noProgram: some View {

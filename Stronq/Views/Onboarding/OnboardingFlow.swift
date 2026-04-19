@@ -59,11 +59,6 @@ struct OnboardingFlow: View {
         VStack(alignment: .leading, spacing: 0) {
             Spacer()
 
-            // Barbell glyph
-            BarbellGlyph(color: theme.accentColor)
-                .padding(.bottom, 24)
-                .opacity(titleVisible ? 1 : 0)
-
             Text("Stronq")
                 .font(.system(size: 56, weight: .heavy))
                 .opacity(titleVisible ? 1 : 0)
@@ -77,6 +72,10 @@ struct OnboardingFlow: View {
                 .opacity(subtitleVisible ? 1 : 0)
                 .offset(y: subtitleVisible ? 0 : 8)
 
+            BarbellGlyph(color: theme.accentColor)
+                .padding(.top, 24)
+                .opacity(subtitleVisible ? 1 : 0)
+
             NavigationLink {
                 HowItWorksView()
             } label: {
@@ -84,7 +83,7 @@ struct OnboardingFlow: View {
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(theme.accentColor)
             }
-            .padding(.top, 24)
+            .padding(.top, 20)
             .opacity(linkVisible ? 1 : 0)
 
             Spacer()

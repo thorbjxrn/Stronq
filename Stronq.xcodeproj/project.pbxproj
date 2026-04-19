@@ -28,6 +28,7 @@
 		97E142F5E3A72AE623EA347C /* DeLormeEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC780DB2A1EC3AF137DE930D /* DeLormeEngine.swift */; };
 		97F2E35EFA03B7871D781C47 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243DC283DE3E8E1D9DDDB2F9 /* SettingsView.swift */; };
 		A19F82860B61ADAE6840DBEA /* ProgramOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE273821247AA091E3326C40 /* ProgramOverviewView.swift */; };
+		ABD39529C22692A1C3F482AA /* SessionSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C070DD3599C314979085F8A2 /* SessionSummary.swift */; };
 		AC0F347539FE432A1612B3E9 /* ExerciseCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785BE572FCB6E03C11C018DC /* ExerciseCatalog.swift */; };
 		BE69909ABF9D9C4FFD847928 /* BodyweightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529C5AF6B1D9D4E1E3D97B22 /* BodyweightEntry.swift */; };
 		C8F55B0BCFEE479F192BF5FA /* BarbellGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FA8D23491F82B25A51AB76 /* BarbellGlyph.swift */; };
@@ -78,6 +79,7 @@
 		AC780DB2A1EC3AF137DE930D /* DeLormeEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeLormeEngine.swift; sourceTree = "<group>"; };
 		BBE0B6B0505FA78098F63C0A /* WorkoutSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSessionView.swift; sourceTree = "<group>"; };
 		BE273821247AA091E3326C40 /* ProgramOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramOverviewView.swift; sourceTree = "<group>"; };
+		C070DD3599C314979085F8A2 /* SessionSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSummary.swift; sourceTree = "<group>"; };
 		C4B5EAF7CFDE28A2147BEA6C /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
 		DA55539172EB93E72088FB6E /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		DB88F98DF2816CD0CECDDB6C /* StronqTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StronqTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,6 +140,7 @@
 				177E03AB36B1E231D1D863D4 /* Exercise.swift */,
 				785BE572FCB6E03C11C018DC /* ExerciseCatalog.swift */,
 				082358CD5AD7ABC389513246 /* Program.swift */,
+				C070DD3599C314979085F8A2 /* SessionSummary.swift */,
 				A96A50854BBB287E0B2E6968 /* WorkoutSession.swift */,
 			);
 			path = Models;
@@ -388,6 +391,7 @@
 				D8F5F4753557CFDB3448BC69 /* ProgressView.swift in Sources */,
 				13EDC82181567D664D73AF5E /* PurchaseManager.swift in Sources */,
 				11EB100E964426B08CCF766E /* ReminderManager.swift in Sources */,
+				ABD39529C22692A1C3F482AA /* SessionSummary.swift in Sources */,
 				97F2E35EFA03B7871D781C47 /* SettingsView.swift in Sources */,
 				89229D21B80F7FB88697F518 /* ThemeManager.swift in Sources */,
 				6637A0CB54BBE20C188B2B16 /* TimerManager.swift in Sources */,
