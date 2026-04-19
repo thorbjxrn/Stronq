@@ -63,8 +63,8 @@ enum AppTheme: String, CaseIterable {
 
     var accentColor: Color {
         switch self {
-        // Muted bronze on pure black — the original Coffee
-        case .stronq: Color(red: 0.72, green: 0.58, blue: 0.42)
+        // Copper-amber — warm but crisp
+        case .stronq: Color(red: 0.82, green: 0.60, blue: 0.36)
         // Classic saturated orange-amber
         case .amber: Color(red: 0.96, green: 0.65, blue: 0.14)
         // Desaturated pink-gold, brushed metal
@@ -84,7 +84,7 @@ enum AppTheme: String, CaseIterable {
 
     var backgroundColor: Color {
         switch self {
-        case .stronq: Color(red: 0.04, green: 0.04, blue: 0.04)
+        case .stronq: Color(red: 0.05, green: 0.04, blue: 0.04)
         case .amber: Color(red: 0.08, green: 0.08, blue: 0.10)
         case .champagne: Color(.systemBackground)
         case .chalk: Color(.systemBackground)
@@ -98,7 +98,8 @@ enum AppTheme: String, CaseIterable {
 
     var cardColor: Color {
         switch self {
-        case .stronq: Color(red: 0.10, green: 0.09, blue: 0.08)
+        // More lift from background
+        case .stronq: Color(red: 0.13, green: 0.11, blue: 0.10)
         case .amber: Color(red: 0.14, green: 0.14, blue: 0.16)
         case .champagne: Color(.secondarySystemBackground)
         case .chalk: Color(.secondarySystemBackground)
@@ -113,7 +114,8 @@ enum AppTheme: String, CaseIterable {
     var textPrimary: Color {
         switch self {
         case .chalk, .champagne, .infrared, .cryo: Color(.label)
-        case .stronq: Color(red: 0.90, green: 0.88, blue: 0.84)
+        // Cool warm white — crisp, not sepia
+        case .stronq: Color(red: 0.94, green: 0.93, blue: 0.91)
         // Bone white
         case .testo: Color(red: 0.95, green: 0.93, blue: 0.90)
         case .tactical: Color(red: 0.80, green: 0.92, blue: 0.82)
@@ -124,7 +126,7 @@ enum AppTheme: String, CaseIterable {
     var textSecondary: Color {
         switch self {
         case .chalk, .champagne, .infrared, .cryo: Color(.secondaryLabel)
-        case .stronq: Color(red: 0.50, green: 0.47, blue: 0.42)
+        case .stronq: Color(red: 0.58, green: 0.54, blue: 0.50)
         case .testo: Color(red: 0.55, green: 0.35, blue: 0.32)
         case .tactical: Color(red: 0.35, green: 0.50, blue: 0.38)
         default: Color(white: 0.6)
@@ -133,7 +135,8 @@ enum AppTheme: String, CaseIterable {
 
     var completedColor: Color {
         switch self {
-        case .stronq: Color(red: 0.75, green: 0.65, blue: 0.35)
+        // Bright gold — clear success
+        case .stronq: Color(red: 0.85, green: 0.72, blue: 0.30)
         case .amber: Color(red: 0.30, green: 0.78, blue: 0.40)
         case .champagne: Color(red: 0.30, green: 0.78, blue: 0.40)
         case .chalk: Color(red: 0.30, green: 0.68, blue: 0.38)
