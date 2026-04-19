@@ -285,7 +285,7 @@ struct WeekCard: View {
                         Text(set.shortDisplayWeight)
                             .font(.system(.caption, design: .monospaced, weight: .semibold))
                             .foregroundStyle(.white.opacity(0.85))
-                            .frame(width: 44, alignment: .trailing)
+                            .frame(width: 52, alignment: .trailing)
                     }
                 }
             }

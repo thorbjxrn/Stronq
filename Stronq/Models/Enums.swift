@@ -65,10 +65,10 @@ enum PushUpVariant: String, Codable, CaseIterable {
         switch self {
         case .kneeling: "Kneel"
         case .regular: "Reg"
-        case .diamond: "Diam"
-        case .archer: "Arch"
+        case .diamond: "Diamd"
+        case .archer: "Archr"
         case .oneArm: "1-Arm"
-        case .oneArmOneLeg: "1A1L"
+        case .oneArmOneLeg: "1A-1L"
         }
     }
 
