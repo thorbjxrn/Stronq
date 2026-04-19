@@ -48,7 +48,7 @@ struct PaywallView: View {
                                 SwiftUI.ProgressView()
                                     .tint(.black)
                             } else {
-                                Text("Upgrade — $3.99")
+                                Text("Upgrade — \(purchaseManager.priceDisplay)")
                                     .font(Typo.heading)
                             }
                         }
@@ -75,6 +75,9 @@ struct PaywallView: View {
             }
         }
         .preferredColorScheme(theme.preferredColorScheme)
+        .onAppear {
+            Task { await purchaseManager.loadProducts() }
+        }
     }
 
     private func featureRow(_ text: String, icon: String) -> some View {

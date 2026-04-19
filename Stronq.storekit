@@ -1,0 +1,43 @@
+{
+  "identifier" : "stronq-storekit",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "premium_001",
+      "localizations" : [
+        {
+          "description" : "Unlock all themes, exercise swapping, and future premium features.",
+          "displayName" : "Stronq Premium",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.thorbjxrn.stronq.premium",
+      "referenceName" : "Stronq Premium",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "stronq",
+    "_developerTeamID" : "228DC29L7W",
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "setting" : "none"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

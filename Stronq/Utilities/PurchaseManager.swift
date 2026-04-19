@@ -8,6 +8,10 @@ final class PurchaseManager {
     private(set) var products: [Product] = []
     private(set) var purchaseError: String?
 
+    var priceDisplay: String {
+        products.first?.displayPrice ?? "$2.99"
+    }
+
     private static let productID = "com.thorbjxrn.stronq.premium"
     private var transactionListener: Task<Void, Never>?
 
