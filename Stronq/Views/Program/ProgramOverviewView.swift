@@ -139,25 +139,23 @@ struct WeekCard: View {
             ForEach(days, id: \.self) { dayType in
                 let session = findSession(dayType)
                 let done = session?.isCompleted == true
-                let sets = session?.completedSets ?? []
-                let hasUncompletedSets = sets.contains { !$0.isCompleted }
-                let allSetsComplete = done && !sets.isEmpty && !hasUncompletedSets
-                let isPartial = done && (sets.isEmpty || hasUncompletedSets)
+                let seriesCount = session?.completedSets.filter(\.isCompleted).map(\.seriesNumber).max() ?? 0
+                let hitFive = done && seriesCount >= 5
 
                 VStack(spacing: 3) {
                     Circle()
-                        .fill(allSetsComplete ? theme.completedColor :
-                              isPartial ? theme.accentColor :
+                        .fill(hitFive ? theme.completedColor :
+                              done ? theme.accentColor :
                               Color.white.opacity(0.1))
                         .frame(width: 20, height: 20)
                         .overlay {
-                            if allSetsComplete {
+                            if hitFive {
                                 Image(systemName: "checkmark")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(.black)
-                            } else if isPartial {
-                                Image(systemName: "minus")
-                                    .font(.system(size: 10, weight: .bold))
+                            } else if done {
+                                Text("\(seriesCount)")
+                                    .font(.system(size: 9, weight: .bold))
                                     .foregroundStyle(.black)
                             }
                         }
@@ -195,35 +193,32 @@ struct WeekCard: View {
         )
         let session = findSession(dayType)
         let isDone = session?.isCompleted == true
-        let sets = session?.completedSets ?? []
-        let hasUncompletedSets = sets.contains { !$0.isCompleted }
-        let allSetsComplete = isDone && !sets.isEmpty && !hasUncompletedSets
-        let isPartial = isDone && (sets.isEmpty || hasUncompletedSets)
         let completedSeries = session?.completedSets.filter(\.isCompleted).map(\.seriesNumber).max() ?? 0
+        let hitFive = isDone && completedSeries >= 5
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(dayType.rawValue)
                     .font(.subheadline.bold())
-                    .foregroundStyle(allSetsComplete ? theme.completedColor :
-                                     isPartial ? theme.accentColor : theme.accentColor)
+                    .foregroundStyle(hitFive ? theme.completedColor :
+                                     isDone ? theme.accentColor : theme.accentColor)
 
-                if allSetsComplete {
+                if hitFive {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.caption)
                         .foregroundStyle(theme.completedColor)
-                } else if isPartial {
-                    Image(systemName: "minus.circle.fill")
-                        .font(.caption)
+                } else if isDone {
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 6))
                         .foregroundStyle(theme.accentColor)
                 }
 
                 Spacer()
 
                 if isDone {
-                    Text("\(completedSeries) series\(isPartial ? " done" : "")")
+                    Text("\(completedSeries) series")
                         .font(.caption2)
-                        .foregroundStyle(allSetsComplete ? theme.completedColor : theme.accentColor)
+                        .foregroundStyle(hitFive ? theme.completedColor : theme.accentColor)
                 } else {
                     switch mode {
                     case .max:
