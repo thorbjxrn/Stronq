@@ -56,23 +56,26 @@ enum PushUpVariant: String, Codable, CaseIterable {
         Self.allCases.firstIndex(of: self) ?? 0
     }
 
-    static func forIntensity(_ intensity: Double, startingLevel: PushUpVariant) -> PushUpVariant {
-        let start = startingLevel.index
+    static let selectableMaxLevels: [PushUpVariant] = [.diamond, .archer, .oneArm, .oneArmOneLeg]
+
+    static func forIntensity(_ intensity: Double, maxLevel: PushUpVariant) -> PushUpVariant {
+        let maxIdx = maxLevel.index
         let offset: Int
         switch intensity {
         case 0.75: offset = 1
-        case 1.0: offset = 2
-        default: offset = 0
+        case 1.0: offset = 0
+        default: offset = 2
         }
-        let target = min(start + offset, allCases.count - 1)
+        let target = max(maxIdx - offset, 0)
         return allCases[target]
     }
 
-    static func progressionLabel(from start: PushUpVariant) -> String {
-        let levels = (0...2).map { offset in
-            let idx = min(start.index + offset, allCases.count - 1)
-            return allCases[idx].rawValue
-        }
-        return levels.joined(separator: " → ")
+    static func progressionLabel(for maxLevel: PushUpVariant) -> String {
+        let levels = [
+            forIntensity(0.5, maxLevel: maxLevel),
+            forIntensity(0.75, maxLevel: maxLevel),
+            forIntensity(1.0, maxLevel: maxLevel)
+        ]
+        return levels.map(\.rawValue).joined(separator: " → ")
     }
 }

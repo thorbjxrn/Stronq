@@ -9,7 +9,7 @@ struct OnboardingFlow: View {
     @State private var includeIntro = true
     @State private var selectedTemplate: ProgramTemplate = .classic
     @State private var exerciseWeights: [String: Double] = [:]
-    @State private var pushUpStart: PushUpVariant = .regular
+    @State private var pushUpStart: PushUpVariant = .oneArm
     @State private var syncHealth = false
     @State private var healthKitManager = HealthKitManager()
 
@@ -276,12 +276,12 @@ struct OnboardingFlow: View {
                 Spacer()
             }
 
-            Text("Starting level")
+            Text("Your hardest variant")
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
 
             HStack(spacing: 6) {
-                ForEach(PushUpVariant.allCases, id: \.self) { variant in
+                ForEach(PushUpVariant.selectableMaxLevels, id: \.self) { variant in
                     let isSelected = pushUpStart == variant
                     Button {
                         pushUpStart = variant
@@ -300,7 +300,7 @@ struct OnboardingFlow: View {
                 }
             }
 
-            Text(PushUpVariant.progressionLabel(from: pushUpStart))
+            Text(PushUpVariant.progressionLabel(for: pushUpStart))
                 .font(.caption)
                 .foregroundStyle(theme.accentColor)
         }

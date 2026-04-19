@@ -84,7 +84,7 @@ struct DeLormeEngine {
                         intensity: intensity,
                         weight: calculateWeight(tenRM: rm, intensity: intensity),
                         reps: 5,
-                        pushUpVariant: exercise.type == .bodyweight ? PushUpVariant.forIntensity(intensity, startingLevel: exercise.startingPushUpVariant) : nil
+                        pushUpVariant: exercise.type == .bodyweight ? PushUpVariant.forIntensity(intensity, maxLevel: exercise.startingPushUpVariant) : nil
                     )
                 }
                 return PlannedSeriesExercise(
