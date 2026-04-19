@@ -223,6 +223,7 @@ struct WorkoutSessionView: View {
                         .strokeBorder(isCurrent && !allDone ? theme.accentColor.opacity(0.3) : .clear, lineWidth: 1)
                 )
         )
+        .contentShape(Rectangle())
         .onTapGesture(count: 2) {
             if allDone {
                 for set in group.sets where set.isCompleted {
