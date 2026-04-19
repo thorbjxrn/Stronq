@@ -140,8 +140,7 @@ struct OnboardingFlow: View {
                 .foregroundStyle(theme.textSecondary)
                 .lineSpacing(4)
                 .padding(.top, 8)
-
-            Spacer()
+                .padding(.bottom, 32)
 
             VStack(spacing: 16) {
                 weightCard(
