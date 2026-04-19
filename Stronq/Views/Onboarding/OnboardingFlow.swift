@@ -36,7 +36,7 @@ struct OnboardingFlow: View {
                     .padding(.bottom, 20)
             }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(theme.preferredColorScheme)
         } // NavigationStack
     }
 

@@ -27,8 +27,10 @@ struct SettingsView: View {
                     aboutSection
                 }
                 .scrollContentBackground(.hidden)
+                .foregroundStyle(theme.textPrimary)
             }
             .navigationTitle("Settings")
+            .preferredColorScheme(theme.preferredColorScheme)
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
             }

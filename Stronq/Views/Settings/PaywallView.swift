@@ -74,7 +74,7 @@ struct PaywallView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(theme.preferredColorScheme)
     }
 
     private func featureRow(_ text: String, icon: String) -> some View {
