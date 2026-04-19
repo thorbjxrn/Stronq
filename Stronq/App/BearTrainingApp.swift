@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+@preconcurrency import ActivityKit
 
 @main
 struct BearTrainingApp: App {
@@ -38,6 +39,13 @@ struct BearTrainingApp: App {
         let pm = PurchaseManager()
         _purchaseManager = State(initialValue: pm)
         _adManager = State(initialValue: AdManager(purchaseManager: pm))
+
+        // Clean up any stale Live Activities from previous session
+        Task {
+            for activity in Activity<RestTimerAttributes>.activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+        }
     }
 
     var body: some Scene {
