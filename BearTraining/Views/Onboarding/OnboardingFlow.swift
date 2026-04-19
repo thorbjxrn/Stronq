@@ -112,32 +112,34 @@ struct OnboardingFlow: View {
 
     private var weightSetupStep: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Your 10RM")
-                .font(.system(size: 28, weight: .bold))
-                .padding(.top, 32)
+            Spacer().frame(height: 60)
+
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text("Your 10RM")
+                    .font(.system(size: 28, weight: .bold))
+
+                Picker("Unit", selection: $unit) {
+                    Text("kg").tag(WeightUnit.kg)
+                    Text("lbs").tag(WeightUnit.lbs)
+                }
+                .pickerStyle(.segmented)
+                .frame(maxWidth: 120)
+                .onChange(of: unit) {
+                    if unit == .lbs {
+                        benchRM = 135
+                        deadliftRM = 175
+                    } else {
+                        benchRM = 60
+                        deadliftRM = 80
+                    }
+                }
+            }
 
             Text("A conservative estimate of the most\nyou can lift for 10 reps with good form.")
                 .font(.subheadline)
                 .foregroundStyle(theme.textSecondary)
                 .lineSpacing(4)
                 .padding(.top, 8)
-
-            Picker("Unit", selection: $unit) {
-                Text("kg").tag(WeightUnit.kg)
-                Text("lbs").tag(WeightUnit.lbs)
-            }
-            .pickerStyle(.segmented)
-            .frame(maxWidth: 140)
-            .padding(.top, 16)
-            .onChange(of: unit) {
-                if unit == .lbs {
-                    benchRM = 135
-                    deadliftRM = 175
-                } else {
-                    benchRM = 60
-                    deadliftRM = 80
-                }
-            }
 
             Spacer()
 
