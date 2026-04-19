@@ -1,5 +1,5 @@
 import XCTest
-@testable import BearTraining
+@testable import Stronq
 
 final class DeLormeEngineTests: XCTestCase {
 

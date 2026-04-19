@@ -164,6 +164,24 @@ final class WorkoutViewModel {
         addSeries(for: exercise, to: session)
     }
 
+    func cancelWorkout(program: Program, modelContext: ModelContext) {
+        guard let session = activeSession else { return }
+
+        stopRestTimer()
+        stopElapsedTimer()
+
+        program.sessions.removeAll { $0.id == session.id }
+        modelContext.delete(session)
+        try? modelContext.save()
+
+        activeSession = nil
+        plannedExercises = []
+        doneExercises = []
+        isWorkoutActive = false
+
+        prepareWorkout(program: program)
+    }
+
     // MARK: - Set Actions
 
     func completeSet(_ set: CompletedSet) {

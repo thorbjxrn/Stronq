@@ -12,36 +12,36 @@ settings:
     SWIFT_VERSION: "6.0"
 
 targets:
-  BearTraining:
+  Stronq:
     type: application
     platform: iOS
     sources:
-      - path: BearTraining
+      - path: Stronq
         excludes:
           - "Preview Content/**"
     resources:
-      - path: BearTraining/Assets.xcassets
-      - path: BearTraining/Preview Content
+      - path: Stronq/Assets.xcassets
+      - path: Stronq/Preview Content
         optional: true
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_FILE: BearTraining/Info.plist
+        INFOPLIST_FILE: Stronq/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: Stronq
-        CODE_SIGN_ENTITLEMENTS: BearTraining/BearTraining.entitlements
+        CODE_SIGN_ENTITLEMENTS: Stronq/Stronq.entitlements
         PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.Stronq
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SUPPORTS_LIVE_ACTIVITIES: YES
     entitlements:
-      path: BearTraining/BearTraining.entitlements
+      path: Stronq/Stronq.entitlements
 
-  BearTrainingTests:
+  StronqTests:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - path: BearTrainingTests
+      - path: StronqTests
     dependencies:
-      - target: BearTraining
+      - target: Stronq
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.StronqTests
