@@ -43,7 +43,6 @@ final class CompletedSet {
         if pushUpVariant != nil {
             return pushUpVariant?.rawValue ?? "Regular"
         }
-        return String(format: "%.1f", targetWeight)
-            .replacingOccurrences(of: ".0", with: "")
+        return String(format: "%.2f", targetWeight)
     }
 }
