@@ -171,7 +171,12 @@ struct WorkoutSessionView: View {
                         }
 
                         Button {
-                            withAnimation { viewModel.markExerciseDone(exercise.name) }
+                            withAnimation {
+                                viewModel.markExerciseDone(exercise.name)
+                                if let nextIndex = viewModel.plannedExercises.firstIndex(where: { !viewModel.isExerciseDone($0.name) }) {
+                                    selectedExercise = nextIndex
+                                }
+                            }
                         } label: {
                             Label("Done — \(viewModel.completedSeriesCount(for: exercise.name)) series", systemImage: "checkmark")
                                 .font(.subheadline.weight(.semibold))
