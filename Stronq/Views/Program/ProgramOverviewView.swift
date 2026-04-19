@@ -126,14 +126,24 @@ struct WeekCard: View {
         let days: [DayType] = week == 7 ? [.heavy] : DayType.allCases
         return HStack(spacing: 8) {
             ForEach(days, id: \.self) { dayType in
-                let done = program.session(week: week, dayType: dayType)?.isCompleted == true
+                let session = program.session(week: week, dayType: dayType)
+                let done = session?.isCompleted == true
+                let allSetsComplete = done && (session?.completedSets.allSatisfy(\.isCompleted) ?? false)
+                let isPartial = done && !allSetsComplete
+
                 VStack(spacing: 3) {
                     Circle()
-                        .fill(done ? theme.completedColor : Color.white.opacity(0.1))
+                        .fill(allSetsComplete ? theme.completedColor :
+                              isPartial ? theme.accentColor :
+                              Color.white.opacity(0.1))
                         .frame(width: 20, height: 20)
                         .overlay {
-                            if done {
+                            if allSetsComplete {
                                 Image(systemName: "checkmark")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundStyle(.black)
+                            } else if isPartial {
+                                Image(systemName: "minus")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(.black)
                             }
@@ -172,26 +182,33 @@ struct WeekCard: View {
         )
         let session = program.session(week: week, dayType: dayType)
         let isDone = session?.isCompleted == true
-        let completedSeries = session?.completedSets.map(\.seriesNumber).max() ?? 0
+        let allSetsComplete = isDone && (session?.completedSets.allSatisfy(\.isCompleted) ?? false)
+        let isPartial = isDone && !allSetsComplete
+        let completedSeries = session?.completedSets.filter(\.isCompleted).map(\.seriesNumber).max() ?? 0
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(dayType.rawValue)
                     .font(.subheadline.bold())
-                    .foregroundStyle(isDone ? theme.completedColor : theme.accentColor)
+                    .foregroundStyle(allSetsComplete ? theme.completedColor :
+                                     isPartial ? theme.accentColor : theme.accentColor)
 
-                if isDone {
+                if allSetsComplete {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.caption)
                         .foregroundStyle(theme.completedColor)
+                } else if isPartial {
+                    Image(systemName: "minus.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(theme.accentColor)
                 }
 
                 Spacer()
 
                 if isDone {
-                    Text("\(completedSeries) series done")
+                    Text("\(completedSeries) series\(isPartial ? " (partial)" : "")")
                         .font(.caption2)
-                        .foregroundStyle(theme.completedColor)
+                        .foregroundStyle(allSetsComplete ? theme.completedColor : theme.accentColor)
                 } else {
                     switch mode {
                     case .max:

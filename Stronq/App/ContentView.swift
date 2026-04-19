@@ -7,7 +7,7 @@ struct ContentView: View {
         TabView {
             TodayView()
                 .tabItem {
-                    Label("Today", systemImage: "figure.strengthtraining.traditional")
+                    Label("Workout", systemImage: "figure.strengthtraining.traditional")
                 }
 
             ProgramOverviewView()

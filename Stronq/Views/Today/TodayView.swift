@@ -33,7 +33,7 @@ struct TodayView: View {
                     noProgram
                 }
             }
-            .navigationTitle("Today")
+            .navigationTitle("Workout")
             .navigationBarTitleDisplayMode(.large)
         }
         .onAppear {
