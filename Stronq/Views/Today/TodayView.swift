@@ -33,7 +33,7 @@ struct TodayView: View {
                     noProgram
                 }
             }
-            .navigationTitle("Workout")
+            .navigationTitle(viewModel.isWorkoutActive || showingComplete ? "" : "Workout")
             .navigationBarTitleDisplayMode(.large)
         }
         .onAppear {

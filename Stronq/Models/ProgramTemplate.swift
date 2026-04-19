@@ -41,7 +41,7 @@ struct ProgramTemplate: Identifiable {
     static let bear = ProgramTemplate(
         id: "bear",
         name: "Yolked",
-        subtitle: "Push-up + Zercher Squat + Pulldown",
+        subtitle: "Push-up + Zercher Squat + HK Pulldown",
         exercises: [
             TemplateExercise(
                 name: "Push-up",
@@ -58,7 +58,7 @@ struct ProgramTemplate: Identifiable {
                 icon: "figure.squat"
             ),
             TemplateExercise(
-                name: "Half-Kneeling Pulldown",
+                name: "HK Pulldown",
                 type: .weighted,
                 defaultRM: 25, defaultRMLbs: 55,
                 increment: 2.5, incrementLbs: 5,
