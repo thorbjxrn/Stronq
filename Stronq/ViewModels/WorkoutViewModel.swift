@@ -72,6 +72,11 @@ final class WorkoutViewModel {
 
     var hasWorkoutToday: Bool { !plannedExercises.isEmpty }
 
+    func seriesPerExerciseCount(_ name: String) -> Int {
+        let count = seriesPerExercise[name] ?? 0
+        return count == 0 ? 5 : count
+    }
+
     // MARK: - Series Info
 
     func seriesModeForExercise(_ name: String) -> SeriesMode {

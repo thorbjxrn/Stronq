@@ -59,13 +59,19 @@ struct TodayView: View {
                     Spacer()
                     // Series info
                     HStack(spacing: 4) {
-                        switch viewModel.seriesMode {
-                        case .max:
+                        if viewModel.seriesMode == .max {
                             Image(systemName: "flame")
                                 .foregroundStyle(theme.accentColor)
                             Text("Max series")
-                        case .fixed(let n):
-                            Text("\(n) series")
+                        } else {
+                            let counts = viewModel.plannedExercises.map { ex in
+                                viewModel.seriesPerExerciseCount(ex.name)
+                            }
+                            if Set(counts).count == 1 {
+                                Text("\(counts.first ?? 5) series")
+                            } else {
+                                Text(counts.map(String.init).joined(separator: "/") + " series")
+                            }
                         }
                     }
                     .font(.subheadline)
