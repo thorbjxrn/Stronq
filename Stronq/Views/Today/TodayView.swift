@@ -45,23 +45,19 @@ struct TodayView: View {
 
     private func workoutPreview(program: Program) -> some View {
         VStack(spacing: 0) {
-            // Day header
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Week \(viewModel.weekNumber) · \(DeLormeEngine.suggestedDay(for: viewModel.dayType))")
-                        .font(.caption)
-                        .foregroundStyle(theme.textSecondary)
-                    Text(viewModel.dayType.rawValue)
-                        .font(.title2.bold())
-                }
-                Spacer()
-            }
-            .padding(.horizontal)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
-
             ScrollView {
                 VStack(spacing: 10) {
+                    // Day header
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Week \(viewModel.weekNumber) · \(DeLormeEngine.suggestedDay(for: viewModel.dayType))")
+                                .font(.caption)
+                                .foregroundStyle(theme.textSecondary)
+                            Text(viewModel.dayType.rawValue)
+                                .font(.title2.bold())
+                        }
+                        Spacer()
+                    }
                     ForEach(viewModel.plannedExercises, id: \.name) { exercise in
                         let seriesCount = viewModel.seriesPerExerciseCount(exercise.name)
                         let isMax = viewModel.seriesModeForExercise(exercise.name) == .max
