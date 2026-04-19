@@ -78,6 +78,16 @@ final class WorkoutViewModel {
             .max() ?? 0
     }
 
+    func completedSeriesCount(for name: String) -> Int {
+        guard let session = activeSession else { return 0 }
+        let allSets = session.completedSets.filter { $0.exerciseName == name }
+        let seriesNumbers = Set(allSets.map(\.seriesNumber))
+        return seriesNumbers.filter { series in
+            let setsInSeries = allSets.filter { $0.seriesNumber == series }
+            return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
+        }.count
+    }
+
     func canAddMoreSeries(for name: String) -> Bool {
         let mode = seriesModeForExercise(name)
         let current = currentSeriesForExercise(name)

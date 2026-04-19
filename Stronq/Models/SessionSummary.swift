@@ -3,15 +3,17 @@ import Foundation
 struct SessionSummary {
     let dayType: DayType
     let duration: String
-    let seriesCount: Int
+    let seriesCounts: [Int]
     let volume: Double
 
-    init(session: WorkoutSession) {
-        self.dayType = session.dayType
-        let mins = Int(session.duration) / 60
-        let secs = Int(session.duration) % 60
+    var totalSeries: Int { seriesCounts.reduce(0, +) }
+
+    init(dayType: DayType, elapsed: TimeInterval, volume: Double, seriesCounts: [Int]) {
+        self.dayType = dayType
+        let mins = Int(elapsed) / 60
+        let secs = Int(elapsed) % 60
         self.duration = "\(mins):\(String(format: "%02d", secs))"
-        self.seriesCount = session.completedSets.map(\.seriesNumber).max() ?? 0
-        self.volume = session.totalVolume
+        self.volume = volume
+        self.seriesCounts = seriesCounts
     }
 }

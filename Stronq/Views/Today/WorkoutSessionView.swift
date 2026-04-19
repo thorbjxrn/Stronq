@@ -173,7 +173,7 @@ struct WorkoutSessionView: View {
                         Button {
                             withAnimation { viewModel.markExerciseDone(exercise.name) }
                         } label: {
-                            Label("Done — \(currentSeries) series", systemImage: "checkmark")
+                            Label("Done — \(viewModel.completedSeriesCount(for: exercise.name)) series", systemImage: "checkmark")
                                 .font(.subheadline.weight(.semibold))
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
@@ -273,10 +273,22 @@ struct WorkoutSessionView: View {
     }
 
     private func finishAndShow() {
-        let summary = viewModel.activeSession.map { SessionSummary(session: $0) }
+        let elapsed = viewModel.elapsedTime
+        let volume = viewModel.activeSession?.totalVolume ?? 0
+        let day = viewModel.dayType
+        let series = program.exercises
+            .sorted(by: { $0.sortOrder < $1.sortOrder })
+            .map { viewModel.completedSeriesCount(for: $0.name) }
+
         viewModel.finishWorkout(program: program, modelContext: modelContext)
-        if let summary, let onFinish {
-            onFinish(summary)
+
+        if let onFinish {
+            onFinish(SessionSummary(
+                dayType: day,
+                elapsed: elapsed,
+                volume: volume,
+                seriesCounts: series
+            ))
         }
     }
 

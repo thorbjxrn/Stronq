@@ -204,7 +204,7 @@ struct TodayView: View {
             VStack(spacing: 12) {
                 HStack(spacing: 24) {
                     statBubble(value: summary.duration, label: "Time")
-                    statBubble(value: "\(summary.seriesCount)", label: "Series")
+                    statBubble(value: summary.seriesCounts.map(String.init).joined(separator: "/"), label: "Series")
                     statBubble(value: formatted(summary.volume), label: "Volume")
                 }
             }
