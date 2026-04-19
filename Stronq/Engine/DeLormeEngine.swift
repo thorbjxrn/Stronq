@@ -98,13 +98,17 @@ struct DeLormeEngine {
 
     // MARK: - Schedule
 
-    static func nextWorkout(program: Program) -> (dayType: DayType, week: Int)? {
+    static func nextWorkout(program: Program, sessions: [WorkoutSession]? = nil) -> (dayType: DayType, week: Int)? {
         var week = program.currentWeek
         if week > 7 { return nil }
 
+        let allSessions = sessions ?? program.sessions
+
         let sequence: [DayType] = week == 7 ? [.heavy] : [.heavy, .light, .medium]
         for dayType in sequence {
-            let done = program.session(week: week, dayType: dayType)?.isCompleted == true
+            let done = allSessions.first {
+                $0.weekNumber == week && $0.dayType == dayType && $0.isCompleted
+            } != nil
             if !done { return (dayType, week) }
         }
 

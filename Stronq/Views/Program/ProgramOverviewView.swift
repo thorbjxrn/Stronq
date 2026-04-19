@@ -4,9 +4,14 @@ import SwiftData
 struct ProgramOverviewView: View {
     @Environment(ThemeManager.self) private var theme
     @Query private var programs: [Program]
+    @Query private var allSessions: [WorkoutSession]
     @State private var selectedWeek: Int?
 
     private var program: Program? { programs.first }
+
+    func findSession(week: Int, dayType: DayType) -> WorkoutSession? {
+        allSessions.first { $0.weekNumber == week && $0.dayType == dayType && $0.isCompleted }
+    }
 
     var body: some View {
         NavigationStack {
@@ -20,6 +25,7 @@ struct ProgramOverviewView: View {
                                 WeekCard(
                                     week: week,
                                     program: program,
+                                    allSessions: allSessions,
                                     isCurrentWeek: week == program.currentWeek,
                                     isExpanded: selectedWeek == week,
                                     theme: theme
@@ -53,9 +59,14 @@ struct ProgramOverviewView: View {
 struct WeekCard: View {
     let week: Int
     let program: Program
+    let allSessions: [WorkoutSession]
     let isCurrentWeek: Bool
     let isExpanded: Bool
     let theme: ThemeManager
+
+    func findSession(_ dayType: DayType) -> WorkoutSession? {
+        allSessions.first { $0.weekNumber == week && $0.dayType == dayType }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -126,7 +137,7 @@ struct WeekCard: View {
         let days: [DayType] = week == 7 ? [.heavy] : DayType.allCases
         return HStack(spacing: 8) {
             ForEach(days, id: \.self) { dayType in
-                let session = program.session(week: week, dayType: dayType)
+                let session = findSession(dayType)
                 let done = session?.isCompleted == true
                 let sets = session?.completedSets ?? []
                 let hasUncompletedSets = sets.contains { !$0.isCompleted }
@@ -182,7 +193,7 @@ struct WeekCard: View {
             dayType: dayType,
             week: week
         )
-        let session = program.session(week: week, dayType: dayType)
+        let session = findSession(dayType)
         let isDone = session?.isCompleted == true
         let sets = session?.completedSets ?? []
         let hasUncompletedSets = sets.contains { !$0.isCompleted }
@@ -249,7 +260,7 @@ struct WeekCard: View {
     }
 
     private var mondaySeriesForWeek: Int? {
-        let session = program.sessions.first {
+        let session = allSessions.first {
             $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
         }
         guard let session else { return nil }
