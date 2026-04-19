@@ -141,14 +141,6 @@ struct OnboardingFlow: View {
                             Text(template.subtitle)
                                 .font(.caption)
                                 .foregroundStyle(theme.textSecondary)
-
-                            HStack(spacing: 12) {
-                                ForEach(template.exercises, id: \.name) { ex in
-                                    Label(ex.name, systemImage: ex.icon)
-                                        .font(.caption2)
-                                        .foregroundStyle(theme.textSecondary)
-                                }
-                            }
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
