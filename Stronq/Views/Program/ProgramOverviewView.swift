@@ -75,7 +75,8 @@ struct WeekCard: View {
     let theme: ThemeManager
 
     func findSession(_ dayType: DayType) -> WorkoutSession? {
-        allSessions.first { $0.weekNumber == week && $0.dayType == dayType }
+        allSessions.first { $0.weekNumber == week && $0.dayType == dayType && $0.isCompleted }
+        ?? allSessions.first { $0.weekNumber == week && $0.dayType == dayType }
     }
 
     var body: some View {
