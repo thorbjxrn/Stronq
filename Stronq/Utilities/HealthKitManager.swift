@@ -38,14 +38,15 @@ final class HealthKitManager {
     ) async {
         guard isAuthorized else { return }
 
-        let workout = HKWorkout(
-            activityType: .traditionalStrengthTraining,
-            start: date.addingTimeInterval(-duration),
-            end: date
-        )
+        let config = HKWorkoutConfiguration()
+        config.activityType = .traditionalStrengthTraining
 
+        let builder = HKWorkoutBuilder(healthStore: healthStore, configuration: config, device: .local())
         do {
-            try await healthStore.save(workout)
+            let start = date.addingTimeInterval(-duration)
+            try await builder.beginCollection(at: start)
+            try await builder.endCollection(at: date)
+            try await builder.finishWorkout()
         } catch {
             // Silently fail — HealthKit write errors shouldn't block the app
         }
