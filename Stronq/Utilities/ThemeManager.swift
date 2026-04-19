@@ -71,8 +71,8 @@ enum AppTheme: String, CaseIterable {
         case .champagne: Color(red: 0.85, green: 0.75, blue: 0.55)
         // Warm off-white, system adaptive
         case .chalk: Color(red: 0.45, green: 0.43, blue: 0.40)
-        // Blood red — raw, primal, heavy
-        case .testo: Color(red: 0.90, green: 0.12, blue: 0.10)
+        // Deep crimson-burgundy — intense but not destructive
+        case .testo: Color(red: 0.75, green: 0.18, blue: 0.18)
         // Phosphor green, night vision
         case .tactical: Color(red: 0.10, green: 0.78, blue: 0.35)
         // Magenta-rose, hot
