@@ -5,30 +5,43 @@ struct BarbellGlyph: View {
     var height: CGFloat = 28
 
     var body: some View {
-        HStack(spacing: 2) {
-            plate(width: 4, ratio: 0.7)
-            plate(width: 4, ratio: 0.85)
-            plate(width: 4, ratio: 1.0)
-            plate(width: 4, ratio: 1.0)
+        HStack(spacing: 0) {
+            // Left collar
+            RoundedRectangle(cornerRadius: 1)
+                .fill(color.opacity(0.3))
+                .frame(width: 8, height: 3)
 
-            bar
+            // Left plates
+            HStack(spacing: 1.5) {
+                plate(ratio: 0.6)
+                plate(ratio: 0.75)
+                plate(ratio: 0.9)
+                plate(ratio: 1.0)
+            }
 
-            plate(width: 4, ratio: 1.0)
-            plate(width: 4, ratio: 1.0)
-            plate(width: 4, ratio: 0.85)
-            plate(width: 4, ratio: 0.7)
+            // Bar
+            RoundedRectangle(cornerRadius: 1)
+                .fill(color.opacity(0.3))
+                .frame(width: 40, height: 3)
+
+            // Right plates
+            HStack(spacing: 1.5) {
+                plate(ratio: 1.0)
+                plate(ratio: 0.9)
+                plate(ratio: 0.75)
+                plate(ratio: 0.6)
+            }
+
+            // Right collar
+            RoundedRectangle(cornerRadius: 1)
+                .fill(color.opacity(0.3))
+                .frame(width: 8, height: 3)
         }
     }
 
-    private func plate(width: CGFloat, ratio: CGFloat) -> some View {
+    private func plate(ratio: CGFloat) -> some View {
         RoundedRectangle(cornerRadius: 1)
             .fill(color)
-            .frame(width: width, height: height * ratio)
-    }
-
-    private var bar: some View {
-        RoundedRectangle(cornerRadius: 1)
-            .fill(color.opacity(0.4))
-            .frame(width: 24, height: 3)
+            .frame(width: 4, height: height * ratio)
     }
 }
