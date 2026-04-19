@@ -113,18 +113,34 @@ struct SettingsView: View {
             .tint(theme.accentColor)
 
             if reminderManager.isEnabled {
-                Picker("Remind at", selection: Binding(
-                    get: { reminderManager.reminderHour },
-                    set: { reminderManager.reminderHour = $0 }
-                )) {
-                    ForEach(5..<22) { hour in
-                        Text("\(hour):00").tag(hour)
+                DatePicker("Time", selection: Binding(
+                    get: { reminderManager.reminderTime },
+                    set: { reminderManager.reminderTime = $0 }
+                ), displayedComponents: .hourAndMinute)
+
+                HStack(spacing: 6) {
+                    ForEach(ReminderManager.dayNames, id: \.id) { day in
+                        let isSelected = reminderManager.reminderDays.contains(day.id)
+                        Button {
+                            if isSelected {
+                                reminderManager.reminderDays.remove(day.id)
+                            } else {
+                                reminderManager.reminderDays.insert(day.id)
+                            }
+                        } label: {
+                            Text(day.short)
+                                .font(.caption2.weight(.medium))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(
+                                    isSelected ? theme.accentColor : Color.white.opacity(0.08),
+                                    in: RoundedRectangle(cornerRadius: 8)
+                                )
+                                .foregroundStyle(isSelected ? .black : theme.textSecondary)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
-
-                Text("Mon · Wed · Fri")
-                    .font(.caption)
-                    .foregroundStyle(theme.textSecondary)
             }
         }
     }
