@@ -22,11 +22,10 @@ struct PaywallView: View {
                         .font(Typo.title)
 
                     VStack(alignment: .leading, spacing: 12) {
-                        featureRow("Ad-free experience", icon: "xmark.circle")
-                        featureRow("Full program customization", icon: "slider.horizontal.3")
-                        featureRow("iCloud sync", icon: "icloud")
-                        featureRow("Additional themes", icon: "paintpalette")
-                        featureRow("Unlimited program history", icon: "clock.arrow.circlepath")
+                        featureRow("Yoked program (3 exercises)", icon: "figure.strengthtraining.traditional")
+                        featureRow("Exercise swapping", icon: "arrow.triangle.2.circlepath")
+                        featureRow("7 premium themes", icon: "paintpalette")
+                        featureRow("Future programs & features", icon: "star")
                     }
                     .padding()
                     .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))

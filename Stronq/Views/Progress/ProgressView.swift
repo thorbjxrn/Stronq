@@ -12,6 +12,7 @@ struct ProgressView: View {
     @State private var healthKitWeights: [(date: Date, weight: Double)] = []
     @State private var healthKitManager = HealthKitManager()
     @State private var newWeight: String = ""
+    @State private var syncStatus: String?
 
     private var program: Program? { programs.first }
 
@@ -133,14 +134,29 @@ struct ProgressView: View {
                 if healthKitManager.isAvailable {
                     Button {
                         Task {
-                            await healthKitManager.requestAuthorization()
-                            healthKitWeights = await healthKitManager.readBodyweightHistory()
+                            syncStatus = "Syncing..."
+                            let authorized = await healthKitManager.requestAuthorization()
+                            if authorized {
+                                healthKitWeights = await healthKitManager.readBodyweightHistory()
+                                syncStatus = healthKitWeights.isEmpty ? "No data in Health" : "\(healthKitWeights.count) entries synced"
+                            } else {
+                                syncStatus = "Access denied — check Settings → Health"
+                            }
+                            try? await Task.sleep(for: .seconds(3))
+                            syncStatus = nil
                         }
                     } label: {
-                        Label("Sync Health", systemImage: "heart.fill")
-                            .font(Typo.caption)
-                            .foregroundStyle(theme.accentColor)
+                        if let status = syncStatus {
+                            Text(status)
+                                .font(Typo.caption)
+                                .foregroundStyle(theme.textSecondary)
+                        } else {
+                            Label("Sync Health", systemImage: "heart.fill")
+                                .font(Typo.caption)
+                                .foregroundStyle(theme.accentColor)
+                        }
                     }
+                    .disabled(syncStatus != nil)
                 }
             }
             .padding(.horizontal)

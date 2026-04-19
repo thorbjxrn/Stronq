@@ -11,8 +11,9 @@ final class HealthKitManager {
         HKHealthStore.isHealthDataAvailable()
     }
 
-    func requestAuthorization() async {
-        guard isAvailable else { return }
+    @discardableResult
+    func requestAuthorization() async -> Bool {
+        guard isAvailable else { return false }
 
         let typesToWrite: Set<HKSampleType> = [
             HKObjectType.workoutType(),
@@ -26,8 +27,10 @@ final class HealthKitManager {
         do {
             try await healthStore.requestAuthorization(toShare: typesToWrite, read: typesToRead)
             isAuthorized = true
+            return true
         } catch {
             isAuthorized = false
+            return false
         }
     }
 
