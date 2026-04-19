@@ -46,6 +46,16 @@ struct ProgramOverviewView: View {
                 }
             }
             .navigationTitle("Program")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        HowItWorksView()
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(theme.accentColor)
+                    }
+                }
+            }
         }
     }
 
