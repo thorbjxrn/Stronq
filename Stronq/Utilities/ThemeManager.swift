@@ -30,7 +30,7 @@ enum AppTheme: String, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .bear: "Bear (Default)"
+        case .bear: "Stronq (Default)"
         case .iron: "Iron"
         case .forest: "Forest"
         case .arctic: "Arctic"
