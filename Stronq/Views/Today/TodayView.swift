@@ -221,12 +221,9 @@ struct TodayView: View {
                     viewModel.prepareWorkout(program: program)
                 }
             } label: {
-                Text(viewModel.hasWorkoutToday ? "Next Workout" : "Done")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(theme.accentColor, in: RoundedRectangle(cornerRadius: 14))
-                    .foregroundStyle(.black)
+                Text(viewModel.hasWorkoutToday ? "Next Workout →" : "Done")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(theme.accentColor)
             }
             .padding(.bottom, 8)
         }
