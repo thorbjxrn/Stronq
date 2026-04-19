@@ -223,13 +223,14 @@ final class WorkoutViewModel {
         stopRestTimer()
         stopElapsedTimer()
 
-        activeSession = nil
-        doneExercises = []
-
         try? modelContext.save()
 
-        prepareWorkout(program: program)
+        activeSession = nil
+        doneExercises = []
+        plannedExercises = []
         isWorkoutActive = false
+
+        prepareWorkout(program: program)
     }
 
     // MARK: - Timer
