@@ -19,7 +19,7 @@ struct PaywallView: View {
                         .foregroundStyle(theme.accentColor)
 
                     Text("Stronq Premium")
-                        .font(.title.bold())
+                        .font(Typo.title)
 
                     VStack(alignment: .leading, spacing: 12) {
                         featureRow("Ad-free experience", icon: "xmark.circle")
@@ -49,7 +49,7 @@ struct PaywallView: View {
                                     .tint(.black)
                             } else {
                                 Text("Upgrade — $3.99")
-                                    .font(.headline)
+                                    .font(Typo.heading)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -63,7 +63,7 @@ struct PaywallView: View {
                     Button("Restore Purchases") {
                         Task { await purchaseManager.restorePurchases() }
                     }
-                    .font(.subheadline)
+                    .font(Typo.body)
                     .foregroundStyle(theme.textSecondary)
                 }
                 .padding()

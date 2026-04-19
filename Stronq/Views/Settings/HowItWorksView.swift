@@ -54,7 +54,7 @@ struct HowItWorksView: View {
                     )
 
                     Text("Based on the DeLorme method (1945) with the Heavy-Light-Medium structure popularized in strength training literature.")
-                        .font(.caption)
+                        .font(Typo.caption)
                         .foregroundStyle(theme.textSecondary)
                         .padding(.horizontal, 4)
                 }
@@ -68,11 +68,11 @@ struct HowItWorksView: View {
     private func section(_ title: String, icon: String, _ body: String) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Label(title, systemImage: icon)
-                .font(.headline)
+                .font(Typo.heading)
                 .foregroundStyle(theme.accentColor)
 
             Text(body)
-                .font(.subheadline)
+                .font(Typo.body)
                 .foregroundStyle(.white.opacity(0.85))
                 .lineSpacing(4)
         }

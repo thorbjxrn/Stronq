@@ -51,10 +51,10 @@ struct TodayView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Week \(viewModel.weekNumber) · \(DeLormeEngine.suggestedDay(for: viewModel.dayType))")
-                                .font(.caption)
+                                .font(Typo.caption)
                                 .foregroundStyle(theme.textSecondary)
                             Text(viewModel.dayType.rawValue)
-                                .font(.title2.bold())
+                                .font(Typo.title)
                         }
                         Spacer()
                     }
@@ -65,15 +65,15 @@ struct TodayView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             HStack {
                                 Text(exercise.name)
-                                    .font(.subheadline.bold())
+                                    .font(Typo.heading)
                                 Spacer()
                                 if isMax {
                                     Label("max series", systemImage: "flame")
-                                        .font(.caption2)
+                                        .font(Typo.small)
                                         .foregroundStyle(theme.accentColor)
                                 } else {
                                     Text("\(seriesCount) series")
-                                        .font(.caption2)
+                                        .font(Typo.small)
                                         .foregroundStyle(theme.textSecondary)
                                 }
                             }
@@ -81,19 +81,19 @@ struct TodayView: View {
                             ForEach(exercise.sets, id: \.intensity) { set in
                                 HStack {
                                     Text(set.intensityLabel)
-                                        .font(.caption2.bold())
+                                        .font(Typo.small)
                                         .foregroundStyle(theme.textSecondary)
                                         .frame(width: 36, alignment: .leading)
                                     Text(set.displayWeight)
-                                        .font(.system(.body, design: .rounded, weight: .bold))
+                                        .font(Typo.weightStandard)
                                     if exercise.type == .weighted {
                                         Text(exercise.unit.symbol)
-                                            .font(.caption2)
+                                            .font(Typo.small)
                                             .foregroundStyle(theme.textSecondary)
                                     }
                                     Spacer()
                                     Text("x5")
-                                        .font(.caption)
+                                        .font(Typo.caption)
                                         .foregroundStyle(theme.textSecondary)
                                 }
                             }
@@ -110,7 +110,7 @@ struct TodayView: View {
                 viewModel.startWorkout(program: program, modelContext: modelContext)
             } label: {
                 Text("Start Workout")
-                    .font(.headline)
+                    .font(Typo.heading)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(theme.accentColor, in: RoundedRectangle(cornerRadius: 14))
@@ -127,9 +127,9 @@ struct TodayView: View {
                 .font(.system(size: 56))
                 .foregroundStyle(theme.accentColor)
             Text("Program Complete")
-                .font(.title2.bold())
+                .font(Typo.title)
             Text("You've finished the cycle.\nStart a new one with updated weights.")
-                .font(.subheadline)
+                .font(Typo.body)
                 .foregroundStyle(theme.textSecondary)
                 .multilineTextAlignment(.center)
 
@@ -156,7 +156,7 @@ struct TodayView: View {
                     startNewCycle(program: program)
                 } label: {
                     Text("Start New Cycle")
-                        .font(.headline)
+                        .font(Typo.heading)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(theme.accentColor, in: RoundedRectangle(cornerRadius: 14))
@@ -194,11 +194,11 @@ struct TodayView: View {
                 .padding(.bottom, 20)
 
             Text("Well done")
-                .font(.system(size: 32, weight: .bold))
+                .font(Typo.hero)
                 .padding(.bottom, 8)
 
             Text(summary.dayType.rawValue)
-                .font(.subheadline)
+                .font(Typo.body)
                 .foregroundStyle(theme.textSecondary)
 
             VStack(spacing: 12) {
@@ -221,7 +221,7 @@ struct TodayView: View {
                 }
             } label: {
                 Text(viewModel.hasWorkoutToday ? "Next Workout →" : "Done")
-                    .font(.subheadline.weight(.medium))
+                    .font(Typo.body)
                     .foregroundStyle(theme.accentColor)
             }
             .padding(.bottom, 8)
@@ -232,9 +232,9 @@ struct TodayView: View {
     private func statBubble(value: String, label: String) -> some View {
         VStack(spacing: 4) {
             Text(value)
-                .font(.system(.title3, design: .rounded, weight: .bold))
+                .font(Typo.statValue)
             Text(label)
-                .font(.caption2)
+                .font(Typo.statLabel)
                 .foregroundStyle(theme.textSecondary)
         }
         .frame(maxWidth: .infinity)

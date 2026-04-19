@@ -39,17 +39,17 @@ struct WorkoutSessionView: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Week \(viewModel.weekNumber)")
-                    .font(.caption)
+                    .font(Typo.caption)
                     .foregroundStyle(theme.textSecondary)
                 Text(viewModel.dayType.rawValue)
-                    .font(.headline)
+                    .font(Typo.heading)
             }
             Spacer()
             HStack(spacing: 4) {
                 Image(systemName: "timer")
-                    .font(.caption)
+                    .font(Typo.caption)
                 Text(viewModel.formattedElapsed)
-                    .font(.system(.subheadline, design: .monospaced))
+                    .font(Typo.timerCompact)
             }
             .foregroundStyle(theme.textSecondary)
         }
@@ -79,12 +79,12 @@ struct WorkoutSessionView: View {
                         }
                         VStack(spacing: 2) {
                             Text(exercise.name)
-                                .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
+                                .font(.system(size: 12, weight: isSelected ? .semibold : .medium))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
                             if seriesCount > 0 {
                                 Text("\(seriesCount) series")
-                                    .font(.system(size: 10))
+                                    .font(Typo.statLabel)
                                     .foregroundStyle(theme.textSecondary)
                             }
                         }
@@ -110,11 +110,11 @@ struct WorkoutSessionView: View {
         if viewModel.isRestTimerRunning {
             HStack {
                 Text(viewModel.formattedRest)
-                    .font(.system(.title2, design: .monospaced, weight: .bold))
+                    .font(Typo.timer)
                     .foregroundStyle(theme.accentColor)
                 Spacer()
                 Button("Skip") { viewModel.skipRestTimer() }
-                    .font(.subheadline.bold())
+                    .font(Typo.bodyEmphasis)
                     .foregroundStyle(theme.accentColor)
             }
             .padding(.horizontal, 16)
@@ -139,11 +139,11 @@ struct WorkoutSessionView: View {
                     switch mode {
                     case .max:
                         Label("Max series", systemImage: "flame")
-                            .font(.caption)
+                            .font(Typo.caption)
                             .foregroundStyle(theme.accentColor)
                     case .fixed(let n):
                         Text("\(currentSeries) of \(n) series")
-                            .font(.caption)
+                            .font(Typo.caption)
                             .foregroundStyle(theme.textSecondary)
                     }
                     Spacer()
@@ -163,7 +163,7 @@ struct WorkoutSessionView: View {
                             withAnimation { viewModel.addAnotherSeriesForExercise(exercise.name) }
                         } label: {
                             Label("Add Series", systemImage: "plus.circle.fill")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typo.bodyEmphasis)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
                                 .background(theme.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
@@ -179,7 +179,7 @@ struct WorkoutSessionView: View {
                             }
                         } label: {
                             Label("Done — \(viewModel.completedSeriesCount(for: exercise.name)) series", systemImage: "checkmark")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typo.bodyEmphasis)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
                                 .background(theme.completedColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
@@ -199,12 +199,12 @@ struct WorkoutSessionView: View {
         return VStack(spacing: 6) {
             HStack {
                 Text("Series \(group.series)")
-                    .font(.caption.bold())
+                    .font(Typo.captionEmphasis)
                     .foregroundStyle(isCurrent ? theme.accentColor : theme.textSecondary)
                 Spacer()
                 if allDone {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.caption)
+                        .font(Typo.caption)
                         .foregroundStyle(theme.completedColor)
                 }
             }
@@ -253,7 +253,7 @@ struct WorkoutSessionView: View {
             Text("\(name) done — \(seriesCount) series")
                 .foregroundStyle(theme.textSecondary)
         }
-        .font(.subheadline)
+        .font(Typo.body)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background(theme.completedColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
@@ -298,7 +298,7 @@ struct WorkoutSessionView: View {
                     finishAndShow()
                 } label: {
                     Label("Finish Workout", systemImage: "flag.checkered")
-                        .font(.headline)
+                        .font(Typo.heading)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(theme.completedColor, in: RoundedRectangle(cornerRadius: 14))
@@ -309,7 +309,7 @@ struct WorkoutSessionView: View {
                 HStack {
                     Button { showingFinishConfirm = true } label: {
                         Text("End Early")
-                            .font(.subheadline)
+                            .font(Typo.body)
                             .foregroundStyle(theme.textSecondary)
                     }
                     .alert("End workout early?", isPresented: $showingFinishConfirm) {
@@ -356,15 +356,15 @@ struct SetRowView: View {
             }
 
             Text(intensityLabel)
-                .font(.caption2.bold())
+                .font(Typo.small)
                 .foregroundStyle(theme.textSecondary)
                 .frame(width: 36)
 
             Text(set.displayWeight)
-                .font(.system(.title3, design: .rounded, weight: .bold))
+                .font(Typo.weightStandard)
             if set.pushUpVariant == nil {
                 Text(unit.symbol)
-                    .font(.caption)
+                    .font(Typo.caption)
                     .foregroundStyle(theme.textSecondary)
             }
 
@@ -375,11 +375,11 @@ struct SetRowView: View {
                     .labelsHidden()
                     .fixedSize()
                 Text("\(set.actualReps)")
-                    .font(.system(.body, design: .monospaced, weight: .bold))
+                    .font(Typo.bodyEmphasis)
             } else {
                 Button { isEditing = true } label: {
                     Text("x\(set.actualReps)")
-                        .font(.subheadline)
+                        .font(Typo.body)
                         .foregroundStyle(set.actualReps != set.targetReps ? .white : theme.textSecondary)
                 }
             }

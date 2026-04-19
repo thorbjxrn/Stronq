@@ -41,10 +41,10 @@ struct LaunchBurstView: View {
 
                 VStack(spacing: 8) {
                     Text("Stronq")
-                        .font(.system(size: 36, weight: .bold))
+                        .font(Typo.title)
 
                     Text("Let's lift.")
-                        .font(.subheadline)
+                        .font(Typo.body)
                         .foregroundStyle(theme.textSecondary)
                 }
                 .opacity(textOpacity)

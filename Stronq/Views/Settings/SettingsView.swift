@@ -131,7 +131,7 @@ struct SettingsView: View {
                             }
                         } label: {
                             Text(day.short)
-                                .font(.caption2.weight(.medium))
+                                .font(Typo.small)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
                                 .background(
@@ -146,7 +146,7 @@ struct SettingsView: View {
 
                 if reminderManager.reminderDays.count != 3 {
                     Text("The program is designed for 3 days per week.")
-                        .font(.caption)
+                        .font(Typo.caption)
                         .foregroundStyle(.orange)
                 }
             }
@@ -177,7 +177,7 @@ struct SettingsView: View {
                     Text("\(formatted(latest.weight)) \(latest.unit.symbol)")
                         .foregroundStyle(theme.textSecondary)
                     Text(latest.date, style: .date)
-                        .font(.caption)
+                        .font(Typo.caption)
                         .foregroundStyle(theme.textSecondary)
                 }
             }
@@ -216,7 +216,7 @@ struct SettingsView: View {
                             Text(appTheme.displayName)
                             if appTheme.isDynamic {
                                 Text("Light & Dark")
-                                    .font(.caption2)
+                                    .font(Typo.statLabel)
                                     .foregroundStyle(theme.textSecondary)
                             }
                         }
@@ -304,7 +304,7 @@ struct SettingsView: View {
                     .foregroundStyle(.red)
                 } header: {
                     Label("Debug — dev builds only", systemImage: "ant")
-                        .font(.caption2)
+                        .font(Typo.statLabel)
                 }
             }
             #endif

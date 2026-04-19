@@ -62,12 +62,12 @@ struct OnboardingFlow: View {
             Spacer()
 
             Text("Stronq")
-                .font(.system(size: 56, weight: .heavy))
+                .font(Typo.hero)
                 .opacity(titleVisible ? 1 : 0)
                 .offset(y: titleVisible ? 0 : 12)
 
             Text("Simple program.\nSix weeks.\nSeriously strong.")
-                .font(.system(size: 20, weight: .regular))
+                .font(Typo.body)
                 .foregroundStyle(theme.textSecondary)
                 .lineSpacing(6)
                 .padding(.top, 16)
@@ -82,7 +82,7 @@ struct OnboardingFlow: View {
                 HowItWorksView()
             } label: {
                 Text("How it works →")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(Typo.caption)
                     .foregroundStyle(theme.accentColor)
             }
             .padding(.top, 20)
@@ -110,10 +110,10 @@ struct OnboardingFlow: View {
             Spacer().frame(height: 60)
 
             Text("Choose Your\nProgram")
-                .font(.system(size: 28, weight: .bold))
+                .font(Typo.title)
 
             Text("Same method, different exercises.")
-                .font(.subheadline)
+                .font(Typo.body)
                 .foregroundStyle(theme.textSecondary)
                 .padding(.top, 8)
                 .padding(.bottom, 32)
@@ -131,7 +131,7 @@ struct OnboardingFlow: View {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text(template.name)
-                                    .font(.headline)
+                                    .font(Typo.heading)
                                 Spacer()
                                 if isSelected {
                                     Image(systemName: "checkmark.circle.fill")
@@ -140,7 +140,7 @@ struct OnboardingFlow: View {
                             }
 
                             Text(template.subtitle)
-                                .font(.caption)
+                                .font(Typo.caption)
                                 .foregroundStyle(theme.textSecondary)
                         }
                         .padding(16)
@@ -175,10 +175,10 @@ struct OnboardingFlow: View {
             Spacer().frame(height: 60)
 
             Text("Your 10RM")
-                .font(.system(size: 28, weight: .bold))
+                .font(Typo.title)
 
             Text("A conservative estimate of the most\nyou can lift for 10 reps with good form.")
-                .font(.subheadline)
+                .font(Typo.body)
                 .foregroundStyle(theme.textSecondary)
                 .lineSpacing(4)
                 .padding(.top, 8)
@@ -222,13 +222,13 @@ struct OnboardingFlow: View {
         return VStack(spacing: 12) {
             HStack {
                 Image(systemName: exercise.icon)
-                    .font(.title3)
+                    .font(Typo.body)
                     .foregroundStyle(theme.accentColor)
                 Text(exercise.name)
-                    .font(.headline)
+                    .font(Typo.heading)
                 Spacer()
                 Text("+\(formatted(increment)) \(unit.symbol)")
-                    .font(.caption)
+                    .font(Typo.caption)
                     .foregroundStyle(theme.textSecondary)
             }
 
@@ -237,26 +237,26 @@ struct OnboardingFlow: View {
                     if weight.wrappedValue > increment { weight.wrappedValue -= increment }
                 } label: {
                     Image(systemName: "minus.circle.fill")
-                        .font(.system(size: 32))
+                        .font(Typo.stepperButton)
                         .foregroundStyle(theme.textSecondary)
                 }
                 .buttonStyle(.borderless)
 
                 Text(formatted(weight.wrappedValue))
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .font(Typo.weightLarge)
                     .frame(minWidth: 60)
 
                 Button {
                     weight.wrappedValue += increment
                 } label: {
                     Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 32))
+                        .font(Typo.stepperButton)
                         .foregroundStyle(theme.accentColor)
                 }
                 .buttonStyle(.borderless)
 
                 Text(unit.symbol)
-                    .font(.title3)
+                    .font(Typo.body)
                     .foregroundStyle(theme.textSecondary)
             }
         }
@@ -268,15 +268,15 @@ struct OnboardingFlow: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: exercise.icon)
-                    .font(.title3)
+                    .font(Typo.body)
                     .foregroundStyle(theme.accentColor)
                 Text(exercise.name)
-                    .font(.headline)
+                    .font(Typo.heading)
                 Spacer()
             }
 
             Text("Your hardest variant")
-                .font(.caption)
+                .font(Typo.caption)
                 .foregroundStyle(theme.textSecondary)
 
             HStack(spacing: 6) {
@@ -286,7 +286,7 @@ struct OnboardingFlow: View {
                         pushUpStart = level.variant
                     } label: {
                         Text(level.label)
-                            .font(.caption2.weight(.medium))
+                            .font(Typo.small)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
                             .background(
@@ -300,7 +300,7 @@ struct OnboardingFlow: View {
             }
 
             Text(PushUpVariant.progressionLabel(for: pushUpStart))
-                .font(.caption)
+                .font(Typo.caption)
                 .foregroundStyle(theme.accentColor)
         }
         .padding(16)
@@ -314,10 +314,10 @@ struct OnboardingFlow: View {
             Spacer().frame(height: 60)
 
             Text("Setup")
-                .font(.system(size: 28, weight: .bold))
+                .font(Typo.title)
 
             Text("A few options before you start.")
-                .font(.subheadline)
+                .font(Typo.body)
                 .foregroundStyle(theme.textSecondary)
                 .padding(.top, 8)
 
@@ -329,7 +329,7 @@ struct OnboardingFlow: View {
                         .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
 
                     Text("Builds up tonnage gradually before the\nfull Heavy-Light-Medium cycle.")
-                        .font(.caption)
+                        .font(Typo.caption)
                         .foregroundStyle(theme.textSecondary)
                         .padding(.leading, 4)
                 }
@@ -366,10 +366,10 @@ struct OnboardingFlow: View {
             Spacer().frame(height: 60)
 
             Text("Ready to Train")
-                .font(.system(size: 28, weight: .bold))
+                .font(Typo.title)
 
             Text(selectedTemplate.name)
-                .font(.subheadline)
+                .font(Typo.body)
                 .foregroundStyle(theme.accentColor)
                 .padding(.top, 4)
                 .padding(.bottom, 24)
@@ -419,13 +419,13 @@ struct OnboardingFlow: View {
     private func scheduleRow(_ day: String, _ type: String, _ detail: String) -> some View {
         HStack {
             Text(day)
-                .font(.caption.bold())
+                .font(Typo.captionEmphasis)
                 .frame(width: 32, alignment: .leading)
             Text(type)
-                .font(.caption)
+                .font(Typo.caption)
             Spacer()
             Text(detail)
-                .font(.caption)
+                .font(Typo.caption)
                 .foregroundStyle(theme.textSecondary)
         }
     }
@@ -435,7 +435,7 @@ struct OnboardingFlow: View {
     private func ctaButton(_ label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
-                .font(.headline)
+                .font(Typo.heading)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(theme.accentColor, in: RoundedRectangle(cornerRadius: 14))

@@ -49,7 +49,7 @@ struct ProgressView: View {
     private var strengthChart: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("10RM Progression")
-                .font(.headline)
+                .font(Typo.heading)
                 .padding(.horizontal)
 
             let data = strengthData
@@ -79,7 +79,7 @@ struct ProgressView: View {
     private var volumeChart: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Session Volume")
-                .font(.headline)
+                .font(Typo.heading)
                 .padding(.horizontal)
 
             let completed = sessions.filter(\.isCompleted)
@@ -128,7 +128,7 @@ struct ProgressView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Bodyweight")
-                    .font(.headline)
+                    .font(Typo.heading)
                 Spacer()
                 if healthKitManager.isAvailable {
                     Button {
@@ -138,7 +138,7 @@ struct ProgressView: View {
                         }
                     } label: {
                         Label("Sync Health", systemImage: "heart.fill")
-                            .font(.caption)
+                            .font(Typo.caption)
                             .foregroundStyle(theme.accentColor)
                     }
                 }
@@ -150,13 +150,13 @@ struct ProgressView: View {
             HStack(spacing: 10) {
                 TextField("Add weight", text: $newWeight)
                     .keyboardType(.decimalPad)
-                    .font(.system(.body, design: .rounded, weight: .medium))
+                    .font(Typo.weightStandard)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
                     .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 10))
 
                 Text(unit.symbol)
-                    .font(.subheadline)
+                    .font(Typo.body)
                     .foregroundStyle(theme.textSecondary)
 
                 Button {
@@ -232,7 +232,7 @@ struct ProgressView: View {
 
     private func emptyState(_ text: String) -> some View {
         Text(text)
-            .font(.subheadline)
+            .font(Typo.body)
             .foregroundStyle(theme.textSecondary)
             .frame(height: 200)
             .frame(maxWidth: .infinity)
@@ -243,14 +243,14 @@ struct ProgressView: View {
     private func statCard(_ label: String, _ value: String, _ unit: String) -> some View {
         VStack(spacing: 4) {
             Text(value)
-                .font(.system(.title3, design: .rounded, weight: .bold))
+                .font(Typo.statValue)
             if !unit.isEmpty {
                 Text(unit)
-                    .font(.caption2)
+                    .font(Typo.statLabel)
                     .foregroundStyle(theme.textSecondary)
             }
             Text(label)
-                .font(.caption2)
+                .font(Typo.statLabel)
                 .foregroundStyle(theme.textSecondary)
         }
         .frame(maxWidth: .infinity)

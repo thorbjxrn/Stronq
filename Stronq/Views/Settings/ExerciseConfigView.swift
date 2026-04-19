@@ -21,7 +21,7 @@ struct ExerciseConfigView: View {
                     Section {
                         VStack(spacing: 16) {
                             Text("10 Rep Max")
-                                .font(.caption.bold())
+                                .font(Typo.captionEmphasis)
                                 .foregroundStyle(theme.textSecondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -34,13 +34,13 @@ struct ExerciseConfigView: View {
                                     }
                                 } label: {
                                     Image(systemName: "minus.circle.fill")
-                                        .font(.system(size: 32))
+                                        .font(Typo.stepperButton)
                                         .foregroundStyle(theme.textSecondary)
                                 }
                                 .buttonStyle(.borderless)
 
                                 TextField("", value: $exercise.initial10RM, format: .number)
-                                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                                    .font(Typo.weightLarge)
                                     .multilineTextAlignment(.center)
                                     .keyboardType(.decimalPad)
                                     .focused($isEditing)
@@ -52,13 +52,13 @@ struct ExerciseConfigView: View {
                                     exercise.initial10RM += step
                                 } label: {
                                     Image(systemName: "plus.circle.fill")
-                                        .font(.system(size: 32))
+                                        .font(Typo.stepperButton)
                                         .foregroundStyle(theme.accentColor)
                                 }
                                 .buttonStyle(.borderless)
 
                                 Text(exercise.unit.symbol)
-                                    .font(.title3)
+                                    .font(Typo.body)
                                     .foregroundStyle(theme.textSecondary)
                             }
                         }
@@ -69,14 +69,14 @@ struct ExerciseConfigView: View {
                     Section("Increment Per Cycle") {
                         HStack {
                             Text("Add when 5 series completed")
-                                .font(.subheadline)
+                                .font(Typo.body)
                                 .foregroundStyle(theme.textSecondary)
                             Spacer()
                             TextField("", value: $exercise.weightIncrement, format: .number)
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 50)
-                                .font(.system(.body, design: .rounded, weight: .bold))
+                                .font(Typo.weightStandard)
                             Text(exercise.unit.symbol)
                                 .foregroundStyle(theme.textSecondary)
                         }
@@ -99,7 +99,7 @@ struct ExerciseConfigView: View {
                                     exercise.startingPushUpVariant = level.variant
                                 } label: {
                                     Text(level.label)
-                                        .font(.caption2.weight(.medium))
+                                        .font(Typo.small)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 8)
                                         .background(
@@ -114,7 +114,7 @@ struct ExerciseConfigView: View {
                         .listRowBackground(theme.cardColor)
 
                         Text(PushUpVariant.progressionLabel(for: exercise.startingPushUpVariant))
-                            .font(.caption)
+                            .font(Typo.caption)
                             .foregroundStyle(theme.accentColor)
                             .listRowBackground(theme.cardColor)
                     }
@@ -150,7 +150,7 @@ struct ExerciseConfigView: View {
                                     Spacer()
                                     if !purchaseManager.isPremium {
                                         Image(systemName: "lock.fill")
-                                            .font(.caption)
+                                            .font(Typo.caption)
                                             .foregroundStyle(theme.textSecondary)
                                     }
                                 }
@@ -161,7 +161,7 @@ struct ExerciseConfigView: View {
                         Text("Swap Exercise")
                     } footer: {
                         Text("Same weight and increment. Adjust above if needed.")
-                            .font(.caption2)
+                            .font(Typo.small)
                     }
                 }
             }
@@ -183,17 +183,17 @@ struct ExerciseConfigView: View {
     private func weightPreviewRow(_ label: String, weight: Double) -> some View {
         HStack {
             Text(label)
-                .font(.subheadline)
+                .font(Typo.body)
                 .foregroundStyle(theme.textSecondary)
                 .frame(width: 44, alignment: .leading)
             Text(formatted(weight))
-                .font(.system(.body, design: .rounded, weight: .semibold))
+                .font(Typo.weightStandard)
             Text(exercise.unit.symbol)
-                .font(.caption)
+                .font(Typo.caption)
                 .foregroundStyle(theme.textSecondary)
             Spacer()
             Text("x 5 reps")
-                .font(.caption)
+                .font(Typo.caption)
                 .foregroundStyle(theme.textSecondary)
         }
         .listRowBackground(theme.cardColor)

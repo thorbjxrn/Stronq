@@ -42,7 +42,7 @@ struct ProgramOverviewView: View {
                             HowItWorksView()
                         } label: {
                             Text("How it works →")
-                                .font(.subheadline)
+                                .font(Typo.body)
                                 .foregroundStyle(theme.accentColor)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
@@ -85,7 +85,7 @@ struct WeekCard: View {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 8) {
                         Text(weekLabel)
-                            .font(.system(.body, design: .rounded, weight: .semibold))
+                            .font(Typo.heading)
                         if isCurrentWeek {
                             Text("NOW")
                                 .font(.system(size: 10, weight: .heavy))
@@ -97,7 +97,7 @@ struct WeekCard: View {
                     }
                     if week == 7 {
                         Text("Final Test")
-                            .font(.caption2)
+                            .font(Typo.small)
                             .foregroundStyle(theme.textSecondary)
                     }
                 }
@@ -228,13 +228,13 @@ struct WeekCard: View {
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(dayType.rawValue)
-                    .font(.subheadline.bold())
+                    .font(Typo.bodyEmphasis)
                     .foregroundStyle(allHitFive ? theme.completedColor :
                                      isDone ? theme.accentColor : theme.accentColor)
 
                 if allHitFive {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.caption)
+                        .font(Typo.caption)
                         .foregroundStyle(theme.completedColor)
                 }
 
@@ -244,7 +244,7 @@ struct WeekCard: View {
                     HStack(spacing: 8) {
                         ForEach(exerciseSeries, id: \.name) { es in
                             Text("\(es.count)")
-                                .font(.caption2.bold())
+                                .font(Typo.small)
                                 .foregroundStyle(es.count >= 5 ? theme.completedColor : theme.accentColor)
                         }
                     }
@@ -252,22 +252,22 @@ struct WeekCard: View {
                     HStack(spacing: 6) {
                         ForEach(perExerciseModes, id: \.name) { em in
                             Text("\(em.count)")
-                                .font(.caption2.bold())
+                                .font(Typo.small)
                                 .foregroundStyle(theme.textSecondary)
                         }
                         Text("series")
-                            .font(.caption2)
+                            .font(Typo.statLabel)
                             .foregroundStyle(theme.textSecondary)
                     }
                 } else {
                     switch mode {
                     case .max:
                         Label("max series", systemImage: "flame")
-                            .font(.caption2)
+                            .font(Typo.statLabel)
                             .foregroundStyle(theme.accentColor.opacity(0.8))
                     case .fixed(let n):
                         Text("\(n) series")
-                            .font(.caption2)
+                            .font(Typo.statLabel)
                             .foregroundStyle(theme.textSecondary)
                     }
                 }
@@ -277,7 +277,7 @@ struct WeekCard: View {
             ForEach(planned, id: \.name) { exercise in
                 HStack(spacing: 0) {
                     Text(exercise.name)
-                        .font(.caption)
+                        .font(Typo.caption)
                         .foregroundStyle(theme.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
