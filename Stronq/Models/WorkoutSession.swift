@@ -48,11 +48,12 @@ final class WorkoutSession {
             .sorted { ($0.seriesNumber, $0.setNumber) < ($1.seriesNumber, $1.setNumber) }
     }
 
-    func maxSeriesCompleted(for exerciseName: String) -> Int {
-        let exerciseSets = setsForExercise(exerciseName)
-        let completedBySeriesAndIntensity = exerciseSets
-            .filter { $0.isCompleted && $0.actualReps >= $0.targetReps }
-        let fullSeries = Set(completedBySeriesAndIntensity.map(\.seriesNumber))
-        return fullSeries.count
+    func fullyCompletedSeriesCount(for exerciseName: String) -> Int {
+        let sets = completedSets.filter { $0.exerciseName == exerciseName }
+        let seriesNumbers = Set(sets.map(\.seriesNumber))
+        return seriesNumbers.filter { series in
+            let setsInSeries = sets.filter { $0.seriesNumber == series }
+            return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
+        }.count
     }
 }

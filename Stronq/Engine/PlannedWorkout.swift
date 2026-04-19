@@ -1,6 +1,6 @@
 import Foundation
 
-struct PlannedSet {
+struct PlannedSet: Sendable {
     let intensity: Double
     let weight: Double
     let reps: Int
@@ -13,6 +13,13 @@ struct PlannedSet {
         case 1.0: "100%"
         default: "\(Int(intensity * 100))%"
         }
+    }
+
+    var shortDisplayWeight: String {
+        if let variant = pushUpVariant {
+            return variant.shortName
+        }
+        return displayWeight
     }
 
     var displayWeight: String {

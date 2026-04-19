@@ -24,7 +24,7 @@ final class WorkoutViewModel {
 
     // MARK: - Setup
 
-    func prepareWorkout(program: Program) {
+    func prepareWorkout(program: Program, modelContext: ModelContext? = nil) {
         plannedExercises = []
 
         let calculatedWeek = DeLormeEngine.currentWeek(
@@ -36,11 +36,20 @@ final class WorkoutViewModel {
             program.currentWeek = calculatedWeek
         }
 
-        guard let next = DeLormeEngine.nextWorkout(program: program) else { return }
+        var freshSessions: [WorkoutSession]?
+        if let modelContext {
+            let programID = program.id
+            let descriptor = FetchDescriptor<WorkoutSession>(
+                predicate: #Predicate { $0.program?.id == programID }
+            )
+            freshSessions = try? modelContext.fetch(descriptor)
+        }
+
+        guard let next = DeLormeEngine.nextWorkout(program: program, sessions: freshSessions) else { return }
         dayType = next.dayType
         weekNumber = next.week
 
-        let mondaySeries = lastMondaySeriesCounts(program: program, week: weekNumber)
+        let mondaySeries = lastMondaySeriesCounts(program: program, week: weekNumber, sessions: freshSessions)
         seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: next.dayType, mondaySeriesCount: mondaySeries.values.min())
         setRestDuration = program.restBetweenSets
         seriesRestDuration = program.restBetweenSeries
@@ -76,6 +85,10 @@ final class WorkoutViewModel {
             .filter { $0.exerciseName == name }
             .map(\.seriesNumber)
             .max() ?? 0
+    }
+
+    func completedSeriesCount(for name: String) -> Int {
+        activeSession?.fullyCompletedSeriesCount(for: name) ?? 0
     }
 
     func canAddMoreSeries(for name: String) -> Bool {
@@ -179,7 +192,7 @@ final class WorkoutViewModel {
         doneExercises = []
         isWorkoutActive = false
 
-        prepareWorkout(program: program)
+        prepareWorkout(program: program, modelContext: modelContext)
     }
 
     // MARK: - Set Actions
@@ -230,7 +243,7 @@ final class WorkoutViewModel {
         plannedExercises = []
         isWorkoutActive = false
 
-        prepareWorkout(program: program)
+        prepareWorkout(program: program, modelContext: modelContext)
     }
 
     // MARK: - Timer
@@ -279,18 +292,16 @@ final class WorkoutViewModel {
 
     // MARK: - Helpers
 
-    private func lastMondaySeriesCounts(program: Program, week: Int) -> [String: Int] {
-        let mondaySession = program.sessions.first {
+    private func lastMondaySeriesCounts(program: Program, week: Int, sessions: [WorkoutSession]? = nil) -> [String: Int] {
+        let allSessions = sessions ?? program.sessions
+        let mondaySession = allSessions.first {
             $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
         }
         guard let session = mondaySession else { return [:] }
 
         var counts: [String: Int] = [:]
         for exercise in program.exercises {
-            counts[exercise.name] = session.completedSets
-                .filter { $0.exerciseName == exercise.name }
-                .map(\.seriesNumber)
-                .max() ?? 0
+            counts[exercise.name] = session.fullyCompletedSeriesCount(for: exercise.name)
         }
         return counts
     }

@@ -37,9 +37,19 @@ struct ProgramOverviewView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+
+                        NavigationLink {
+                            HowItWorksView()
+                        } label: {
+                            Text("How it works →")
+                                .font(.subheadline)
+                                .foregroundStyle(theme.accentColor)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                        }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
                 } else {
                     Text("No program configured.")
                         .foregroundStyle(theme.textSecondary)
@@ -139,24 +149,27 @@ struct WeekCard: View {
             ForEach(days, id: \.self) { dayType in
                 let session = findSession(dayType)
                 let done = session?.isCompleted == true
-                let sets = session?.completedSets ?? []
-                let hasUncompletedSets = sets.contains { !$0.isCompleted }
-                let allSetsComplete = done && !sets.isEmpty && !hasUncompletedSets
-                let isPartial = done && (sets.isEmpty || hasUncompletedSets)
+                let exerciseNames = Set((session?.completedSets ?? []).map(\.exerciseName))
+                let allHitFive = done && !exerciseNames.isEmpty && exerciseNames.allSatisfy { name in
+                    let max = (session?.completedSets ?? [])
+                        .filter { $0.exerciseName == name && $0.isCompleted }
+                        .map(\.seriesNumber).max() ?? 0
+                    return max >= 5
+                }
 
                 VStack(spacing: 3) {
                     Circle()
-                        .fill(allSetsComplete ? theme.completedColor :
-                              isPartial ? theme.accentColor :
+                        .fill(allHitFive ? theme.completedColor :
+                              done ? theme.accentColor :
                               Color.white.opacity(0.1))
                         .frame(width: 20, height: 20)
                         .overlay {
-                            if allSetsComplete {
-                                Image(systemName: "checkmark")
+                            if allHitFive {
+                                Image(systemName: "arrow.up")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(.black)
-                            } else if isPartial {
-                                Image(systemName: "minus")
+                            } else if done {
+                                Image(systemName: "checkmark")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(.black)
                             }
@@ -183,11 +196,23 @@ struct WeekCard: View {
     }
 
     private func dayRow(_ dayType: DayType) -> some View {
+        let mondayPerExercise = mondaySeriesPerExercise
         let mode = DeLormeEngine.seriesCount(
             week: week,
             dayType: dayType,
             mondaySeriesCount: mondaySeriesForWeek
         )
+        let perExerciseModes: [(name: String, count: Int)] = program.exercises
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map { ex in
+                let mc = mondayPerExercise[ex.name]
+                let m = DeLormeEngine.seriesCount(week: week, dayType: dayType, mondaySeriesCount: mc)
+                switch m {
+                case .fixed(let n): return (name: ex.name, count: n)
+                case .max: return (name: ex.name, count: 0)
+                }
+            }
+        let hasVariableSeries = Set(perExerciseModes.map(\.count)).count > 1
         let planned = DeLormeEngine.generateSeries(
             exercises: program.exercises,
             dayType: dayType,
@@ -195,35 +220,45 @@ struct WeekCard: View {
         )
         let session = findSession(dayType)
         let isDone = session?.isCompleted == true
-        let sets = session?.completedSets ?? []
-        let hasUncompletedSets = sets.contains { !$0.isCompleted }
-        let allSetsComplete = isDone && !sets.isEmpty && !hasUncompletedSets
-        let isPartial = isDone && (sets.isEmpty || hasUncompletedSets)
-        let completedSeries = session?.completedSets.filter(\.isCompleted).map(\.seriesNumber).max() ?? 0
+        let exerciseSeries: [(name: String, count: Int)] = isDone && session != nil ? program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder }).map { ex in
+            (name: ex.name, count: session!.fullyCompletedSeriesCount(for: ex.name))
+        } : []
+        let allHitFive = isDone && !exerciseSeries.isEmpty && exerciseSeries.allSatisfy { $0.count >= 5 }
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(dayType.rawValue)
                     .font(.subheadline.bold())
-                    .foregroundStyle(allSetsComplete ? theme.completedColor :
-                                     isPartial ? theme.accentColor : theme.accentColor)
+                    .foregroundStyle(allHitFive ? theme.completedColor :
+                                     isDone ? theme.accentColor : theme.accentColor)
 
-                if allSetsComplete {
+                if allHitFive {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.caption)
                         .foregroundStyle(theme.completedColor)
-                } else if isPartial {
-                    Image(systemName: "minus.circle.fill")
-                        .font(.caption)
-                        .foregroundStyle(theme.accentColor)
                 }
 
                 Spacer()
 
                 if isDone {
-                    Text("\(completedSeries) series\(isPartial ? " (partial)" : "")")
-                        .font(.caption2)
-                        .foregroundStyle(allSetsComplete ? theme.completedColor : theme.accentColor)
+                    HStack(spacing: 8) {
+                        ForEach(exerciseSeries, id: \.name) { es in
+                            Text("\(es.count)")
+                                .font(.caption2.bold())
+                                .foregroundStyle(es.count >= 5 ? theme.completedColor : theme.accentColor)
+                        }
+                    }
+                } else if hasVariableSeries {
+                    HStack(spacing: 6) {
+                        ForEach(perExerciseModes, id: \.name) { em in
+                            Text("\(em.count)")
+                                .font(.caption2.bold())
+                                .foregroundStyle(theme.textSecondary)
+                        }
+                        Text("series")
+                            .font(.caption2)
+                            .foregroundStyle(theme.textSecondary)
+                    }
                 } else {
                     switch mode {
                     case .max:
@@ -247,7 +282,7 @@ struct WeekCard: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     ForEach(exercise.sets, id: \.intensity) { set in
-                        Text(set.displayWeight)
+                        Text(set.shortDisplayWeight)
                             .font(.system(.caption, design: .monospaced, weight: .semibold))
                             .foregroundStyle(.white.opacity(0.85))
                             .frame(width: 44, alignment: .trailing)
@@ -259,11 +294,21 @@ struct WeekCard: View {
         .background(theme.backgroundColor.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
     }
 
-    private var mondaySeriesForWeek: Int? {
+    private var mondaySeriesPerExercise: [String: Int] {
         let session = allSessions.first {
             $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
         }
-        guard let session else { return nil }
-        return session.completedSets.map(\.seriesNumber).max()
+        guard let session else { return [:] }
+        var result: [String: Int] = [:]
+        for exercise in program.exercises {
+            result[exercise.name] = session.fullyCompletedSeriesCount(for: exercise.name)
+        }
+        return result
+    }
+
+    private var mondaySeriesForWeek: Int? {
+        let perExercise = mondaySeriesPerExercise
+        guard !perExercise.isEmpty else { return nil }
+        return perExercise.values.min()
     }
 }

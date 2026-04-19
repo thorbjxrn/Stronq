@@ -84,7 +84,7 @@ struct DeLormeEngine {
                         intensity: intensity,
                         weight: calculateWeight(tenRM: rm, intensity: intensity),
                         reps: 5,
-                        pushUpVariant: exercise.type == .bodyweight ? PushUpVariant.from(intensity: intensity) : nil
+                        pushUpVariant: exercise.type == .bodyweight ? PushUpVariant.forIntensity(intensity, maxLevel: exercise.startingPushUpVariant) : nil
                     )
                 }
                 return PlannedSeriesExercise(
@@ -141,7 +141,7 @@ enum SeriesMode: Equatable {
     case max
 }
 
-struct PlannedSeriesExercise {
+struct PlannedSeriesExercise: Sendable {
     let name: String
     let type: ExerciseType
     let sets: [PlannedSet]

@@ -11,7 +11,13 @@ final class Exercise {
     var weightIncrement: Double
     var unit: WeightUnit
     var sortOrder: Int
+    var pushUpStartLevel: String?
     var program: Program?
+
+    var startingPushUpVariant: PushUpVariant {
+        get { PushUpVariant(rawValue: pushUpStartLevel ?? "") ?? .regular }
+        set { pushUpStartLevel = newValue.rawValue }
+    }
 
     init(
         name: String,
@@ -19,7 +25,8 @@ final class Exercise {
         initial10RM: Double,
         weightIncrement: Double,
         unit: WeightUnit = .kg,
-        sortOrder: Int
+        sortOrder: Int,
+        pushUpStart: PushUpVariant = .regular
     ) {
         self.id = UUID()
         self.name = name
@@ -29,6 +36,7 @@ final class Exercise {
         self.weightIncrement = weightIncrement
         self.unit = unit
         self.sortOrder = sortOrder
+        self.pushUpStartLevel = pushUpStart.rawValue
     }
 
     static func defaultExercises(unit: WeightUnit = .kg) -> [Exercise] {

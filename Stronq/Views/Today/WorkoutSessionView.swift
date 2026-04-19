@@ -79,10 +79,12 @@ struct WorkoutSessionView: View {
                         }
                         VStack(spacing: 2) {
                             Text(exercise.name)
-                                .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
+                                .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
                             if seriesCount > 0 {
                                 Text("\(seriesCount) series")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: 10))
                                     .foregroundStyle(theme.textSecondary)
                             }
                         }
@@ -169,9 +171,14 @@ struct WorkoutSessionView: View {
                         }
 
                         Button {
-                            withAnimation { viewModel.markExerciseDone(exercise.name) }
+                            withAnimation {
+                                viewModel.markExerciseDone(exercise.name)
+                                if let nextIndex = viewModel.plannedExercises.firstIndex(where: { !viewModel.isExerciseDone($0.name) }) {
+                                    selectedExercise = nextIndex
+                                }
+                            }
                         } label: {
-                            Label("Done — \(currentSeries) series", systemImage: "checkmark")
+                            Label("Done — \(viewModel.completedSeriesCount(for: exercise.name)) series", systemImage: "checkmark")
                                 .font(.subheadline.weight(.semibold))
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
@@ -216,36 +223,23 @@ struct WorkoutSessionView: View {
                         .strokeBorder(isCurrent && !allDone ? theme.accentColor.opacity(0.3) : .clear, lineWidth: 1)
                 )
         )
+        .onTapGesture(count: 2) {
+            if allDone {
+                for set in group.sets where set.isCompleted {
+                    viewModel.uncompleteSet(set)
+                }
+            } else {
+                for set in group.sets where !set.isCompleted {
+                    set.isCompleted = true
+                    set.completedAt = .now
+                }
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            }
+        }
         .opacity(allDone && !isCurrent ? 0.5 : 1)
     }
 
-    private func actionButtons(exercise: PlannedSeriesExercise) -> some View {
-        HStack(spacing: 12) {
-            if viewModel.canAddMoreSeries(for: exercise.name) {
-                Button {
-                    withAnimation { viewModel.addAnotherSeriesForExercise(exercise.name) }
-                } label: {
-                    Label("Another Series", systemImage: "plus.circle.fill")
-                        .font(.subheadline.weight(.semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(theme.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                        .foregroundStyle(theme.accentColor)
-                }
-            }
 
-            Button {
-                withAnimation { viewModel.markExerciseDone(exercise.name) }
-            } label: {
-                Label("Done", systemImage: "checkmark")
-                    .font(.subheadline.weight(.semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(theme.completedColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                    .foregroundStyle(theme.completedColor)
-            }
-        }
-    }
 
     private func doneLabel(_ name: String, seriesCount: Int) -> some View {
         HStack(spacing: 8) {
@@ -271,10 +265,22 @@ struct WorkoutSessionView: View {
     }
 
     private func finishAndShow() {
-        let summary = viewModel.activeSession.map { SessionSummary(session: $0) }
+        let elapsed = viewModel.elapsedTime
+        let volume = viewModel.activeSession?.totalVolume ?? 0
+        let day = viewModel.dayType
+        let series = program.exercises
+            .sorted(by: { $0.sortOrder < $1.sortOrder })
+            .map { viewModel.completedSeriesCount(for: $0.name) }
+
         viewModel.finishWorkout(program: program, modelContext: modelContext)
-        if let summary, let onFinish {
-            onFinish(summary)
+
+        if let onFinish {
+            onFinish(SessionSummary(
+                dayType: day,
+                elapsed: elapsed,
+                volume: volume,
+                seriesCounts: series
+            ))
         }
     }
 

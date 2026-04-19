@@ -87,22 +87,18 @@ struct ProgressView: View {
             if completed.isEmpty {
                 emptyState("Complete workouts to see volume trends.")
             } else {
-                let calendar = Calendar.current
-                let grouped = Dictionary(grouping: completed) { session in
-                    calendar.startOfDay(for: session.date)
-                }
-                let volumeData = grouped.map { (day, daySessions) in
+                let volumeData = completed.map { session in
                     VolumePoint(
-                        id: day.timeIntervalSince1970.description,
-                        date: day,
-                        volume: daySessions.reduce(0) { $0 + $1.totalVolume },
-                        dayType: daySessions.first?.dayType.rawValue ?? ""
+                        id: session.id.uuidString,
+                        week: session.weekNumber,
+                        volume: session.totalVolume,
+                        dayType: session.dayType.rawValue
                     )
-                }.sorted { $0.date < $1.date }
+                }.sorted { ($0.week, DayType.sortOrder($0.dayType)) < ($1.week, DayType.sortOrder($1.dayType)) }
 
                 Chart(volumeData, id: \.id) { point in
                     BarMark(
-                        x: .value("Date", point.date, unit: .day),
+                        x: .value("Week", "W\(point.week)"),
                         y: .value("Volume", point.volume)
                     )
                 }
@@ -303,7 +299,7 @@ struct StrengthPoint: Identifiable {
 
 struct VolumePoint: Identifiable {
     let id: String
-    let date: Date
+    let week: Int
     let volume: Double
     let dayType: String
 }

@@ -4,7 +4,13 @@ import SwiftData
 struct ExerciseConfigView: View {
     @Bindable var exercise: Exercise
     @Environment(ThemeManager.self) private var theme
+    @Environment(PurchaseManager.self) private var purchaseManager
     @FocusState private var isEditing: Bool
+    @State private var showingPaywall = false
+
+    private var alternatives: [ExerciseAlternative] {
+        ExerciseAlternative.alternatives(for: exercise.name)
+    }
 
     var body: some View {
         ZStack {
@@ -84,11 +90,79 @@ struct ExerciseConfigView: View {
                     }
                 }
 
-                Section {
-                    TextField("Exercise Name", text: $exercise.name)
+                if exercise.type == .bodyweight {
+                    Section("Difficulty") {
+                        HStack(spacing: 6) {
+                            ForEach(PushUpVariant.selectableMaxLevels, id: \.variant) { level in
+                                let isSelected = exercise.startingPushUpVariant == level.variant
+                                Button {
+                                    exercise.startingPushUpVariant = level.variant
+                                } label: {
+                                    Text(level.label)
+                                        .font(.caption2.weight(.medium))
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            isSelected ? theme.accentColor : Color.white.opacity(0.08),
+                                            in: RoundedRectangle(cornerRadius: 8)
+                                        )
+                                        .foregroundStyle(isSelected ? .black : theme.textSecondary)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
                         .listRowBackground(theme.cardColor)
-                } header: {
-                    Text("Name")
+
+                        Text(PushUpVariant.progressionLabel(for: exercise.startingPushUpVariant))
+                            .font(.caption)
+                            .foregroundStyle(theme.accentColor)
+                            .listRowBackground(theme.cardColor)
+                    }
+                }
+
+                if !alternatives.isEmpty {
+                    Section {
+                        ForEach(alternatives) { alt in
+                            Button {
+                                if purchaseManager.isPremium {
+                                    exercise.name = alt.name
+                                    if alt.isWeighted && exercise.type == .bodyweight {
+                                        exercise.type = .weighted
+                                        exercise.initial10RM = alt.defaultRM
+                                        exercise.weightIncrement = alt.defaultIncrement
+                                        exercise.pushUpStartLevel = nil
+                                    } else if !alt.isWeighted && exercise.type == .weighted {
+                                        exercise.type = .bodyweight
+                                        exercise.initial10RM = 0
+                                        exercise.weightIncrement = 0
+                                        exercise.startingPushUpVariant = .oneArm
+                                    }
+                                } else {
+                                    showingPaywall = true
+                                }
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: alt.icon)
+                                        .foregroundStyle(theme.accentColor)
+                                        .frame(width: 24)
+                                    Text(alt.name)
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    if !purchaseManager.isPremium {
+                                        Image(systemName: "lock.fill")
+                                            .font(.caption)
+                                            .foregroundStyle(theme.textSecondary)
+                                    }
+                                }
+                            }
+                            .listRowBackground(theme.cardColor)
+                        }
+                    } header: {
+                        Text("Swap Exercise")
+                    } footer: {
+                        Text("Same weight and increment. Adjust above if needed.")
+                            .font(.caption2)
+                    }
                 }
             }
             .scrollContentBackground(.hidden)
@@ -100,6 +174,9 @@ struct ExerciseConfigView: View {
                 Spacer()
                 Button("Done") { isEditing = false }
             }
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
         }
     }
 

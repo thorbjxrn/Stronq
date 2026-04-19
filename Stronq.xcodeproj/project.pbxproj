@@ -33,6 +33,7 @@
 		BE69909ABF9D9C4FFD847928 /* BodyweightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529C5AF6B1D9D4E1E3D97B22 /* BodyweightEntry.swift */; };
 		C8F55B0BCFEE479F192BF5FA /* BarbellGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FA8D23491F82B25A51AB76 /* BarbellGlyph.swift */; };
 		D8F5F4753557CFDB3448BC69 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5CEC2A8A5A0FD7B6AE4D4D /* ProgressView.swift */; };
+		E556EFFA90200544D466A993 /* ProgramTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EE76AB50532EBD34A5C189 /* ProgramTemplate.swift */; };
 		F008F7B1FDFFAC95FC564657 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA55539172EB93E72088FB6E /* Enums.swift */; };
 		F10E99219E69860D57B8E28C /* AdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977F7F57A4AD697E47674987 /* AdManager.swift */; };
 		F2A6DFF079BA0F3054891635 /* CompletedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536490E6AC54B974D71815C5 /* CompletedSet.swift */; };
@@ -81,6 +82,7 @@
 		BE273821247AA091E3326C40 /* ProgramOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramOverviewView.swift; sourceTree = "<group>"; };
 		C070DD3599C314979085F8A2 /* SessionSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSummary.swift; sourceTree = "<group>"; };
 		C4B5EAF7CFDE28A2147BEA6C /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
+		D1EE76AB50532EBD34A5C189 /* ProgramTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramTemplate.swift; sourceTree = "<group>"; };
 		DA55539172EB93E72088FB6E /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		DB88F98DF2816CD0CECDDB6C /* StronqTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StronqTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC708DD6AB0C8267C257454C /* LaunchBurstView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchBurstView.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				177E03AB36B1E231D1D863D4 /* Exercise.swift */,
 				785BE572FCB6E03C11C018DC /* ExerciseCatalog.swift */,
 				082358CD5AD7ABC389513246 /* Program.swift */,
+				D1EE76AB50532EBD34A5C189 /* ProgramTemplate.swift */,
 				C070DD3599C314979085F8A2 /* SessionSummary.swift */,
 				A96A50854BBB287E0B2E6968 /* WorkoutSession.swift */,
 			);
@@ -388,6 +391,7 @@
 				47AF320DA68ACE5363B0CB49 /* PlannedWorkout.swift in Sources */,
 				15DAF0089963AD37729DF022 /* Program.swift in Sources */,
 				A19F82860B61ADAE6840DBEA /* ProgramOverviewView.swift in Sources */,
+				E556EFFA90200544D466A993 /* ProgramTemplate.swift in Sources */,
 				D8F5F4753557CFDB3448BC69 /* ProgressView.swift in Sources */,
 				13EDC82181567D664D73AF5E /* PurchaseManager.swift in Sources */,
 				11EB100E964426B08CCF766E /* ReminderManager.swift in Sources */,

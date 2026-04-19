@@ -18,7 +18,7 @@ struct PaywallView: View {
                         .font(.system(size: 60))
                         .foregroundStyle(theme.accentColor)
 
-                    Text("Bear Premium")
+                    Text("Stronq Premium")
                         .font(.title.bold())
 
                     VStack(alignment: .leading, spacing: 12) {

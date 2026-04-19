@@ -1,42 +1,62 @@
 import Foundation
 
-struct ExerciseTemplate: Identifiable, Hashable {
+struct ExerciseAlternative: Identifiable, Sendable {
     let id: String
     let name: String
-    let type: ExerciseType
-    let category: ExerciseCategory
-    let defaultIncrement: Double
     let icon: String
+    var isWeighted: Bool = false
+    var defaultRM: Double = 0
+    var defaultIncrement: Double = 2.5
 
-    enum ExerciseCategory: String, CaseIterable {
-        case push = "Push"
-        case pull = "Pull"
-        case legs = "Legs"
-    }
-
-    static let catalog: [ExerciseTemplate] = [
-        // Push
-        ExerciseTemplate(id: "bench-press", name: "Bench Press", type: .weighted, category: .push, defaultIncrement: 2.5, icon: "figure.strengthtraining.traditional"),
-        ExerciseTemplate(id: "push-up", name: "Push-up", type: .bodyweight, category: .push, defaultIncrement: 0, icon: "figure.push.up"),
-        ExerciseTemplate(id: "overhead-press", name: "Overhead Press", type: .weighted, category: .push, defaultIncrement: 2.5, icon: "figure.arms.open"),
-        ExerciseTemplate(id: "dumbbell-press", name: "Dumbbell Press", type: .weighted, category: .push, defaultIncrement: 2, icon: "dumbbell.fill"),
-        ExerciseTemplate(id: "dips", name: "Dips", type: .bodyweight, category: .push, defaultIncrement: 0, icon: "figure.cooldown"),
-
-        // Pull
-        ExerciseTemplate(id: "deadlift", name: "Deadlift", type: .weighted, category: .pull, defaultIncrement: 5, icon: "figure.strengthtraining.functional"),
-        ExerciseTemplate(id: "pulldown", name: "Half-Kneeling 1-Arm Pulldown", type: .weighted, category: .pull, defaultIncrement: 2.5, icon: "figure.rowing"),
-        ExerciseTemplate(id: "barbell-row", name: "Barbell Row", type: .weighted, category: .pull, defaultIncrement: 2.5, icon: "figure.rowing"),
-        ExerciseTemplate(id: "pull-up", name: "Pull-up", type: .bodyweight, category: .pull, defaultIncrement: 0, icon: "figure.climbing"),
-        ExerciseTemplate(id: "cable-row", name: "Cable Row", type: .weighted, category: .pull, defaultIncrement: 2.5, icon: "figure.rowing"),
-
-        // Legs
-        ExerciseTemplate(id: "zercher-squat", name: "Zercher Squat", type: .weighted, category: .legs, defaultIncrement: 5, icon: "figure.squat"),
-        ExerciseTemplate(id: "back-squat", name: "Back Squat", type: .weighted, category: .legs, defaultIncrement: 5, icon: "figure.squat"),
-        ExerciseTemplate(id: "front-squat", name: "Front Squat", type: .weighted, category: .legs, defaultIncrement: 5, icon: "figure.squat"),
-        ExerciseTemplate(id: "leg-press", name: "Leg Press", type: .weighted, category: .legs, defaultIncrement: 5, icon: "figure.step.training"),
-        ExerciseTemplate(id: "romanian-deadlift", name: "Romanian Deadlift", type: .weighted, category: .legs, defaultIncrement: 5, icon: "figure.strengthtraining.functional"),
+    static let alternatives: [String: [ExerciseAlternative]] = [
+        "Bench Press": [
+            ExerciseAlternative(id: "db-bench", name: "Dumbbell Bench Press", icon: "dumbbell.fill"),
+            ExerciseAlternative(id: "incline-bench", name: "Incline Bench Press", icon: "figure.strengthtraining.traditional"),
+            ExerciseAlternative(id: "floor-press", name: "Floor Press", icon: "figure.strengthtraining.traditional"),
+            ExerciseAlternative(id: "close-grip-bench", name: "Close-Grip Bench Press", icon: "figure.strengthtraining.traditional"),
+        ],
+        "Deadlift": [
+            ExerciseAlternative(id: "rdl", name: "Romanian Deadlift", icon: "figure.strengthtraining.functional"),
+            ExerciseAlternative(id: "sumo", name: "Sumo Deadlift", icon: "figure.strengthtraining.functional"),
+            ExerciseAlternative(id: "trap-bar", name: "Trap Bar Deadlift", icon: "figure.strengthtraining.functional"),
+        ],
+        "Push-up": [
+            ExerciseAlternative(id: "dips", name: "Dips", icon: "figure.cooldown", isWeighted: true, defaultRM: 0, defaultIncrement: 5),
+            ExerciseAlternative(id: "db-bench-alt", name: "Dumbbell Bench Press", icon: "dumbbell.fill", isWeighted: true, defaultRM: 20, defaultIncrement: 2),
+            ExerciseAlternative(id: "bench-press-alt", name: "Bench Press", icon: "figure.strengthtraining.traditional", isWeighted: true, defaultRM: 60, defaultIncrement: 2.5),
+        ],
+        "Zercher Squat": [
+            ExerciseAlternative(id: "back-squat", name: "Back Squat", icon: "figure.strengthtraining.functional"),
+            ExerciseAlternative(id: "front-squat", name: "Front Squat", icon: "figure.strengthtraining.functional"),
+            ExerciseAlternative(id: "goblet-squat", name: "Goblet Squat", icon: "figure.strengthtraining.functional"),
+        ],
+        "Half-Kneeling Pulldown": [
+            ExerciseAlternative(id: "seated-cable-row", name: "Seated Cable Row", icon: "figure.rowing"),
+            ExerciseAlternative(id: "db-row", name: "Dumbbell Row", icon: "figure.rowing"),
+            ExerciseAlternative(id: "barbell-row", name: "Barbell Row", icon: "figure.rowing"),
+            ExerciseAlternative(id: "lat-pulldown", name: "Lat Pulldown", icon: "figure.rowing"),
+        ],
     ]
 
-    static let v1Defaults: [String] = ["push-up", "pulldown", "zercher-squat"]
-    static let originalDefaults: [String] = ["bench-press", "deadlift"]
+    private static let aliases: [String: String] = [
+        "HK Pulldown": "Half-Kneeling Pulldown",
+    ]
+
+    static func alternatives(for exerciseName: String) -> [ExerciseAlternative] {
+        let canonicalName = aliases[exerciseName] ?? exerciseName
+
+        if let alts = alternatives[canonicalName] {
+            return alts
+        }
+
+        for (key, alts) in alternatives {
+            if alts.contains(where: { $0.name == canonicalName }) {
+                var result = alts.filter { $0.name != canonicalName }
+                let isBodyweight = key == "Push-up"
+                result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: isBodyweight ? "figure.core.training" : "figure.strengthtraining.traditional", isWeighted: !isBodyweight), at: 0)
+                return result
+            }
+        }
+        return []
+    }
 }
