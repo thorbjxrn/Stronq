@@ -61,8 +61,8 @@ enum AppTheme: String, CaseIterable {
         case .midnight: Color(red: 0.20, green: 0.82, blue: 0.88)
         // Muted bronze — dark, heavy, masculine
         case .obsidian: Color(red: 0.72, green: 0.58, blue: 0.42)
-        // OD green — military olive drab, high contrast
-        case .tactical: Color(red: 0.65, green: 0.75, blue: 0.35)
+        // Phosphor green — night vision / radar CRT
+        case .tactical: Color(red: 0.10, green: 0.78, blue: 0.35)
         }
     }
 
@@ -74,8 +74,8 @@ enum AppTheme: String, CaseIterable {
         case .midnight: Color(red: 0.04, green: 0.05, blue: 0.09)
         // Pure black — heavy, no-nonsense
         case .obsidian: Color(red: 0.04, green: 0.04, blue: 0.04)
-        // Dark olive-black
-        case .tactical: Color(red: 0.06, green: 0.07, blue: 0.05)
+        // Near-black with faint green cast
+        case .tactical: Color(red: 0.03, green: 0.05, blue: 0.03)
         }
     }
 
@@ -87,8 +87,8 @@ enum AppTheme: String, CaseIterable {
         case .midnight: Color(red: 0.08, green: 0.09, blue: 0.16)
         // Dark charcoal with warm undertone
         case .obsidian: Color(red: 0.10, green: 0.09, blue: 0.08)
-        // Dark khaki-green
-        case .tactical: Color(red: 0.11, green: 0.12, blue: 0.09)
+        // Dark with green tint — CRT glow
+        case .tactical: Color(red: 0.06, green: 0.10, blue: 0.07)
         }
     }
 
@@ -97,8 +97,8 @@ enum AppTheme: String, CaseIterable {
         case .chalk: Color(.label)
         // Slightly warm white for obsidian
         case .obsidian: Color(red: 0.90, green: 0.88, blue: 0.84)
-        // Bright sand for tactical
-        case .tactical: Color(red: 0.92, green: 0.90, blue: 0.80)
+        // Pale green-white — terminal text
+        case .tactical: Color(red: 0.80, green: 0.92, blue: 0.82)
         default: .white
         }
     }
@@ -107,7 +107,7 @@ enum AppTheme: String, CaseIterable {
         switch self {
         case .chalk: Color(.secondaryLabel)
         case .obsidian: Color(red: 0.50, green: 0.47, blue: 0.42)
-        case .tactical: Color(red: 0.58, green: 0.60, blue: 0.48)
+        case .tactical: Color(red: 0.35, green: 0.50, blue: 0.38)
         default: Color(white: 0.6)
         }
     }
@@ -120,8 +120,8 @@ enum AppTheme: String, CaseIterable {
         case .midnight: Color(red: 0.25, green: 0.85, blue: 0.60)
         // Dull gold — understated success
         case .obsidian: Color(red: 0.75, green: 0.65, blue: 0.35)
-        // Olive green — mission complete
-        case .tactical: Color(red: 0.45, green: 0.65, blue: 0.30)
+        // Bright phosphor — confirmed on scope
+        case .tactical: Color(red: 0.15, green: 0.85, blue: 0.40)
         }
     }
 
@@ -132,7 +132,7 @@ enum AppTheme: String, CaseIterable {
         case .crimson: Color(red: 0.92, green: 0.28, blue: 0.50)
         case .midnight: Color(red: 0.20, green: 0.82, blue: 0.88)
         case .obsidian: Color(red: 0.72, green: 0.58, blue: 0.42)
-        case .tactical: Color(red: 0.65, green: 0.75, blue: 0.35)
+        case .tactical: Color(red: 0.10, green: 0.78, blue: 0.35)
         }
     }
 }
