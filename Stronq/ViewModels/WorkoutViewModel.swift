@@ -278,7 +278,6 @@ final class WorkoutViewModel {
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { return }
                 restTimerRemaining -= 1
-                timerManager.updateLiveActivity(timeRemaining: restTimerRemaining)
             }
             isRestTimerRunning = false
             timerManager.endLiveActivity()

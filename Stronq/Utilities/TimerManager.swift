@@ -12,8 +12,9 @@ final class TimerManager {
         duration: Int
     ) {
         let attrs = RestTimerAttributes(exerciseName: exerciseName)
+        let endDate = Date.now.addingTimeInterval(TimeInterval(duration))
         let state = RestTimerAttributes.ContentState(
-            timeRemaining: duration,
+            endDate: endDate,
             nextSetInfo: nextSetInfo
         )
 
@@ -27,7 +28,7 @@ final class TimerManager {
             do {
                 let newActivity = try Activity.request(
                     attributes: attrs,
-                    content: .init(state: state, staleDate: nil),
+                    content: .init(state: state, staleDate: endDate),
                     pushType: nil
                 )
                 activityID = newActivity.id
@@ -35,18 +36,6 @@ final class TimerManager {
                 print("[LiveActivity] Failed: \(error)")
             }
         }
-    }
-
-    func updateLiveActivity(timeRemaining: Int) {
-        guard let id = activityID else { return }
-        guard let activity = Activity<RestTimerAttributes>.activities.first(where: { $0.id == id }) else { return }
-
-        let state = RestTimerAttributes.ContentState(
-            timeRemaining: timeRemaining,
-            nextSetInfo: activity.content.state.nextSetInfo
-        )
-
-        Task { await activity.update(.init(state: state, staleDate: nil)) }
     }
 
     func endLiveActivity() {

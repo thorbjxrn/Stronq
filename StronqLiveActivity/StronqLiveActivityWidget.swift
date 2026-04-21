@@ -11,7 +11,7 @@ struct StronqLiveActivityWidget: Widget {
                     Text("Stronq")
                         .font(.caption2.bold())
                         .foregroundStyle(.secondary)
-                    Text(context.state.formattedTime)
+                    Text(timerInterval: context.state.timerInterval, countsDown: true)
                         .font(.system(size: 36, weight: .bold, design: .monospaced))
                         .foregroundStyle(Color(red: 0.85, green: 0.75, blue: 0.55))
                 }
@@ -32,7 +32,7 @@ struct StronqLiveActivityWidget: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Text(context.state.formattedTime)
+                    Text(timerInterval: context.state.timerInterval, countsDown: true)
                         .font(.system(.title2, design: .monospaced, weight: .bold))
                         .foregroundStyle(Color(red: 0.85, green: 0.75, blue: 0.55))
                 }
@@ -46,14 +46,14 @@ struct StronqLiveActivityWidget: Widget {
                         .foregroundStyle(.secondary)
                 }
             } compactLeading: {
-                Text(context.state.formattedTime)
+                Text(timerInterval: context.state.timerInterval, countsDown: true)
                     .font(.system(.caption, design: .monospaced, weight: .bold))
                     .foregroundStyle(Color(red: 0.85, green: 0.75, blue: 0.55))
             } compactTrailing: {
                 Image(systemName: "timer")
                     .foregroundStyle(Color(red: 0.85, green: 0.75, blue: 0.55))
             } minimal: {
-                Text(context.state.formattedTime)
+                Text(timerInterval: context.state.timerInterval, countsDown: true)
                     .font(.system(.caption2, design: .monospaced))
             }
         }
