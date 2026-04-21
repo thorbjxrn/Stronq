@@ -467,16 +467,16 @@ struct OnboardingFlow: View {
 
     private func convertWeights(from oldUnit: WeightUnit, to newUnit: WeightUnit) {
         guard oldUnit != newUnit else { return }
-        for key in exerciseWeights.keys {
-            if let weight = exerciseWeights[key] {
-                if newUnit == .lbs {
-                    exerciseWeights[key] = (weight * 2.20462).rounded()
-                } else {
-                    exerciseWeights[key] = (weight / 2.20462 * 2).rounded() / 2
-                }
+        for exercise in selectedTemplate.exercises where exercise.type == .weighted {
+            guard let weight = exerciseWeights[exercise.name] else { continue }
+            if newUnit == .lbs {
+                exerciseWeights[exercise.name] = (weight * 2.20462).rounded()
+            } else {
+                let raw = weight / 2.20462
+                let step = exercise.increment
+                exerciseWeights[exercise.name] = (raw / step).rounded() * step
             }
         }
-        // Init any missing weights with the new unit's defaults
         initWeights()
     }
 

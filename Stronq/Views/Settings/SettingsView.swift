@@ -87,11 +87,13 @@ struct SettingsView: View {
                             program.exercises.forEach { exercise in
                                 if exercise.type == .weighted {
                                     if newUnit == .lbs {
-                                        exercise.initial10RM = (exercise.initial10RM * 2.20462).rounded()
                                         exercise.weightIncrement = (exercise.weightIncrement * 2.20462 * 2).rounded() / 2
+                                        exercise.initial10RM = (exercise.initial10RM * 2.20462).rounded()
                                     } else {
-                                        exercise.initial10RM = (exercise.initial10RM / 2.20462 * 2).rounded() / 2
                                         exercise.weightIncrement = (exercise.weightIncrement / 2.20462 * 2).rounded() / 2
+                                        let raw = exercise.initial10RM / 2.20462
+                                        let step = exercise.weightIncrement
+                                        exercise.initial10RM = (raw / step).rounded() * step
                                     }
                                 }
                                 exercise.unit = newUnit
