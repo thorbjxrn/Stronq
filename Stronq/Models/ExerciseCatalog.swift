@@ -54,7 +54,7 @@ struct ExerciseAlternative: Identifiable, Sendable {
             if alts.contains(where: { $0.name == canonicalName }) {
                 var result = alts.filter { $0.name != canonicalName }
                 let isBodyweight = key == "Push-up"
-                result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: isBodyweight ? "figure.highintensity.intervaltraining" : "dumbbell.fill", isWeighted: !isBodyweight, defaultRM: 0), at: 0)
+                result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: isBodyweight ? "figure.highintensity.intervaltraining" : "dumbbell.fill", isWeighted: !isBodyweight, defaultRM: 0, isFree: true), at: 0)
                 return result
             }
         }

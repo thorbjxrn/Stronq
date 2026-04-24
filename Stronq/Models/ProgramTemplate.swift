@@ -28,7 +28,7 @@ struct ProgramTemplate: Identifiable, Sendable {
                 type: .weighted,
                 defaultRM: 60, defaultRMLbs: 135,
                 increment: 2.5, incrementLbs: 5,
-                icon: "dumbbell.fill"
+                icon: "figure.arms.open"
             ),
             TemplateExercise(
                 name: "Deadlift",

@@ -38,6 +38,8 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_FILE: Stronq/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: Stronq
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_ENTITLEMENTS: Stronq/Stronq.entitlements
         PRODUCT_BUNDLE_IDENTIFIER: thorbjxrn.Stronq
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
