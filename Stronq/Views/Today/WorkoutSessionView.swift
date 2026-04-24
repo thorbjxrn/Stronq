@@ -230,11 +230,16 @@ struct WorkoutSessionView: View {
                     viewModel.uncompleteSet(set)
                 }
             } else {
-                for set in group.sets where !set.isCompleted {
+                let incompleteSets = group.sets.filter { !$0.isCompleted }
+                for set in incompleteSets {
                     set.isCompleted = true
                     set.completedAt = .now
                 }
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                if let lastSet = incompleteSets.last {
+                    viewModel.completeSet(lastSet)
+                } else {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                }
             }
         }
         .onTapGesture(count: 1) {

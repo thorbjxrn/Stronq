@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 @Observable
 @MainActor
@@ -261,8 +262,11 @@ final class WorkoutViewModel {
 
     func skipRestTimer() { stopRestTimer() }
 
+    private static let restNotificationID = "stronq-rest-timer"
+
     private func startRestTimer(duration: Int, exerciseName: String? = nil, isSeriesRest: Bool = false) {
         stopRestTimer()
+        let endDate = Date.now.addingTimeInterval(TimeInterval(duration))
         restTimerRemaining = duration
         isRestTimerRunning = true
 
@@ -272,18 +276,20 @@ final class WorkoutViewModel {
             nextSetInfo: nextInfo,
             duration: duration
         )
+        scheduleRestNotification(in: duration, exerciseName: exerciseName ?? "")
 
         restTimerTask = Task {
-            while restTimerRemaining > 0 && !Task.isCancelled {
+            while !Task.isCancelled {
+                let remaining = Int(endDate.timeIntervalSinceNow.rounded(.up))
+                restTimerRemaining = max(remaining, 0)
+                if remaining <= 0 { break }
                 try? await Task.sleep(for: .seconds(1))
-                guard !Task.isCancelled else { return }
-                restTimerRemaining -= 1
             }
+            guard !Task.isCancelled else { return }
             isRestTimerRunning = false
+            restTimerRemaining = 0
             timerManager.endLiveActivity()
-            if restTimerRemaining == 0 {
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
-            }
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
     }
 
@@ -293,6 +299,17 @@ final class WorkoutViewModel {
         isRestTimerRunning = false
         restTimerRemaining = 0
         timerManager.endLiveActivity()
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [Self.restNotificationID])
+    }
+
+    private func scheduleRestNotification(in seconds: Int, exerciseName: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "Rest Complete"
+        content.body = "Time for your next set — \(exerciseName)"
+        content.sound = .default
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(seconds), repeats: false)
+        let request = UNNotificationRequest(identifier: Self.restNotificationID, content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request)
     }
 
     private func startElapsedTimer() {
