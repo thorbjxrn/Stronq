@@ -4,8 +4,7 @@ import SwiftData
 
 @main
 struct BearTrainingApp: App {
-    @State private var purchaseManager = PurchaseManager()
-    @State private var adManager: AdManager
+    @State private var purchaseManager: PurchaseManager
     @State private var themeManager = ThemeManager()
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
@@ -36,9 +35,7 @@ struct BearTrainingApp: App {
             UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
         }
 
-        let pm = PurchaseManager()
-        _purchaseManager = State(initialValue: pm)
-        _adManager = State(initialValue: AdManager(purchaseManager: pm))
+        _purchaseManager = State(initialValue: PurchaseManager())
 
         // Clean up any stale Live Activities from previous session
         Task {
@@ -54,7 +51,6 @@ struct BearTrainingApp: App {
         }
         .modelContainer(modelContainer)
         .environment(purchaseManager)
-        .environment(adManager)
         .environment(themeManager)
     }
 }

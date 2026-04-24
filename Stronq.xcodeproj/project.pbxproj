@@ -41,7 +41,6 @@
 		D9CF00F118F8FC2EB66C65EE /* StronqLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA31A0C3E90E17D5C3757829 /* StronqLiveActivityBundle.swift */; };
 		E556EFFA90200544D466A993 /* ProgramTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EE76AB50532EBD34A5C189 /* ProgramTemplate.swift */; };
 		F008F7B1FDFFAC95FC564657 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA55539172EB93E72088FB6E /* Enums.swift */; };
-		F10E99219E69860D57B8E28C /* AdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977F7F57A4AD697E47674987 /* AdManager.swift */; };
 		F2A6DFF079BA0F3054891635 /* CompletedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536490E6AC54B974D71815C5 /* CompletedSet.swift */; };
 		F3CAD4820046FA95D9E7BF16 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177E03AB36B1E231D1D863D4 /* Exercise.swift */; };
 		F7C03CC43A9B43A4A926C1F2 /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B5EAF7CFDE28A2147BEA6C /* OnboardingFlow.swift */; };
@@ -102,7 +101,6 @@
 		785BE572FCB6E03C11C018DC /* ExerciseCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseCatalog.swift; sourceTree = "<group>"; };
 		88EA8629C7B49B55389A6AAC /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		97408B9B15B7120E8D44791D /* Stronq.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Stronq.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		977F7F57A4AD697E47674987 /* AdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdManager.swift; sourceTree = "<group>"; };
 		98189A5D3FAF1B4B22909B47 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		A2A229AFE15345FE40A1EAC6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A96A50854BBB287E0B2E6968 /* WorkoutSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSession.swift; sourceTree = "<group>"; };
@@ -268,7 +266,6 @@
 		D9CC57E0A70164B5C8CF2320 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				977F7F57A4AD697E47674987 /* AdManager.swift */,
 				28BAE0F7BF42C9280051F6AA /* HealthKitManager.swift */,
 				0D489585F4838BBA41E4FB9D /* PurchaseManager.swift */,
 				3D24A38734A905A21FF6B48F /* ReminderManager.swift */,
@@ -458,7 +455,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F10E99219E69860D57B8E28C /* AdManager.swift in Sources */,
 				C8F55B0BCFEE479F192BF5FA /* BarbellGlyph.swift in Sources */,
 				95FE6AAEFBE5757816BD09E4 /* BearTrainingApp.swift in Sources */,
 				BE69909ABF9D9C4FFD847928 /* BodyweightEntry.swift in Sources */,
