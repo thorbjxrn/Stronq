@@ -32,9 +32,7 @@ final class TimerManager {
                     pushType: nil
                 )
                 activityID = newActivity.id
-            } catch {
-                print("[LiveActivity] Failed: \(error)")
-            }
+            } catch {}
         }
     }
 
