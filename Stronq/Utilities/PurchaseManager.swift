@@ -9,7 +9,7 @@ final class PurchaseManager {
     private(set) var purchaseError: String?
 
     var priceDisplay: String {
-        products.first?.displayPrice ?? "$2.99"
+        products.first?.displayPrice ?? "$4.99"
     }
 
     private static let productID = "com.thorbjxrn.stronq.premium"

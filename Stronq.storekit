@@ -5,12 +5,12 @@
   ],
   "products" : [
     {
-      "displayPrice" : "2.99",
+      "displayPrice" : "4.99",
       "familyShareable" : false,
       "internalID" : "premium_001",
       "localizations" : [
         {
-          "description" : "Unlock all themes, exercise swapping, and future premium features.",
+          "description" : "Unlock all programs, exercise swaps, and themes.",
           "displayName" : "Stronq Premium",
           "locale" : "en_US"
         }
