@@ -28,14 +28,14 @@ struct ProgramTemplate: Identifiable, Sendable {
                 type: .weighted,
                 defaultRM: 60, defaultRMLbs: 135,
                 increment: 2.5, incrementLbs: 5,
-                icon: "figure.strengthtraining.traditional"
+                icon: "dumbbell.fill"
             ),
             TemplateExercise(
                 name: "Deadlift",
                 type: .weighted,
                 defaultRM: 80, defaultRMLbs: 175,
                 increment: 5, incrementLbs: 10,
-                icon: "figure.strengthtraining.functional"
+                icon: "figure.strengthtraining.traditional"
             )
         ]
     )
@@ -51,14 +51,14 @@ struct ProgramTemplate: Identifiable, Sendable {
                 type: .bodyweight,
                 defaultRM: 0, defaultRMLbs: 0,
                 increment: 0, incrementLbs: 0,
-                icon: "figure.core.training"
+                icon: "figure.highintensity.intervaltraining"
             ),
             TemplateExercise(
                 name: "Zercher Squat",
                 type: .weighted,
                 defaultRM: 45, defaultRMLbs: 95,
                 increment: 5, incrementLbs: 10,
-                icon: "figure.strengthtraining.functional"
+                icon: "figure.cross.training"
             ),
             TemplateExercise(
                 name: "Half-Kneeling Pulldown",

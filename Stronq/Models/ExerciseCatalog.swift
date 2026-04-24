@@ -12,24 +12,24 @@ struct ExerciseAlternative: Identifiable, Sendable {
     static let alternatives: [String: [ExerciseAlternative]] = [
         "Bench Press": [
             ExerciseAlternative(id: "db-bench", name: "Dumbbell Bench Press", icon: "dumbbell.fill", defaultRM: 20, defaultIncrement: 2, isFree: true),
-            ExerciseAlternative(id: "incline-bench", name: "Incline Bench Press", icon: "figure.strengthtraining.traditional", defaultRM: 50),
-            ExerciseAlternative(id: "floor-press", name: "Floor Press", icon: "figure.strengthtraining.traditional", defaultRM: 50),
-            ExerciseAlternative(id: "close-grip-bench", name: "Close-Grip Bench Press", icon: "figure.strengthtraining.traditional", defaultRM: 50),
+            ExerciseAlternative(id: "incline-bench", name: "Incline Bench Press", icon: "dumbbell.fill", defaultRM: 50),
+            ExerciseAlternative(id: "floor-press", name: "Floor Press", icon: "dumbbell.fill", defaultRM: 50),
+            ExerciseAlternative(id: "close-grip-bench", name: "Close-Grip Bench Press", icon: "dumbbell.fill", defaultRM: 50),
         ],
         "Deadlift": [
-            ExerciseAlternative(id: "rdl", name: "Romanian Deadlift", icon: "figure.strengthtraining.functional", defaultRM: 60),
-            ExerciseAlternative(id: "sumo", name: "Sumo Deadlift", icon: "figure.strengthtraining.functional", defaultRM: 80),
-            ExerciseAlternative(id: "trap-bar", name: "Trap Bar Deadlift", icon: "figure.strengthtraining.functional", defaultRM: 80),
+            ExerciseAlternative(id: "rdl", name: "Romanian Deadlift", icon: "figure.strengthtraining.traditional", defaultRM: 60),
+            ExerciseAlternative(id: "sumo", name: "Sumo Deadlift", icon: "figure.strengthtraining.traditional", defaultRM: 80),
+            ExerciseAlternative(id: "trap-bar", name: "Trap Bar Deadlift", icon: "figure.strengthtraining.traditional", defaultRM: 80),
         ],
         "Push-up": [
-            ExerciseAlternative(id: "dips", name: "Dips", icon: "figure.cooldown", defaultRM: 0, defaultIncrement: 5),
+            ExerciseAlternative(id: "dips", name: "Dips", icon: "figure.highintensity.intervaltraining", defaultRM: 0, defaultIncrement: 5),
             ExerciseAlternative(id: "db-bench-alt", name: "Dumbbell Bench Press", icon: "dumbbell.fill", defaultRM: 20, defaultIncrement: 2),
-            ExerciseAlternative(id: "bench-press-alt", name: "Bench Press", icon: "figure.strengthtraining.traditional", defaultRM: 60),
+            ExerciseAlternative(id: "bench-press-alt", name: "Bench Press", icon: "dumbbell.fill", defaultRM: 60),
         ],
         "Zercher Squat": [
-            ExerciseAlternative(id: "back-squat", name: "Back Squat", icon: "figure.strengthtraining.functional", defaultRM: 60),
-            ExerciseAlternative(id: "front-squat", name: "Front Squat", icon: "figure.strengthtraining.functional", defaultRM: 50),
-            ExerciseAlternative(id: "goblet-squat", name: "Goblet Squat", icon: "figure.strengthtraining.functional", defaultRM: 24, defaultIncrement: 2),
+            ExerciseAlternative(id: "back-squat", name: "Back Squat", icon: "figure.cross.training", defaultRM: 60),
+            ExerciseAlternative(id: "front-squat", name: "Front Squat", icon: "figure.cross.training", defaultRM: 50),
+            ExerciseAlternative(id: "goblet-squat", name: "Goblet Squat", icon: "figure.cross.training", defaultRM: 24, defaultIncrement: 2),
         ],
         "Half-Kneeling Pulldown": [
             ExerciseAlternative(id: "seated-cable-row", name: "Seated Cable Row", icon: "figure.rowing", defaultRM: 40),
@@ -54,7 +54,7 @@ struct ExerciseAlternative: Identifiable, Sendable {
             if alts.contains(where: { $0.name == canonicalName }) {
                 var result = alts.filter { $0.name != canonicalName }
                 let isBodyweight = key == "Push-up"
-                result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: isBodyweight ? "figure.core.training" : "figure.strengthtraining.traditional", isWeighted: !isBodyweight, defaultRM: 0), at: 0)
+                result.insert(ExerciseAlternative(id: key.lowercased(), name: key, icon: isBodyweight ? "figure.highintensity.intervaltraining" : "dumbbell.fill", isWeighted: !isBodyweight, defaultRM: 0), at: 0)
                 return result
             }
         }
