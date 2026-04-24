@@ -240,9 +240,6 @@ struct OnboardingFlow: View {
 
         return VStack(spacing: 12) {
             HStack {
-                Image(systemName: exercise.icon)
-                    .font(Typo.body)
-                    .foregroundStyle(theme.accentColor)
                 Text(exercise.name)
                     .font(Typo.heading)
                 Spacer()
@@ -286,9 +283,6 @@ struct OnboardingFlow: View {
     private func bodyweightCard(exercise: ProgramTemplate.TemplateExercise) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: exercise.icon)
-                    .font(Typo.body)
-                    .foregroundStyle(theme.accentColor)
                 Text(exercise.name)
                     .font(Typo.heading)
                 Spacer()

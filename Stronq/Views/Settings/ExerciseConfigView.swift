@@ -142,9 +142,6 @@ struct ExerciseConfigView: View {
                                 }
                             } label: {
                                 HStack(spacing: 12) {
-                                    Image(systemName: alt.icon)
-                                        .foregroundStyle(theme.accentColor)
-                                        .frame(width: 24)
                                     Text(alt.name)
                                         .foregroundStyle(.white)
                                     Spacer()

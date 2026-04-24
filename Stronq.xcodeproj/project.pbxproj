@@ -40,6 +40,7 @@
 		D936A875D161F39E9E119901 /* RestTimerAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F167D63F40F7E6FB3FA65CBF /* RestTimerAttributes.swift */; };
 		D9CF00F118F8FC2EB66C65EE /* StronqLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA31A0C3E90E17D5C3757829 /* StronqLiveActivityBundle.swift */; };
 		E556EFFA90200544D466A993 /* ProgramTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EE76AB50532EBD34A5C189 /* ProgramTemplate.swift */; };
+		ED1AA1FC614DC0C9B3F5F615 /* ExerciseIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02214644C59C42978DE4D8C0 /* ExerciseIcon.swift */; };
 		F008F7B1FDFFAC95FC564657 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA55539172EB93E72088FB6E /* Enums.swift */; };
 		F2A6DFF079BA0F3054891635 /* CompletedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536490E6AC54B974D71815C5 /* CompletedSet.swift */; };
 		F3CAD4820046FA95D9E7BF16 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177E03AB36B1E231D1D863D4 /* Exercise.swift */; };
@@ -79,6 +80,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02214644C59C42978DE4D8C0 /* ExerciseIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseIcon.swift; sourceTree = "<group>"; };
 		02FA8D23491F82B25A51AB76 /* BarbellGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbellGlyph.swift; sourceTree = "<group>"; };
 		082358CD5AD7ABC389513246 /* Program.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Program.swift; sourceTree = "<group>"; };
 		0D489585F4838BBA41E4FB9D /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 				DA55539172EB93E72088FB6E /* Enums.swift */,
 				177E03AB36B1E231D1D863D4 /* Exercise.swift */,
 				785BE572FCB6E03C11C018DC /* ExerciseCatalog.swift */,
+				02214644C59C42978DE4D8C0 /* ExerciseIcon.swift */,
 				082358CD5AD7ABC389513246 /* Program.swift */,
 				D1EE76AB50532EBD34A5C189 /* ProgramTemplate.swift */,
 				C070DD3599C314979085F8A2 /* SessionSummary.swift */,
@@ -465,6 +468,7 @@
 				F3CAD4820046FA95D9E7BF16 /* Exercise.swift in Sources */,
 				AC0F347539FE432A1612B3E9 /* ExerciseCatalog.swift in Sources */,
 				36A7E35E9099D842E678880D /* ExerciseConfigView.swift in Sources */,
+				ED1AA1FC614DC0C9B3F5F615 /* ExerciseIcon.swift in Sources */,
 				5442585F242DBFAAF6305BC2 /* HealthKitManager.swift in Sources */,
 				792DAC3E44D70DDCAC701D55 /* HowItWorksView.swift in Sources */,
 				724624CCDB74E8D122A8B85F /* LaunchBurstView.swift in Sources */,

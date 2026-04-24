@@ -14,7 +14,6 @@ struct ProgramTemplate: Identifiable, Sendable {
         let defaultRMLbs: Double
         let increment: Double
         let incrementLbs: Double
-        let icon: String
     }
 
     static let classic = ProgramTemplate(
@@ -27,15 +26,13 @@ struct ProgramTemplate: Identifiable, Sendable {
                 name: "Bench Press",
                 type: .weighted,
                 defaultRM: 60, defaultRMLbs: 135,
-                increment: 2.5, incrementLbs: 5,
-                icon: "figure.arms.open"
+                increment: 2.5, incrementLbs: 5
             ),
             TemplateExercise(
                 name: "Deadlift",
                 type: .weighted,
                 defaultRM: 80, defaultRMLbs: 175,
-                increment: 5, incrementLbs: 10,
-                icon: "figure.strengthtraining.traditional"
+                increment: 5, incrementLbs: 10
             )
         ]
     )
@@ -50,22 +47,19 @@ struct ProgramTemplate: Identifiable, Sendable {
                 name: "Push-up",
                 type: .bodyweight,
                 defaultRM: 0, defaultRMLbs: 0,
-                increment: 0, incrementLbs: 0,
-                icon: "figure.highintensity.intervaltraining"
+                increment: 0, incrementLbs: 0
             ),
             TemplateExercise(
                 name: "Zercher Squat",
                 type: .weighted,
                 defaultRM: 45, defaultRMLbs: 95,
-                increment: 5, incrementLbs: 10,
-                icon: "figure.cross.training"
+                increment: 5, incrementLbs: 10
             ),
             TemplateExercise(
                 name: "Half-Kneeling Pulldown",
                 type: .weighted,
                 defaultRM: 25, defaultRMLbs: 55,
-                increment: 2.5, incrementLbs: 5,
-                icon: "figure.rowing"
+                increment: 2.5, incrementLbs: 5
             )
         ]
     )
