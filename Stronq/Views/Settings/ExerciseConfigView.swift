@@ -175,6 +175,9 @@ struct ExerciseConfigView: View {
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
         }
+        .onDisappear {
+            isEditing = false
+        }
     }
 
     private func weightPreviewRow(_ label: String, weight: Double) -> some View {

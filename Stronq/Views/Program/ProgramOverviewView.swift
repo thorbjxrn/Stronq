@@ -56,6 +56,7 @@ struct ProgramOverviewView: View {
                 }
             }
             .navigationTitle("Program")
+            .ignoresSafeArea(.keyboard)
         }
     }
 
