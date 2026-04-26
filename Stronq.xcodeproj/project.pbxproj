@@ -20,6 +20,7 @@
 		3C4D5E6F7A8B9C0D1E2F3A4B /* ProgramRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6A7B8C9D0E1F2A3B4 /* ProgramRegistry.swift */; };
 		4D5E6F7A8B9C0D1E2F3A4B5C /* DeLormeClassicProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A7B8C9D0E1F2A3B4C5 /* DeLormeClassicProgram.swift */; };
 		5442585F242DBFAAF6305BC2 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BAE0F7BF42C9280051F6AA /* HealthKitManager.swift */; };
+		B8C9D0E1F2A3B4C5D6E7F8A9 /* PHULProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B8C9D0E1F2A3B4C5D6E7F8 /* PHULProgram.swift */; };
 		589C289A8EB66FA81730B6A4 /* WorkoutSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE0B6B0505FA78098F63C0A /* WorkoutSessionView.swift */; };
 		5E6F7A8B9C0D1E2F3A4B5C6D /* DeLormeYokedProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F6A7B8C9D0E1F2A3B4C5D6 /* DeLormeYokedProgram.swift */; };
 		601FCE4CD4777B09F0710563 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290E3F22D165B32E5C8DCB /* TodayView.swift */; };
@@ -106,6 +107,7 @@
 		97408B9B15B7120E8D44791D /* Stronq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stronq.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98189A5D3FAF1B4B22909B47 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* ProgramDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramDefinition.swift; sourceTree = "<group>"; };
+		A7B8C9D0E1F2A3B4C5D6E7F8 /* PHULProgram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHULProgram.swift; sourceTree = "<group>"; };
 		A2A229AFE15345FE40A1EAC6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A96A50854BBB287E0B2E6968 /* WorkoutSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSession.swift; sourceTree = "<group>"; };
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* WorkoutEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutEngine.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 			children = (
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* DeLormeClassicProgram.swift */,
 				E5F6A7B8C9D0E1F2A3B4C5D6 /* DeLormeYokedProgram.swift */,
+				A7B8C9D0E1F2A3B4C5D6E7F8 /* PHULProgram.swift */,
 			);
 			path = Programs;
 			sourceTree = "<group>";
@@ -480,6 +483,7 @@
 				4D5E6F7A8B9C0D1E2F3A4B5C /* DeLormeClassicProgram.swift in Sources */,
 				5E6F7A8B9C0D1E2F3A4B5C6D /* DeLormeYokedProgram.swift in Sources */,
 				F008F7B1FDFFAC95FC564657 /* Enums.swift in Sources */,
+				B8C9D0E1F2A3B4C5D6E7F8A9 /* PHULProgram.swift in Sources */,
 				F3CAD4820046FA95D9E7BF16 /* Exercise.swift in Sources */,
 				AC0F347539FE432A1612B3E9 /* ExerciseCatalog.swift in Sources */,
 				36A7E35E9099D842E678880D /* ExerciseConfigView.swift in Sources */,

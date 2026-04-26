@@ -109,6 +109,93 @@ final class ProgramDefinitionTests: XCTestCase {
     }
 
     func testRegistryContainsAllPrograms() {
-        XCTAssertEqual(ProgramRegistry.all.count, 2)
+        XCTAssertEqual(ProgramRegistry.all.count, 3)
+    }
+
+    func testRegistryFindsPHUL() {
+        let def = ProgramRegistry.definition(for: "phul")
+        XCTAssertNotNil(def)
+        XCTAssertEqual(def?.name, "PHUL")
+    }
+}
+
+final class PHULTests: XCTestCase {
+
+    let definition = ProgramDefinition.phul
+
+    func testPHULHasFourDays() {
+        XCTAssertEqual(definition.days.count, 4)
+        XCTAssertEqual(definition.days.map(\.name), ["Upper Power", "Lower Power", "Upper Hypertrophy", "Lower Hypertrophy"])
+        XCTAssertEqual(definition.days.map(\.shortLabel), ["UP", "LP", "UH", "LH"])
+    }
+
+    func testPHULIsRepeating() {
+        XCTAssertTrue(definition.repeating)
+        XCTAssertNil(definition.cycleLength)
+    }
+
+    func testPHULIsPremium() {
+        XCTAssertTrue(definition.isPremium)
+    }
+
+    func testUpperPowerExercises() {
+        let day = definition.days[0]
+        XCTAssertGreaterThanOrEqual(day.exerciseSlots.count, 5)
+        XCTAssertEqual(day.exerciseSlots[0].defaultExercise, "Bench Press")
+        XCTAssertEqual(day.exerciseSlots[0].role, .primary)
+        XCTAssertEqual(day.exerciseSlots[1].defaultExercise, "Barbell Row")
+        XCTAssertEqual(day.exerciseSlots[1].role, .primary)
+    }
+
+    func testPowerDaysStraightSets() {
+        let upperPower = definition.days[0]
+        for slot in upperPower.exerciseSlots where slot.role == .primary {
+            let group = slot.setGroups[0]
+            if case .fixed(let n) = group.repeatCount {
+                XCTAssertGreaterThanOrEqual(n, 3)
+                XCTAssertLessThanOrEqual(n, 5)
+            } else {
+                XCTFail("Primary power exercises should use .fixed repeat count")
+            }
+        }
+    }
+
+    func testHypertrophyDaysHigherReps() {
+        let upperHypertrophy = definition.days[2]
+        for slot in upperHypertrophy.exerciseSlots {
+            let reps = slot.setGroups[0].sets[0].reps
+            XCTAssertGreaterThanOrEqual(reps, 8, "\(slot.defaultExercise) should have 8+ reps on hypertrophy day")
+        }
+    }
+
+    func testProgressionTriggersCompleteAllSets() {
+        for day in definition.days {
+            for slot in day.exerciseSlots {
+                XCTAssertEqual(slot.progression.trigger, .completeAllSets)
+            }
+        }
+    }
+
+    func testRepeatingCycleLoopsBack() {
+        let sessions = definition.days.map { (dayName: $0.name, week: 1, isCompleted: true) }
+        let next = WorkoutEngine.nextDay(definition: definition, currentWeek: 1, completedSessions: sessions)
+        XCTAssertNotNil(next)
+        XCTAssertEqual(next?.dayName, "Upper Power")
+    }
+
+    func testWorkoutGeneration() {
+        let exercises = [
+            Exercise(name: "Bench Press", type: .weighted, initial10RM: 80, weightIncrement: 2.5, unit: .kg, sortOrder: 0),
+            Exercise(name: "Barbell Row", type: .weighted, initial10RM: 60, weightIncrement: 2.5, unit: .kg, sortOrder: 1),
+        ]
+
+        let planned = WorkoutEngine.generateWorkout(
+            definition: definition,
+            dayName: "Upper Power",
+            week: 1,
+            exercises: exercises
+        )
+        XCTAssertEqual(planned.count, 2)
+        XCTAssertEqual(planned[0].sets[0].weight, 80)
     }
 }

@@ -4,6 +4,7 @@ struct ProgramRegistry {
     static let all: [ProgramDefinition] = [
         .delormeClassic,
         .delormeYoked,
+        .phul,
     ]
 
     static func definition(for programType: String) -> ProgramDefinition? {
@@ -49,6 +50,21 @@ struct ExerciseDefaults {
         case "Push-up": return (0, 0, 0, 0)
         case "Barbell Row": return (50, 110, 2.5, 5)
         case "Overhead Press": return (35, 75, 2.5, 5)
+        case "Back Squat": return (60, 135, 5, 10)
+        case "Front Squat": return (50, 110, 5, 10)
+        case "Barbell Curl": return (25, 55, 2.5, 5)
+        case "Tricep Pushdown": return (20, 45, 2.5, 5)
+        case "Leg Press": return (100, 220, 5, 10)
+        case "Leg Curl": return (30, 65, 2.5, 5)
+        case "Calf Raise": return (40, 90, 5, 10)
+        case "Incline Bench Press": return (50, 110, 2.5, 5)
+        case "Lat Pulldown": return (40, 90, 2.5, 5)
+        case "Dumbbell Lateral Raise": return (8, 15, 1, 2.5)
+        case "Incline Dumbbell Curl": return (10, 20, 1, 2.5)
+        case "Overhead Tricep Extension": return (15, 30, 2.5, 5)
+        case "Romanian Deadlift": return (60, 135, 2.5, 5)
+        case "Leg Extension": return (30, 65, 2.5, 5)
+        case "Seated Calf Raise": return (30, 65, 5, 10)
         default: return (40, 90, 2.5, 5)
         }
     }
