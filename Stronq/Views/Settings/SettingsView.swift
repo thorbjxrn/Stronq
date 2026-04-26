@@ -159,8 +159,9 @@ struct SettingsView: View {
                     }
                 }
 
-                if reminderManager.reminderDays.count != 3 {
-                    Text("The program is designed for 3 days per week.")
+                if let dayCount = program?.definition?.days.count,
+                   reminderManager.reminderDays.count != dayCount {
+                    Text("This program is designed for \(dayCount) days per week.")
                         .font(Typo.caption)
                         .foregroundStyle(.orange)
                 }

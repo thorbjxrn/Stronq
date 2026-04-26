@@ -9,8 +9,8 @@ struct ProgramOverviewView: View {
 
     private var program: Program? { programs.first }
 
-    func findSession(week: Int, dayType: DayType) -> WorkoutSession? {
-        allSessions.first { $0.weekNumber == week && $0.dayType == dayType && $0.isCompleted }
+    func findSession(week: Int, dayName: String) -> WorkoutSession? {
+        allSessions.first { $0.weekNumber == week && $0.dayName == dayName && $0.isCompleted }
     }
 
     var body: some View {
@@ -75,14 +75,17 @@ struct WeekCard: View {
     let isExpanded: Bool
     let theme: ThemeManager
 
-    func findSession(_ dayType: DayType) -> WorkoutSession? {
-        allSessions.first { $0.weekNumber == week && $0.dayType == dayType && $0.isCompleted }
-        ?? allSessions.first { $0.weekNumber == week && $0.dayType == dayType }
+    private var definition: ProgramDefinition {
+        program.definition ?? .delormeClassic
+    }
+
+    func findSession(_ dayName: String) -> WorkoutSession? {
+        allSessions.first { $0.weekNumber == week && $0.dayName == dayName && $0.isCompleted }
+        ?? allSessions.first { $0.weekNumber == week && $0.dayName == dayName }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 8) {
@@ -97,7 +100,7 @@ struct WeekCard: View {
                                 .foregroundStyle(.black)
                         }
                     }
-                    if week == 7 {
+                    if definition.cycleLength == 7 && week == 7 {
                         Text("Final Test")
                             .font(Typo.small)
                             .foregroundStyle(theme.textSecondary)
@@ -132,41 +135,52 @@ struct WeekCard: View {
         )
     }
 
-    // MARK: - Week Label
-
     private var weekLabel: String {
         switch week {
         case -1: "Intro 1"
         case 0: "Intro 2"
-        case 7: "Week 7"
-        default: "Week \(week)"
+        default:
+            if definition.cycleLength == 7 && week == 7 {
+                "Week 7"
+            } else {
+                "Week \(week)"
+            }
         }
     }
 
     // MARK: - Day Dots
 
     private var dayDots: some View {
-        let days: [DayType] = week == 7 ? [.heavy] : DayType.allCases
+        let dayNames: [String] = {
+            if definition.cycleLength == 7 && week == 7 {
+                return [definition.days[0].name]
+            }
+            return definition.days.map(\.name)
+        }()
+        let progressionGroupCount = 5
+
         return HStack(spacing: 8) {
-            ForEach(days, id: \.self) { dayType in
-                let session = findSession(dayType)
+            ForEach(dayNames, id: \.self) { dayName in
+                let session = findSession(dayName)
                 let done = session?.isCompleted == true
+                let isPrimaryDay = dayName == definition.days.first?.name
                 let exerciseNames = Set((session?.completedSets ?? []).map(\.exerciseName))
-                let allHitFive = done && dayType == .heavy && !exerciseNames.isEmpty && exerciseNames.allSatisfy { name in
+                let allHitTarget = done && isPrimaryDay && !exerciseNames.isEmpty && exerciseNames.allSatisfy { name in
                     let max = (session?.completedSets ?? [])
                         .filter { $0.exerciseName == name && $0.isCompleted }
-                        .map(\.seriesNumber).max() ?? 0
-                    return max >= 5
+                        .map(\.groupNumber).max() ?? 0
+                    return max >= progressionGroupCount
                 }
+                let shortLabel = definition.days.first(where: { $0.name == dayName })?.shortLabel ?? ""
 
                 VStack(spacing: 3) {
                     Circle()
-                        .fill(allHitFive ? theme.completedColor :
+                        .fill(allHitTarget ? theme.completedColor :
                               done ? theme.accentColor :
                               Color.white.opacity(0.1))
                         .frame(width: 20, height: 20)
                         .overlay {
-                            if allHitFive {
+                            if allHitTarget {
                                 Image(systemName: "arrow.up")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(.black)
@@ -176,7 +190,7 @@ struct WeekCard: View {
                                     .foregroundStyle(.black)
                             }
                         }
-                    Text(dayType.shortLabel)
+                    Text(shortLabel)
                         .font(.system(size: 10, weight: .medium))
                         .foregroundStyle(theme.textSecondary)
                 }
@@ -188,53 +202,61 @@ struct WeekCard: View {
 
     @ViewBuilder
     private var expandedContent: some View {
-        let days: [DayType] = week == 7 ? [.heavy] : DayType.allCases
+        let dayNames: [String] = {
+            if definition.cycleLength == 7 && week == 7 {
+                return [definition.days[0].name]
+            }
+            return definition.days.map(\.name)
+        }()
 
         VStack(spacing: 12) {
-            ForEach(days, id: \.self) { dayType in
-                dayRow(dayType)
+            ForEach(dayNames, id: \.self) { dayName in
+                dayRow(dayName)
             }
         }
     }
 
-    private func dayRow(_ dayType: DayType) -> some View {
-        let mondayPerExercise = mondaySeriesPerExercise
-        let mode = DeLormeEngine.seriesCount(
+    private func dayRow(_ dayName: String) -> some View {
+        let heavyPerExercise = heavyGroupsPerExercise
+        let mode = WorkoutEngine.groupCount(
+            definition: definition,
+            dayName: dayName,
             week: week,
-            dayType: dayType,
-            mondaySeriesCount: mondaySeriesForWeek
+            heavyGroupCount: heavyGroupsForWeek
         )
         let perExerciseModes: [(name: String, count: Int)] = program.exercises
             .sorted { $0.sortOrder < $1.sortOrder }
             .map { ex in
-                let mc = mondayPerExercise[ex.name]
-                let m = DeLormeEngine.seriesCount(week: week, dayType: dayType, mondaySeriesCount: mc)
+                let hc = heavyPerExercise[ex.name]
+                let m = WorkoutEngine.groupCountForExercise(definition: definition, dayName: dayName, week: week, exerciseName: ex.name, heavyGroupCount: hc)
                 switch m {
                 case .fixed(let n): return (name: ex.name, count: n)
                 case .max: return (name: ex.name, count: 0)
                 }
             }
-        let hasVariableSeries = Set(perExerciseModes.map(\.count)).count > 1
-        let planned = DeLormeEngine.generateSeries(
-            exercises: program.exercises,
-            dayType: dayType,
-            week: week
+        let hasVariableGroups = Set(perExerciseModes.map(\.count)).count > 1
+        let planned = WorkoutEngine.generateWorkout(
+            definition: definition,
+            dayName: dayName,
+            week: week,
+            exercises: program.exercises
         )
-        let session = findSession(dayType)
+        let session = findSession(dayName)
         let isDone = session?.isCompleted == true
-        let exerciseSeries: [(name: String, count: Int)] = isDone && session != nil ? program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder }).map { ex in
-            (name: ex.name, count: session!.fullyCompletedSeriesCount(for: ex.name))
+        let progressionGroupCount = 5
+        let exerciseGroups: [(name: String, count: Int)] = isDone && session != nil ? program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder }).map { ex in
+            (name: ex.name, count: session!.fullyCompletedGroupCount(for: ex.name))
         } : []
-        let allHitFive = isDone && !exerciseSeries.isEmpty && exerciseSeries.allSatisfy { $0.count >= 5 }
+        let allHitTarget = isDone && !exerciseGroups.isEmpty && exerciseGroups.allSatisfy { $0.count >= progressionGroupCount }
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(dayType.rawValue)
+                Text(dayName)
                     .font(Typo.bodyEmphasis)
-                    .foregroundStyle(allHitFive ? theme.completedColor :
+                    .foregroundStyle(allHitTarget ? theme.completedColor :
                                      isDone ? theme.accentColor : theme.accentColor)
 
-                if allHitFive {
+                if allHitTarget {
                     Image(systemName: "checkmark.circle.fill")
                         .font(Typo.caption)
                         .foregroundStyle(theme.completedColor)
@@ -244,13 +266,13 @@ struct WeekCard: View {
 
                 if isDone {
                     HStack(spacing: 8) {
-                        ForEach(exerciseSeries, id: \.name) { es in
-                            Text("\(es.count)")
+                        ForEach(exerciseGroups, id: \.name) { eg in
+                            Text("\(eg.count)")
                                 .font(Typo.small)
-                                .foregroundStyle(es.count >= 5 ? theme.completedColor : theme.accentColor)
+                                .foregroundStyle(eg.count >= progressionGroupCount ? theme.completedColor : theme.accentColor)
                         }
                     }
-                } else if hasVariableSeries {
+                } else if hasVariableGroups {
                     HStack(spacing: 6) {
                         ForEach(perExerciseModes, id: \.name) { em in
                             Text("\(em.count)")
@@ -275,7 +297,6 @@ struct WeekCard: View {
                 }
             }
 
-            // Exercises
             ForEach(planned, id: \.name) { exercise in
                 HStack(spacing: 0) {
                     Text(exercise.name)
@@ -296,20 +317,21 @@ struct WeekCard: View {
         .background(theme.backgroundColor.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
     }
 
-    private var mondaySeriesPerExercise: [String: Int] {
+    private var heavyGroupsPerExercise: [String: Int] {
+        let primaryDayName = definition.days.first?.name ?? "Heavy"
         let session = allSessions.first {
-            $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
+            $0.weekNumber == week && $0.dayName == primaryDayName && $0.isCompleted
         }
         guard let session else { return [:] }
         var result: [String: Int] = [:]
         for exercise in program.exercises {
-            result[exercise.name] = session.fullyCompletedSeriesCount(for: exercise.name)
+            result[exercise.name] = session.fullyCompletedGroupCount(for: exercise.name)
         }
         return result
     }
 
-    private var mondaySeriesForWeek: Int? {
-        let perExercise = mondaySeriesPerExercise
+    private var heavyGroupsForWeek: Int? {
+        let perExercise = heavyGroupsPerExercise
         guard !perExercise.isEmpty else { return nil }
         return perExercise.values.min()
     }

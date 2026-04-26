@@ -8,7 +8,7 @@ struct OnboardingFlow: View {
     @State private var step = 0
     @State private var unit: WeightUnit = .kg
     @State private var includeIntro = true
-    @State private var selectedTemplate: ProgramTemplate = .classic
+    @State private var selectedDefinition: ProgramDefinition = .delormeClassic
     @State private var exerciseWeights: [String: Double] = [:]
     @State private var pushUpStart: PushUpVariant = .archer
     @State private var syncHealth = false
@@ -18,6 +18,10 @@ struct OnboardingFlow: View {
     let onComplete: () -> Void
 
     private let totalSteps = 5
+
+    private var exerciseDefaults: [ExerciseDefaults] {
+        ExerciseDefaults.defaults(for: selectedDefinition)
+    }
 
     var body: some View {
         NavigationStack {
@@ -124,24 +128,24 @@ struct OnboardingFlow: View {
                 .padding(.bottom, 32)
 
             VStack(spacing: 12) {
-                ForEach(ProgramTemplate.all) { template in
-                    let isSelected = selectedTemplate.id == template.id
+                ForEach(ProgramRegistry.all, id: \.id) { definition in
+                    let isSelected = selectedDefinition.id == definition.id
 
                     Button {
-                        if template.isPremium && !purchaseManager.isPremium {
+                        if definition.isPremium && !purchaseManager.isPremium {
                             showingPaywall = true
                         } else {
                             withAnimation(.easeInOut(duration: 0.15)) {
-                                selectedTemplate = template
+                                selectedDefinition = definition
                                 initWeights()
                             }
                         }
                     } label: {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(template.name)
+                                Text(definition.name)
                                     .font(Typo.heading)
-                                if template.isPremium {
+                                if definition.isPremium {
                                     Text("PRO")
                                         .font(Typo.small)
                                         .padding(.horizontal, 6)
@@ -156,7 +160,7 @@ struct OnboardingFlow: View {
                                 }
                             }
 
-                            Text(template.subtitle)
+                            Text(definition.description)
                                 .font(Typo.caption)
                                 .foregroundStyle(theme.textSecondary)
                         }
@@ -213,7 +217,7 @@ struct OnboardingFlow: View {
             }
 
             VStack(spacing: 16) {
-                ForEach(selectedTemplate.exercises, id: \.name) { exercise in
+                ForEach(exerciseDefaults, id: \.name) { exercise in
                     if exercise.type == .weighted {
                         weightCard(exercise: exercise)
                     } else {
@@ -231,7 +235,7 @@ struct OnboardingFlow: View {
         .padding(.horizontal, 28)
     }
 
-    private func weightCard(exercise: ProgramTemplate.TemplateExercise) -> some View {
+    private func weightCard(exercise: ExerciseDefaults) -> some View {
         let increment = unit == .kg ? exercise.increment : exercise.incrementLbs
         let weight = Binding(
             get: { exerciseWeights[exercise.name] ?? (unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs) },
@@ -280,7 +284,7 @@ struct OnboardingFlow: View {
         .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 16))
     }
 
-    private func bodyweightCard(exercise: ProgramTemplate.TemplateExercise) -> some View {
+    private func bodyweightCard(exercise: ExerciseDefaults) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(exercise.name)
@@ -335,16 +339,18 @@ struct OnboardingFlow: View {
                 .padding(.top, 8)
 
             VStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Toggle("Include 2-Week Intro Cycle", isOn: $includeIntro)
-                        .tint(theme.accentColor)
-                        .padding(16)
-                        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
+                if selectedDefinition.introCycle != nil {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Toggle("Include 2-Week Intro Cycle", isOn: $includeIntro)
+                            .tint(theme.accentColor)
+                            .padding(16)
+                            .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
 
-                    Text("Builds up tonnage gradually before the\nfull Heavy-Light-Medium cycle.")
-                        .font(Typo.caption)
-                        .foregroundStyle(theme.textSecondary)
-                        .padding(.leading, 4)
+                        Text("Builds up tonnage gradually before the\nfull \(selectedDefinition.days.map(\.name).joined(separator: "-")) cycle.")
+                            .font(Typo.caption)
+                            .foregroundStyle(theme.textSecondary)
+                            .padding(.leading, 4)
+                    }
                 }
 
                 if healthKitManager.isAvailable {
@@ -381,14 +387,14 @@ struct OnboardingFlow: View {
             Text("Ready to Train")
                 .font(Typo.title)
 
-            Text(selectedTemplate.name)
+            Text(selectedDefinition.name)
                 .font(Typo.body)
                 .foregroundStyle(theme.accentColor)
                 .padding(.top, 4)
                 .padding(.bottom, 24)
 
             VStack(spacing: 1) {
-                ForEach(selectedTemplate.exercises, id: \.name) { exercise in
+                ForEach(exerciseDefaults, id: \.name) { exercise in
                     HStack {
                         Text(exercise.name)
                             .foregroundStyle(theme.textSecondary)
@@ -411,9 +417,20 @@ struct OnboardingFlow: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
 
             VStack(alignment: .leading, spacing: 8) {
-                scheduleRow("Mon", "Heavy — max series", selectedTemplate.exercises.count == 2 ? "50% → 75% → 100%" : "50/75/100%")
-                scheduleRow("Wed", "Light", "50% only")
-                scheduleRow("Fri", "Medium", "50% → 75%")
+                ForEach(selectedDefinition.days, id: \.name) { day in
+                    let weekdayName = day.suggestedWeekday.flatMap { wd -> String? in
+                        let formatter = DateFormatter()
+                        formatter.locale = Locale(identifier: "en_US_POSIX")
+                        let names = formatter.shortWeekdaySymbols!
+                        return names[(wd - 1) % 7]
+                    } ?? "—"
+                    let setsDesc = day.exerciseSlots.first.map { slot -> String in
+                        slot.setGroups.first.map { group in
+                            group.sets.map { "\(Int($0.intensity * 100))%" }.joined(separator: "/")
+                        } ?? ""
+                    } ?? ""
+                    scheduleRow(weekdayName, day.name, setsDesc)
+                }
             }
             .padding(16)
             .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
@@ -461,7 +478,7 @@ struct OnboardingFlow: View {
 
     private func convertWeights(from oldUnit: WeightUnit, to newUnit: WeightUnit) {
         guard oldUnit != newUnit else { return }
-        for exercise in selectedTemplate.exercises where exercise.type == .weighted {
+        for exercise in exerciseDefaults where exercise.type == .weighted {
             guard let weight = exerciseWeights[exercise.name] else { continue }
             if newUnit == .lbs {
                 exerciseWeights[exercise.name] = (weight * 2.20462).rounded()
@@ -475,7 +492,7 @@ struct OnboardingFlow: View {
     }
 
     private func initWeights() {
-        for exercise in selectedTemplate.exercises where exercise.type == .weighted {
+        for exercise in exerciseDefaults where exercise.type == .weighted {
             if exerciseWeights[exercise.name] == nil {
                 exerciseWeights[exercise.name] = unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs
             }
@@ -490,25 +507,26 @@ struct OnboardingFlow: View {
 
     private func createProgram() {
         let program = Program(
+            programType: selectedDefinition.id,
             startDate: .now,
-            introCycleEnabled: includeIntro
+            introCycleEnabled: selectedDefinition.introCycle != nil ? includeIntro : false
         )
 
-        for (index, templateEx) in selectedTemplate.exercises.enumerated() {
-            let increment = unit == .kg ? templateEx.increment : templateEx.incrementLbs
-            let rm = exerciseWeights[templateEx.name] ?? (unit == .kg ? templateEx.defaultRM : templateEx.defaultRMLbs)
+        for (index, exercise) in exerciseDefaults.enumerated() {
+            let increment = unit == .kg ? exercise.increment : exercise.incrementLbs
+            let rm = exerciseWeights[exercise.name] ?? (unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs)
 
-            let exercise = Exercise(
-                name: templateEx.name,
-                type: templateEx.type,
+            let ex = Exercise(
+                name: exercise.name,
+                type: exercise.type,
                 initial10RM: rm,
                 weightIncrement: increment,
                 unit: unit,
                 sortOrder: index,
-                pushUpStart: templateEx.type == .bodyweight ? pushUpStart : .regular
+                pushUpStart: exercise.type == .bodyweight ? pushUpStart : .regular
             )
-            exercise.program = program
-            program.exercises.append(exercise)
+            ex.program = program
+            program.exercises.append(ex)
         }
 
         modelContext.insert(program)
