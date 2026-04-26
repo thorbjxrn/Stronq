@@ -12,6 +12,7 @@
 		13EDC82181567D664D73AF5E /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D489585F4838BBA41E4FB9D /* PurchaseManager.swift */; };
 		15DAF0089963AD37729DF022 /* Program.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082358CD5AD7ABC389513246 /* Program.swift */; };
 		191846DD4B90BB2DF7CBC97F /* DeLormeEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D3164A60D94A16E61BE8F6 /* DeLormeEngineTests.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* DeLormeBaselineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6071829A1B2C3A4B5C6 /* DeLormeBaselineTests.swift */; };
 		1C125AF779E8A4548C0C1268 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98189A5D3FAF1B4B22909B47 /* Typography.swift */; };
 		2C09759B07081B0DC5AEE0C6 /* RestTimerAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F167D63F40F7E6FB3FA65CBF /* RestTimerAttributes.swift */; };
 		3108FE1C899360A323319CCD /* StronqLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB22863A8ED64A424B0979C1 /* StronqLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -119,6 +120,7 @@
 		DC708DD6AB0C8267C257454C /* LaunchBurstView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchBurstView.swift; sourceTree = "<group>"; };
 		DF5CEC2A8A5A0FD7B6AE4D4D /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		E4F9B80E0329DB8EBB486E6C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D4E5F6071829A1B2C3A4B5C6 /* DeLormeBaselineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeLormeBaselineTests.swift; sourceTree = "<group>"; };
 		E9D3164A60D94A16E61BE8F6 /* DeLormeEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeLormeEngineTests.swift; sourceTree = "<group>"; };
 		F167D63F40F7E6FB3FA65CBF /* RestTimerAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestTimerAttributes.swift; sourceTree = "<group>"; };
 		F874C3C7C055AE7A03043FCA /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 		232446390C56D7827561BDF4 /* StronqTests */ = {
 			isa = PBXGroup;
 			children = (
+				D4E5F6071829A1B2C3A4B5C6 /* DeLormeBaselineTests.swift */,
 				E9D3164A60D94A16E61BE8F6 /* DeLormeEngineTests.swift */,
 			);
 			path = StronqTests;
@@ -440,6 +443,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3D4E5F60718293A4B5C /* DeLormeBaselineTests.swift in Sources */,
 				191846DD4B90BB2DF7CBC97F /* DeLormeEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

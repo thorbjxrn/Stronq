@@ -11,12 +11,13 @@ final class WorkoutViewModel {
     var isRestTimerRunning = false
     var elapsedTime: TimeInterval = 0
 
-    var seriesMode: SeriesMode = .fixed(5)
-    var plannedExercises: [PlannedSeriesExercise] = []
-    var dayType: DayType = .heavy
+    var groupMode: GroupMode = .fixed(5)
+    var plannedExercises: [PlannedWorkoutExercise] = []
+    var dayName: String = "Heavy"
     var weekNumber: Int = 1
     var doneExercises: Set<String> = []
-    private var seriesPerExercise: [String: Int] = [:]
+    private var groupsPerExercise: [String: Int] = [:]
+    private var definition: ProgramDefinition?
 
     private var restTimerTask: Task<Void, Never>?
     private var elapsedTimerTask: Task<Void, Never>?
@@ -28,11 +29,13 @@ final class WorkoutViewModel {
 
     func prepareWorkout(program: Program, modelContext: ModelContext? = nil) {
         plannedExercises = []
+        guard let def = program.definition else { return }
+        definition = def
 
-        let calculatedWeek = DeLormeEngine.currentWeek(
+        let calculatedWeek = WorkoutEngine.currentWeek(
             startDate: program.startDate,
             currentDate: .now,
-            introCycleEnabled: program.introCycleEnabled
+            definition: def
         )
         if calculatedWeek > program.currentWeek {
             program.currentWeek = calculatedWeek
@@ -47,79 +50,92 @@ final class WorkoutViewModel {
             freshSessions = try? modelContext.fetch(descriptor)
         }
 
-        guard let next = DeLormeEngine.nextWorkout(program: program, sessions: freshSessions) else { return }
-        dayType = next.dayType
+        let allSessions = freshSessions ?? program.sessions
+        let completedInfo = allSessions.map { (dayName: $0.dayName, week: $0.weekNumber, isCompleted: $0.isCompleted) }
+
+        guard let next = WorkoutEngine.nextDay(
+            definition: def,
+            currentWeek: program.currentWeek,
+            completedSessions: completedInfo
+        ) else { return }
+
+        dayName = next.dayName
         weekNumber = next.week
 
-        let mondaySeries = lastMondaySeriesCounts(program: program, week: weekNumber, sessions: freshSessions)
-        seriesMode = DeLormeEngine.seriesCount(week: weekNumber, dayType: next.dayType, mondaySeriesCount: mondaySeries.values.min())
+        if next.week != program.currentWeek && !def.repeating {
+            program.currentWeek = next.week
+        }
+
+        let heavyGroups = lastHeavyGroupCounts(program: program, week: weekNumber, sessions: freshSessions)
+        groupMode = WorkoutEngine.groupCount(definition: def, dayName: next.dayName, week: weekNumber, heavyGroupCount: heavyGroups.values.min())
         setRestDuration = program.restBetweenSets
         seriesRestDuration = program.restBetweenSeries
 
-        plannedExercises = DeLormeEngine.generateSeries(
-            exercises: program.exercises,
-            dayType: next.dayType,
-            week: weekNumber
+        plannedExercises = WorkoutEngine.generateWorkout(
+            definition: def,
+            dayName: next.dayName,
+            week: weekNumber,
+            exercises: program.exercises
         )
 
         for exercise in plannedExercises {
-            let mondayCount = mondaySeries[exercise.name]
-            let mode = DeLormeEngine.seriesCount(week: weekNumber, dayType: next.dayType, mondaySeriesCount: mondayCount)
+            let heavyCount = heavyGroups[exercise.name]
+            let mode = WorkoutEngine.groupCountForExercise(definition: def, dayName: next.dayName, week: weekNumber, exerciseName: exercise.name, heavyGroupCount: heavyCount)
             switch mode {
-            case .fixed(let n): seriesPerExercise[exercise.name] = n
-            case .max: seriesPerExercise[exercise.name] = 0
+            case .fixed(let n): groupsPerExercise[exercise.name] = n
+            case .max: groupsPerExercise[exercise.name] = 0
             }
         }
     }
 
     var hasWorkoutToday: Bool { !plannedExercises.isEmpty }
 
-    func seriesPerExerciseCount(_ name: String) -> Int {
-        let count = seriesPerExercise[name] ?? 0
+    func groupsPerExerciseCount(_ name: String) -> Int {
+        let count = groupsPerExercise[name] ?? 0
         return count == 0 ? 5 : count
     }
 
-    // MARK: - Series Info
+    // MARK: - Group Info
 
-    func seriesModeForExercise(_ name: String) -> SeriesMode {
-        let count = seriesPerExercise[name] ?? 0
+    func groupModeForExercise(_ name: String) -> GroupMode {
+        let count = groupsPerExercise[name] ?? 0
         return count == 0 ? .max : .fixed(count)
     }
 
-    func currentSeriesForExercise(_ name: String) -> Int {
+    func currentGroupForExercise(_ name: String) -> Int {
         guard let session = activeSession else { return 0 }
         return session.completedSets
             .filter { $0.exerciseName == name }
-            .map(\.seriesNumber)
+            .map(\.groupNumber)
             .max() ?? 0
     }
 
-    func completedSeriesCount(for name: String) -> Int {
-        activeSession?.fullyCompletedSeriesCount(for: name) ?? 0
+    func completedGroupCount(for name: String) -> Int {
+        activeSession?.fullyCompletedGroupCount(for: name) ?? 0
     }
 
-    func canAddMoreSeries(for name: String) -> Bool {
-        let mode = seriesModeForExercise(name)
-        let current = currentSeriesForExercise(name)
+    func canAddMoreGroups(for name: String) -> Bool {
+        let mode = groupModeForExercise(name)
+        let current = currentGroupForExercise(name)
         switch mode {
         case .max: return true
         case .fixed(let n): return current < n
         }
     }
 
-    func allSetsCompleteForCurrentSeries(exerciseName: String) -> Bool {
+    func allSetsCompleteForCurrentGroup(exerciseName: String) -> Bool {
         guard let session = activeSession else { return false }
-        let current = currentSeriesForExercise(exerciseName)
+        let current = currentGroupForExercise(exerciseName)
         guard current > 0 else { return false }
-        let setsInSeries = session.completedSets.filter {
-            $0.exerciseName == exerciseName && $0.seriesNumber == current
+        let setsInGroup = session.completedSets.filter {
+            $0.exerciseName == exerciseName && $0.groupNumber == current
         }
-        return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
+        return !setsInGroup.isEmpty && setsInGroup.allSatisfy(\.isCompleted)
     }
 
     func isExerciseDone(_ name: String) -> Bool {
         if doneExercises.contains(name) { return true }
-        let mode = seriesModeForExercise(name)
+        let mode = groupModeForExercise(name)
         if case .fixed = mode {
             guard let session = activeSession else { return false }
             let sets = session.completedSets.filter { $0.exerciseName == name }
@@ -135,7 +151,7 @@ final class WorkoutViewModel {
     // MARK: - Session Lifecycle
 
     func startWorkout(program: Program, modelContext: ModelContext) {
-        let session = WorkoutSession(weekNumber: weekNumber, dayType: dayType)
+        let session = WorkoutSession(weekNumber: weekNumber, dayName: dayName)
         session.program = program
         program.sessions.append(session)
         modelContext.insert(session)
@@ -147,25 +163,25 @@ final class WorkoutViewModel {
         startElapsedTimer()
 
         for exercise in plannedExercises {
-            let mode = seriesModeForExercise(exercise.name)
+            let mode = groupModeForExercise(exercise.name)
             let initialCount: Int
             switch mode {
             case .fixed(let n): initialCount = n
             case .max: initialCount = 5
             }
             for _ in 0..<initialCount {
-                addSeries(for: exercise, to: session)
+                addGroup(for: exercise, to: session)
             }
         }
     }
 
-    func addSeries(for exercise: PlannedSeriesExercise, to session: WorkoutSession) {
-        let nextSeries = currentSeriesForExercise(exercise.name) + 1
+    func addGroup(for exercise: PlannedWorkoutExercise, to session: WorkoutSession) {
+        let nextGroup = currentGroupForExercise(exercise.name) + 1
 
         for (setIndex, set) in exercise.sets.enumerated() {
             let completedSet = CompletedSet(
                 exerciseName: exercise.name,
-                seriesNumber: nextSeries,
+                groupNumber: nextGroup,
                 setNumber: setIndex + 1,
                 targetWeight: set.weight,
                 targetReps: set.reps,
@@ -177,11 +193,11 @@ final class WorkoutViewModel {
         }
     }
 
-    func addAnotherSeriesForExercise(_ name: String) {
+    func addAnotherGroupForExercise(_ name: String) {
         guard let session = activeSession else { return }
         guard let exercise = plannedExercises.first(where: { $0.name == name }) else { return }
-        guard canAddMoreSeries(for: name) else { return }
-        addSeries(for: exercise, to: session)
+        guard canAddMoreGroups(for: name) else { return }
+        addGroup(for: exercise, to: session)
     }
 
     func cancelWorkout(program: Program, modelContext: ModelContext) {
@@ -209,24 +225,24 @@ final class WorkoutViewModel {
         set.completedAt = .now
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-        let seriesNum = set.seriesNumber
+        let groupNum = set.groupNumber
         let name = set.exerciseName
         Task { @MainActor in
-            let isSeries = allSetsCompleteInSeries(seriesNum, exerciseName: name)
+            let isGroup = allSetsCompleteInGroup(groupNum, exerciseName: name)
             startRestTimer(
-                duration: isSeries ? seriesRestDuration : setRestDuration,
+                duration: isGroup ? seriesRestDuration : setRestDuration,
                 exerciseName: name,
-                isSeriesRest: isSeries
+                isSeriesRest: isGroup
             )
         }
     }
 
-    private func allSetsCompleteInSeries(_ series: Int, exerciseName: String) -> Bool {
+    private func allSetsCompleteInGroup(_ group: Int, exerciseName: String) -> Bool {
         guard let session = activeSession else { return false }
-        let setsInSeries = session.completedSets.filter {
-            $0.exerciseName == exerciseName && $0.seriesNumber == series
+        let setsInGroup = session.completedSets.filter {
+            $0.exerciseName == exerciseName && $0.groupNumber == group
         }
-        return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
+        return !setsInGroup.isEmpty && setsInGroup.allSatisfy(\.isCompleted)
     }
 
     func uncompleteSet(_ set: CompletedSet) {
@@ -270,7 +286,7 @@ final class WorkoutViewModel {
         restTimerRemaining = duration
         isRestTimerRunning = true
 
-        let nextInfo = isSeriesRest ? "Series rest — \(exerciseName ?? "")" : "Set rest — \(exerciseName ?? "")"
+        let nextInfo = isSeriesRest ? "Group rest — \(exerciseName ?? "")" : "Set rest — \(exerciseName ?? "")"
         timerManager.startLiveActivity(
             exerciseName: exerciseName ?? "",
             nextSetInfo: nextInfo,
@@ -329,16 +345,18 @@ final class WorkoutViewModel {
 
     // MARK: - Helpers
 
-    private func lastMondaySeriesCounts(program: Program, week: Int, sessions: [WorkoutSession]? = nil) -> [String: Int] {
+    private func lastHeavyGroupCounts(program: Program, week: Int, sessions: [WorkoutSession]? = nil) -> [String: Int] {
+        guard let def = program.definition else { return [:] }
+        let heavyDayName = def.days.first?.name ?? "Heavy"
         let allSessions = sessions ?? program.sessions
-        let mondaySession = allSessions.first {
-            $0.weekNumber == week && $0.dayType == .heavy && $0.isCompleted
+        let heavySession = allSessions.first {
+            $0.weekNumber == week && $0.dayName == heavyDayName && $0.isCompleted
         }
-        guard let session = mondaySession else { return [:] }
+        guard let session = heavySession else { return [:] }
 
         var counts: [String: Int] = [:]
         for exercise in program.exercises {
-            counts[exercise.name] = session.fullyCompletedSeriesCount(for: exercise.name)
+            counts[exercise.name] = session.fullyCompletedGroupCount(for: exercise.name)
         }
         return counts
     }
@@ -355,14 +373,14 @@ final class WorkoutViewModel {
         return String(format: "%d:%02d", minutes, seconds)
     }
 
-    func setsGroupedBySeries(for name: String) -> [(series: Int, sets: [CompletedSet])] {
+    func setsGroupedByGroup(for name: String) -> [(group: Int, sets: [CompletedSet])] {
         guard let session = activeSession else { return [] }
         let all = session.completedSets
             .filter { $0.exerciseName == name }
-            .sorted { ($0.seriesNumber, $0.setNumber) < ($1.seriesNumber, $1.setNumber) }
-        let grouped = Dictionary(grouping: all) { $0.seriesNumber }
-        return grouped.keys.sorted().map { s in
-            (series: s, sets: grouped[s]!.sorted { $0.setNumber < $1.setNumber })
+            .sorted { ($0.groupNumber, $0.setNumber) < ($1.groupNumber, $1.setNumber) }
+        let grouped = Dictionary(grouping: all) { $0.groupNumber }
+        return grouped.keys.sorted().map { g in
+            (group: g, sets: grouped[g]!.sorted { $0.setNumber < $1.setNumber })
         }
     }
 }
