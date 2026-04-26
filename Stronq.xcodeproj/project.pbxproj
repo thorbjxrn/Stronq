@@ -102,7 +102,7 @@
 		75F7D1141B2291F26E8A4946 /* Stronq.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Stronq.entitlements; sourceTree = "<group>"; };
 		785BE572FCB6E03C11C018DC /* ExerciseCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseCatalog.swift; sourceTree = "<group>"; };
 		88EA8629C7B49B55389A6AAC /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
-		97408B9B15B7120E8D44791D /* Stronq.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Stronq.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		97408B9B15B7120E8D44791D /* Stronq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stronq.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98189A5D3FAF1B4B22909B47 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		A2A229AFE15345FE40A1EAC6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A96A50854BBB287E0B2E6968 /* WorkoutSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSession.swift; sourceTree = "<group>"; };
@@ -532,7 +532,11 @@
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StronqLiveActivity/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.Stronq.LiveActivity;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -665,7 +669,11 @@
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StronqLiveActivity/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = thorbjxrn.Stronq.LiveActivity;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -695,7 +703,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Stronq/Stronq.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Stronq/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Stronq;
@@ -717,7 +725,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Stronq/Stronq.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Stronq/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Stronq;

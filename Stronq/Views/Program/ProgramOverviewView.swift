@@ -152,7 +152,7 @@ struct WeekCard: View {
                 let session = findSession(dayType)
                 let done = session?.isCompleted == true
                 let exerciseNames = Set((session?.completedSets ?? []).map(\.exerciseName))
-                let allHitFive = done && !exerciseNames.isEmpty && exerciseNames.allSatisfy { name in
+                let allHitFive = done && dayType == .heavy && !exerciseNames.isEmpty && exerciseNames.allSatisfy { name in
                     let max = (session?.completedSets ?? [])
                         .filter { $0.exerciseName == name && $0.isCompleted }
                         .map(\.seriesNumber).max() ?? 0

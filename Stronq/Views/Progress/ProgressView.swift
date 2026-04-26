@@ -260,11 +260,9 @@ struct ProgressView: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(Typo.statValue)
-            if !unit.isEmpty {
-                Text(unit)
-                    .font(Typo.statLabel)
-                    .foregroundStyle(theme.textSecondary)
-            }
+            Text(unit.isEmpty ? " " : unit)
+                .font(Typo.statLabel)
+                .foregroundStyle(theme.textSecondary)
             Text(label)
                 .font(Typo.statLabel)
                 .foregroundStyle(theme.textSecondary)

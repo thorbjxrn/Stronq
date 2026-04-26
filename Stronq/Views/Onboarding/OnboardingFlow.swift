@@ -171,7 +171,7 @@ struct OnboardingFlow: View {
                                 )
                         )
                     }
-                    .foregroundStyle(.white)
+                    .foregroundStyle(theme.textPrimary)
                 }
             }
 
