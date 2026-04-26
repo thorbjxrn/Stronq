@@ -56,7 +56,7 @@ struct WorkoutEngine {
         week: Int
     ) -> [Double] {
         // Check intro overrides first
-        if let overrides = definition.introOverrides {
+        if let overrides = definition.weekOverrides {
             for weekOverride in overrides {
                 if weekOverride.week == week,
                    let dayOverride = weekOverride.dayOverrides.first(where: { $0.dayName == dayName }) {
@@ -74,6 +74,31 @@ struct WorkoutEngine {
         return firstGroup.sets.map(\.intensity)
     }
 
+    // MARK: - Rep Count
+
+    static func repCount(
+        definition: ProgramDefinition,
+        dayName: String,
+        week: Int
+    ) -> Int {
+        if let overrides = definition.weekOverrides {
+            for weekOverride in overrides {
+                if weekOverride.week == week,
+                   let dayOverride = weekOverride.dayOverrides.first(where: { $0.dayName == dayName }) {
+                    return dayOverride.reps
+                }
+            }
+        }
+
+        guard let day = definition.days.first(where: { $0.name == dayName }),
+              let firstSlot = day.exerciseSlots.first,
+              let firstGroup = firstSlot.setGroups.first,
+              let firstSet = firstGroup.sets.first else {
+            return 5
+        }
+        return firstSet.reps
+    }
+
     // MARK: - Group Count
 
     static func groupCount(
@@ -83,7 +108,7 @@ struct WorkoutEngine {
         heavyGroupCount: Int?
     ) -> GroupMode {
         // Check intro overrides first
-        if let overrides = definition.introOverrides {
+        if let overrides = definition.weekOverrides {
             for weekOverride in overrides {
                 if weekOverride.week == week,
                    let dayOverride = weekOverride.dayOverrides.first(where: { $0.dayName == dayName }) {
@@ -117,7 +142,7 @@ struct WorkoutEngine {
         heavyGroupCount: Int?
     ) -> GroupMode {
         // Check intro overrides first
-        if let overrides = definition.introOverrides {
+        if let overrides = definition.weekOverrides {
             for weekOverride in overrides {
                 if weekOverride.week == week,
                    let dayOverride = weekOverride.dayOverrides.first(where: { $0.dayName == dayName }) {
@@ -159,6 +184,7 @@ struct WorkoutEngine {
         exercises: [Exercise]
     ) -> [PlannedWorkoutExercise] {
         let intensities = intensityLevels(definition: definition, dayName: dayName, week: week)
+        let reps = repCount(definition: definition, dayName: dayName, week: week)
 
         return exercises
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -168,7 +194,7 @@ struct WorkoutEngine {
                     PlannedSet(
                         intensity: intensity,
                         weight: rm * intensity,
-                        reps: 5,
+                        reps: reps,
                         pushUpVariant: exercise.type == .bodyweight
                             ? PushUpVariant.forIntensity(intensity, maxLevel: exercise.startingPushUpVariant)
                             : nil

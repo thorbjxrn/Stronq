@@ -4,7 +4,7 @@ struct ProgramRegistry {
     static let all: [ProgramDefinition] = [
         .delormeClassic,
         .delormeYoked,
-        .phul,
+        .candito6Week,
     ]
 
     static func definition(for programType: String) -> ProgramDefinition? {

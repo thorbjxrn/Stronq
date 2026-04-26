@@ -112,90 +112,84 @@ final class ProgramDefinitionTests: XCTestCase {
         XCTAssertEqual(ProgramRegistry.all.count, 3)
     }
 
-    func testRegistryFindsPHUL() {
-        let def = ProgramRegistry.definition(for: "phul")
+    func testRegistryFindsCandito() {
+        let def = ProgramRegistry.definition(for: "candito-6week")
         XCTAssertNotNil(def)
-        XCTAssertEqual(def?.name, "PHUL")
+        XCTAssertEqual(def?.name, "Candito 6-Week")
     }
 }
 
-final class PHULTests: XCTestCase {
+final class Candito6WeekTests: XCTestCase {
 
-    let definition = ProgramDefinition.phul
+    let definition = ProgramDefinition.candito6Week
 
-    func testPHULHasFourDays() {
-        XCTAssertEqual(definition.days.count, 4)
-        XCTAssertEqual(definition.days.map(\.name), ["Upper Power", "Lower Power", "Upper Hypertrophy", "Lower Hypertrophy"])
-        XCTAssertEqual(definition.days.map(\.shortLabel), ["UP", "LP", "UH", "LH"])
+    func testHasTwoDays() {
+        XCTAssertEqual(definition.days.count, 2)
+        XCTAssertEqual(definition.days.map(\.name), ["Upper", "Lower"])
+        XCTAssertEqual(definition.days.map(\.shortLabel), ["U", "L"])
     }
 
-    func testPHULIsRepeating() {
-        XCTAssertTrue(definition.repeating)
-        XCTAssertNil(definition.cycleLength)
+    func testSixWeekNonRepeating() {
+        XCTAssertEqual(definition.cycleLength, 6)
+        XCTAssertFalse(definition.repeating)
     }
 
-    func testPHULIsPremium() {
+    func testIsPremium() {
         XCTAssertTrue(definition.isPremium)
     }
 
-    func testUpperPowerExercises() {
-        let day = definition.days[0]
-        XCTAssertGreaterThanOrEqual(day.exerciseSlots.count, 5)
-        XCTAssertEqual(day.exerciseSlots[0].defaultExercise, "Bench Press")
-        XCTAssertEqual(day.exerciseSlots[0].role, .primary)
-        XCTAssertEqual(day.exerciseSlots[1].defaultExercise, "Barbell Row")
-        XCTAssertEqual(day.exerciseSlots[1].role, .primary)
+    func testConditioningWeeksHighReps() {
+        let reps1 = WorkoutEngine.repCount(definition: definition, dayName: "Upper", week: 1)
+        let reps2 = WorkoutEngine.repCount(definition: definition, dayName: "Lower", week: 2)
+        XCTAssertEqual(reps1, 10)
+        XCTAssertEqual(reps2, 10)
     }
 
-    func testPowerDaysStraightSets() {
-        let upperPower = definition.days[0]
-        for slot in upperPower.exerciseSlots where slot.role == .primary {
-            let group = slot.setGroups[0]
-            if case .fixed(let n) = group.repeatCount {
-                XCTAssertGreaterThanOrEqual(n, 3)
-                XCTAssertLessThanOrEqual(n, 5)
-            } else {
-                XCTFail("Primary power exercises should use .fixed repeat count")
-            }
-        }
+    func testLinearProgressionWeeks() {
+        let reps3 = WorkoutEngine.repCount(definition: definition, dayName: "Upper", week: 3)
+        let reps4 = WorkoutEngine.repCount(definition: definition, dayName: "Lower", week: 4)
+        XCTAssertEqual(reps3, 6)
+        XCTAssertEqual(reps4, 6)
     }
 
-    func testHypertrophyDaysHigherReps() {
-        let upperHypertrophy = definition.days[2]
-        for slot in upperHypertrophy.exerciseSlots {
-            let reps = slot.setGroups[0].sets[0].reps
-            XCTAssertGreaterThanOrEqual(reps, 8, "\(slot.defaultExercise) should have 8+ reps on hypertrophy day")
-        }
+    func testStrengthWeekLowReps() {
+        let reps = WorkoutEngine.repCount(definition: definition, dayName: "Upper", week: 5)
+        XCTAssertEqual(reps, 3)
     }
 
-    func testProgressionTriggersCompleteAllSets() {
-        for day in definition.days {
-            for slot in day.exerciseSlots {
-                XCTAssertEqual(slot.progression.trigger, .completeAllSets)
-            }
-        }
+    func testPeakWeekSingles() {
+        let reps = WorkoutEngine.repCount(definition: definition, dayName: "Lower", week: 6)
+        XCTAssertEqual(reps, 1)
     }
 
-    func testRepeatingCycleLoopsBack() {
-        let sessions = definition.days.map { (dayName: $0.name, week: 1, isCompleted: true) }
-        let next = WorkoutEngine.nextDay(definition: definition, currentWeek: 1, completedSessions: sessions)
-        XCTAssertNotNil(next)
-        XCTAssertEqual(next?.dayName, "Upper Power")
+    func testIntensityProgression() {
+        let w1 = WorkoutEngine.intensityLevels(definition: definition, dayName: "Upper", week: 1)
+        let w5 = WorkoutEngine.intensityLevels(definition: definition, dayName: "Upper", week: 5)
+        let w6 = WorkoutEngine.intensityLevels(definition: definition, dayName: "Upper", week: 6)
+        XCTAssertEqual(w1, [0.70])
+        XCTAssertEqual(w5, [0.90])
+        XCTAssertEqual(w6, [0.97])
     }
 
-    func testWorkoutGeneration() {
+    func testWorkoutGenerationUsesWeekReps() {
         let exercises = [
-            Exercise(name: "Bench Press", type: .weighted, initial10RM: 80, weightIncrement: 2.5, unit: .kg, sortOrder: 0),
-            Exercise(name: "Barbell Row", type: .weighted, initial10RM: 60, weightIncrement: 2.5, unit: .kg, sortOrder: 1),
+            Exercise(name: "Bench Press", type: .weighted, initial10RM: 100, weightIncrement: 2.5, unit: .kg, sortOrder: 0),
         ]
+        let w1 = WorkoutEngine.generateWorkout(definition: definition, dayName: "Upper", week: 1, exercises: exercises)
+        let w6 = WorkoutEngine.generateWorkout(definition: definition, dayName: "Upper", week: 6, exercises: exercises)
 
-        let planned = WorkoutEngine.generateWorkout(
-            definition: definition,
-            dayName: "Upper Power",
-            week: 1,
-            exercises: exercises
-        )
-        XCTAssertEqual(planned.count, 2)
-        XCTAssertEqual(planned[0].sets[0].weight, 80)
+        XCTAssertEqual(w1[0].sets[0].reps, 10)
+        XCTAssertEqual(w1[0].sets[0].weight, 70)
+
+        XCTAssertEqual(w6[0].sets[0].reps, 1)
+        XCTAssertEqual(w6[0].sets[0].weight, 97)
+    }
+
+    func testCycleEndsAfterWeek6() {
+        let sessions = (1...6).flatMap { week in
+            definition.days.map { (dayName: $0.name, week: week, isCompleted: true) }
+        }
+        let next = WorkoutEngine.nextDay(definition: definition, currentWeek: 6, completedSessions: sessions)
+        XCTAssertNil(next)
     }
 }

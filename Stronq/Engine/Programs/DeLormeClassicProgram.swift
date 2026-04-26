@@ -10,7 +10,7 @@ extension ProgramDefinition {
         cycleLength: 7,
         repeating: false,
         introCycle: IntroCycle(weeks: 2, volumeMultiplier: 1.0),
-        introOverrides: Self.delormeIntroOverrides,
+        weekOverrides: Self.delormeWeekOverrides,
         days: [
             // MARK: - Heavy
             DayDefinition(
@@ -176,10 +176,10 @@ extension ProgramDefinition {
         ]
     )
 
-    // MARK: - Shared Intro Overrides
+    // MARK: - Shared Week Overrides
 
-    static let delormeIntroOverrides: [IntroWeekOverride] = [
-        IntroWeekOverride(
+    static let delormeWeekOverrides: [WeekOverride] = [
+        WeekOverride(
             week: -1,
             dayOverrides: [
                 .init(dayName: "Heavy", intensities: [0.50, 0.75], groupCount: 3),
@@ -187,7 +187,7 @@ extension ProgramDefinition {
                 .init(dayName: "Medium", intensities: [0.50, 0.75], groupCount: 5),
             ]
         ),
-        IntroWeekOverride(
+        WeekOverride(
             week: 0,
             dayOverrides: [
                 .init(dayName: "Heavy", intensities: [0.50, 0.75, 1.00], groupCount: 2),

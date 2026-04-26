@@ -10,7 +10,7 @@ extension ProgramDefinition {
         cycleLength: 7,
         repeating: false,
         introCycle: IntroCycle(weeks: 2, volumeMultiplier: 1.0),
-        introOverrides: Self.delormeIntroOverrides,
+        weekOverrides: Self.delormeWeekOverrides,
         days: [
             // MARK: - Heavy
             DayDefinition(

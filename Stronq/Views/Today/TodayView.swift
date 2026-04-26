@@ -92,7 +92,7 @@ struct TodayView: View {
                                             .foregroundStyle(theme.textSecondary)
                                     }
                                     Spacer()
-                                    Text("x5")
+                                    Text("x\(set.reps)")
                                         .font(Typo.caption)
                                         .foregroundStyle(theme.textSecondary)
                                 }

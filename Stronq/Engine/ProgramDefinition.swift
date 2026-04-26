@@ -64,14 +64,15 @@ struct IntroCycle: Codable, Sendable {
     let volumeMultiplier: Double
 }
 
-struct IntroWeekOverride: Codable, Sendable {
+struct WeekOverride: Codable, Sendable {
     let week: Int
-    let dayOverrides: [IntroDay]
+    let dayOverrides: [DayOverride]
 
-    struct IntroDay: Codable, Sendable {
+    struct DayOverride: Codable, Sendable {
         let dayName: String
         let intensities: [Double]
         let groupCount: Int
+        var reps: Int = 5
     }
 }
 
@@ -83,7 +84,7 @@ struct ProgramDefinition: Codable, Sendable {
     var cycleLength: Int? = nil
     var repeating: Bool = false
     var introCycle: IntroCycle? = nil
-    var introOverrides: [IntroWeekOverride]? = nil
+    var weekOverrides: [WeekOverride]? = nil
     let days: [DayDefinition]
 
     func dayIndex(for dayName: String) -> Int? {

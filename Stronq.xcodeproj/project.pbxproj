@@ -18,6 +18,7 @@
 		3108FE1C899360A323319CCD /* StronqLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB22863A8ED64A424B0979C1 /* StronqLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		36A7E35E9099D842E678880D /* ExerciseConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C51824852D68ED7ED341F1 /* ExerciseConfigView.swift */; };
 		3C4D5E6F7A8B9C0D1E2F3A4B /* ProgramRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6A7B8C9D0E1F2A3B4 /* ProgramRegistry.swift */; };
+		C9D0E1F2A3B4C5D6E7F8A9B0 /* CanditoProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E1F2A3B4C5D6E7F8A9B0C1 /* CanditoProgram.swift */; };
 		4D5E6F7A8B9C0D1E2F3A4B5C /* DeLormeClassicProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A7B8C9D0E1F2A3B4C5 /* DeLormeClassicProgram.swift */; };
 		5442585F242DBFAAF6305BC2 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BAE0F7BF42C9280051F6AA /* HealthKitManager.swift */; };
 		B8C9D0E1F2A3B4C5D6E7F8A9 /* PHULProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B8C9D0E1F2A3B4C5D6E7F8 /* PHULProgram.swift */; };
@@ -117,6 +118,7 @@
 		C3D4E5F6A7B8C9D0E1F2A3B4 /* ProgramRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramRegistry.swift; sourceTree = "<group>"; };
 		C4B5EAF7CFDE28A2147BEA6C /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
 		CA31A0C3E90E17D5C3757829 /* StronqLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StronqLiveActivityBundle.swift; sourceTree = "<group>"; };
+		D0E1F2A3B4C5D6E7F8A9B0C1 /* CanditoProgram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanditoProgram.swift; sourceTree = "<group>"; };
 		D4E5F6A7B8C9D0E1F2A3B4C5 /* DeLormeClassicProgram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeLormeClassicProgram.swift; sourceTree = "<group>"; };
 		DA55539172EB93E72088FB6E /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		DB22863A8ED64A424B0979C1 /* StronqLiveActivity.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = StronqLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -247,6 +249,7 @@
 		7A8B9C0D1E2F3A4B5C6D7E8F /* Programs */ = {
 			isa = PBXGroup;
 			children = (
+				D0E1F2A3B4C5D6E7F8A9B0C1 /* CanditoProgram.swift */,
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* DeLormeClassicProgram.swift */,
 				E5F6A7B8C9D0E1F2A3B4C5D6 /* DeLormeYokedProgram.swift */,
 				A7B8C9D0E1F2A3B4C5D6E7F8 /* PHULProgram.swift */,
@@ -481,6 +484,7 @@
 				F2A6DFF079BA0F3054891635 /* CompletedSet.swift in Sources */,
 				FED05942C28DB5F83EEC3667 /* ContentView.swift in Sources */,
 				4D5E6F7A8B9C0D1E2F3A4B5C /* DeLormeClassicProgram.swift in Sources */,
+				C9D0E1F2A3B4C5D6E7F8A9B0 /* CanditoProgram.swift in Sources */,
 				5E6F7A8B9C0D1E2F3A4B5C6D /* DeLormeYokedProgram.swift in Sources */,
 				F008F7B1FDFFAC95FC564657 /* Enums.swift in Sources */,
 				B8C9D0E1F2A3B4C5D6E7F8A9 /* PHULProgram.swift in Sources */,
