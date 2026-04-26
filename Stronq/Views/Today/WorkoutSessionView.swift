@@ -41,7 +41,7 @@ struct WorkoutSessionView: View {
                 Text("Week \(viewModel.weekNumber)")
                     .font(Typo.caption)
                     .foregroundStyle(theme.textSecondary)
-                Text(viewModel.dayType.rawValue)
+                Text(viewModel.dayName)
                     .font(Typo.heading)
             }
             Spacer()
@@ -66,7 +66,7 @@ struct WorkoutSessionView: View {
                 let exercise = viewModel.plannedExercises[index]
                 let isSelected = selectedExercise == index
                 let isDone = viewModel.isExerciseDone(exercise.name)
-                let seriesCount = viewModel.currentSeriesForExercise(exercise.name)
+                let seriesCount = viewModel.currentGroupForExercise(exercise.name)
 
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) { selectedExercise = index }
@@ -125,12 +125,12 @@ struct WorkoutSessionView: View {
 
     // MARK: - Exercise Page
 
-    private func exercisePage(_ exercise: PlannedSeriesExercise) -> some View {
-        let groups = viewModel.setsGroupedBySeries(for: exercise.name)
-        let mode = viewModel.seriesModeForExercise(exercise.name)
-        let lastSeriesDone = viewModel.allSetsCompleteForCurrentSeries(exerciseName: exercise.name)
+    private func exercisePage(_ exercise: PlannedWorkoutExercise) -> some View {
+        let groups = viewModel.setsGroupedByGroup(for: exercise.name)
+        let mode = viewModel.groupModeForExercise(exercise.name)
+        let lastSeriesDone = viewModel.allSetsCompleteForCurrentGroup(exerciseName: exercise.name)
         let isDone = viewModel.isExerciseDone(exercise.name)
-        let currentSeries = viewModel.currentSeriesForExercise(exercise.name)
+        let currentSeries = viewModel.currentGroupForExercise(exercise.name)
 
         return ScrollView {
             VStack(spacing: 12) {
@@ -151,7 +151,7 @@ struct WorkoutSessionView: View {
                 .padding(.horizontal, 4)
 
                 // Series cards
-                ForEach(groups, id: \.series) { group in
+                ForEach(groups, id: \.group) { group in
                     seriesCard(group: group, exerciseName: exercise.name)
                 }
 
@@ -160,7 +160,7 @@ struct WorkoutSessionView: View {
                 } else if mode == .max && lastSeriesDone {
                     VStack(spacing: 10) {
                         Button {
-                            withAnimation { viewModel.addAnotherSeriesForExercise(exercise.name) }
+                            withAnimation { viewModel.addAnotherGroupForExercise(exercise.name) }
                         } label: {
                             Label("Add Series", systemImage: "plus.circle.fill")
                                 .font(Typo.bodyEmphasis)
@@ -178,7 +178,7 @@ struct WorkoutSessionView: View {
                                 }
                             }
                         } label: {
-                            Label("Done — \(viewModel.completedSeriesCount(for: exercise.name)) series", systemImage: "checkmark")
+                            Label("Done — \(viewModel.completedGroupCount(for: exercise.name)) series", systemImage: "checkmark")
                                 .font(Typo.bodyEmphasis)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
@@ -192,13 +192,13 @@ struct WorkoutSessionView: View {
         }
     }
 
-    private func seriesCard(group: (series: Int, sets: [CompletedSet]), exerciseName: String) -> some View {
+    private func seriesCard(group: (group: Int, sets: [CompletedSet]), exerciseName: String) -> some View {
         let allDone = group.sets.allSatisfy(\.isCompleted)
-        let isCurrent = !allDone && isFirstIncompleteSeries(group.series, exerciseName: exerciseName)
+        let isCurrent = !allDone && isFirstIncompleteGroup(group.group, exerciseName: exerciseName)
 
         return VStack(spacing: 6) {
             HStack {
-                Text("Series \(group.series)")
+                Text("Series \(group.group)")
                     .font(Typo.captionEmphasis)
                     .foregroundStyle(isCurrent ? theme.accentColor : theme.textSecondary)
                 Spacer()
@@ -265,11 +265,11 @@ struct WorkoutSessionView: View {
         .background(theme.completedColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
     }
 
-    private func isFirstIncompleteSeries(_ series: Int, exerciseName: String) -> Bool {
-        let groups = viewModel.setsGroupedBySeries(for: exerciseName)
+    private func isFirstIncompleteGroup(_ series: Int, exerciseName: String) -> Bool {
+        let groups = viewModel.setsGroupedByGroup(for: exerciseName)
         for group in groups {
             if !group.sets.allSatisfy(\.isCompleted) {
-                return group.series == series
+                return group.group == series
             }
         }
         return false
@@ -278,19 +278,19 @@ struct WorkoutSessionView: View {
     private func finishAndShow() {
         let elapsed = viewModel.elapsedTime
         let volume = viewModel.activeSession?.totalVolume ?? 0
-        let day = viewModel.dayType
-        let series = program.exercises
+        let day = viewModel.dayName
+        let groups = program.exercises
             .sorted(by: { $0.sortOrder < $1.sortOrder })
-            .map { viewModel.completedSeriesCount(for: $0.name) }
+            .map { viewModel.completedGroupCount(for: $0.name) }
 
         viewModel.finishWorkout(program: program, modelContext: modelContext)
 
         if let onFinish {
             onFinish(SessionSummary(
-                dayType: day,
+                dayName: day,
                 elapsed: elapsed,
                 volume: volume,
-                seriesCounts: series
+                groupCounts: groups
             ))
         }
     }

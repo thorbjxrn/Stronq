@@ -93,9 +93,9 @@ struct ProgressView: View {
                         id: session.id.uuidString,
                         week: session.weekNumber,
                         volume: session.totalVolume,
-                        dayType: session.dayType.rawValue
+                        dayType: session.dayName
                     )
-                }.sorted { ($0.week, DayType.sortOrder($0.dayType)) < ($1.week, DayType.sortOrder($1.dayType)) }
+                }.sorted { ($0.week, $0.dayType) < ($1.week, $1.dayType) }
 
                 Chart(volumeData, id: \.id) { point in
                     BarMark(
@@ -280,7 +280,8 @@ struct ProgressView: View {
     }
 
     private var strengthData: [StrengthPoint] {
-        let heavySessions = sessions.filter { $0.isCompleted && $0.dayType == .heavy }
+        let primaryDayName = program?.definition?.days.first?.name ?? "Heavy"
+        let heavySessions = sessions.filter { $0.isCompleted && $0.dayName == primaryDayName }
         var points: [StrengthPoint] = []
 
         for session in heavySessions {
