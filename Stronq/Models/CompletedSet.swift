@@ -5,7 +5,7 @@ import SwiftData
 final class CompletedSet {
     var id: UUID
     var exerciseName: String
-    var seriesNumber: Int
+    @Attribute(originalName: "seriesNumber") var groupNumber: Int
     var setNumber: Int
     var targetWeight: Double
     var actualWeight: Double
@@ -19,7 +19,7 @@ final class CompletedSet {
 
     init(
         exerciseName: String,
-        seriesNumber: Int,
+        groupNumber: Int,
         setNumber: Int,
         targetWeight: Double,
         targetReps: Int = 5,
@@ -28,7 +28,7 @@ final class CompletedSet {
     ) {
         self.id = UUID()
         self.exerciseName = exerciseName
-        self.seriesNumber = seriesNumber
+        self.groupNumber = groupNumber
         self.setNumber = setNumber
         self.targetWeight = targetWeight
         self.actualWeight = targetWeight
@@ -43,6 +43,8 @@ final class CompletedSet {
         if pushUpVariant != nil {
             return pushUpVariant?.rawValue ?? "Regular"
         }
-        return String(format: "%.2f", targetWeight)
+        return targetWeight.truncatingRemainder(dividingBy: 1) == 0
+            ? String(format: "%.0f", targetWeight)
+            : String(format: "%.1f", targetWeight)
     }
 }

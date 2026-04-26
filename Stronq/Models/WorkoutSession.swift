@@ -6,7 +6,7 @@ final class WorkoutSession {
     var id: UUID
     var date: Date
     var weekNumber: Int
-    var dayType: DayType
+    @Attribute(originalName: "dayType") var dayName: String
     var duration: TimeInterval
     var isCompleted: Bool
     var program: Program?
@@ -17,12 +17,12 @@ final class WorkoutSession {
     init(
         date: Date = .now,
         weekNumber: Int,
-        dayType: DayType
+        dayName: String
     ) {
         self.id = UUID()
         self.date = date
         self.weekNumber = weekNumber
-        self.dayType = dayType
+        self.dayName = dayName
         self.duration = 0
         self.isCompleted = false
         self.completedSets = []
@@ -45,15 +45,15 @@ final class WorkoutSession {
     func setsForExercise(_ exerciseName: String) -> [CompletedSet] {
         completedSets
             .filter { $0.exerciseName == exerciseName }
-            .sorted { ($0.seriesNumber, $0.setNumber) < ($1.seriesNumber, $1.setNumber) }
+            .sorted { ($0.groupNumber, $0.setNumber) < ($1.groupNumber, $1.setNumber) }
     }
 
-    func fullyCompletedSeriesCount(for exerciseName: String) -> Int {
+    func fullyCompletedGroupCount(for exerciseName: String) -> Int {
         let sets = completedSets.filter { $0.exerciseName == exerciseName }
-        let seriesNumbers = Set(sets.map(\.seriesNumber))
-        return seriesNumbers.filter { series in
-            let setsInSeries = sets.filter { $0.seriesNumber == series }
-            return !setsInSeries.isEmpty && setsInSeries.allSatisfy(\.isCompleted)
+        let groupNumbers = Set(sets.map(\.groupNumber))
+        return groupNumbers.filter { group in
+            let setsInGroup = sets.filter { $0.groupNumber == group }
+            return !setsInGroup.isEmpty && setsInGroup.allSatisfy(\.isCompleted)
         }.count
     }
 }

@@ -8,16 +8,20 @@ struct OnboardingFlow: View {
     @State private var step = 0
     @State private var unit: WeightUnit = .kg
     @State private var includeIntro = true
-    @State private var selectedTemplate: ProgramTemplate = .classic
+    @State private var selectedDefinition: ProgramDefinition = .delormeClassic
     @State private var exerciseWeights: [String: Double] = [:]
     @State private var pushUpStart: PushUpVariant = .archer
-    @State private var syncHealth = false
     @State private var healthKitManager = HealthKitManager()
+    @State private var reminderManager = ReminderManager()
     @State private var showingPaywall = false
 
     let onComplete: () -> Void
 
     private let totalSteps = 5
+
+    private var exerciseDefaults: [ExerciseDefaults] {
+        ExerciseDefaults.defaults(for: selectedDefinition)
+    }
 
     var body: some View {
         NavigationStack {
@@ -124,24 +128,24 @@ struct OnboardingFlow: View {
                 .padding(.bottom, 32)
 
             VStack(spacing: 12) {
-                ForEach(ProgramTemplate.all) { template in
-                    let isSelected = selectedTemplate.id == template.id
+                ForEach(ProgramRegistry.all, id: \.id) { definition in
+                    let isSelected = selectedDefinition.id == definition.id
 
                     Button {
-                        if template.isPremium && !purchaseManager.isPremium {
+                        if definition.isPremium && !purchaseManager.isPremium {
                             showingPaywall = true
                         } else {
                             withAnimation(.easeInOut(duration: 0.15)) {
-                                selectedTemplate = template
+                                selectedDefinition = definition
                                 initWeights()
                             }
                         }
                     } label: {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(template.name)
+                                Text(definition.name)
                                     .font(Typo.heading)
-                                if template.isPremium {
+                                if definition.isPremium && !purchaseManager.isPremium {
                                     Text("PRO")
                                         .font(Typo.small)
                                         .padding(.horizontal, 6)
@@ -156,7 +160,7 @@ struct OnboardingFlow: View {
                                 }
                             }
 
-                            Text(template.subtitle)
+                            Text(definition.description)
                                 .font(Typo.caption)
                                 .foregroundStyle(theme.textSecondary)
                         }
@@ -187,12 +191,29 @@ struct OnboardingFlow: View {
 
     // MARK: - Weight Setup
 
+    private var exerciseDayMapping: [String: String] {
+        var seen = Set<String>()
+        var mapping: [String: String] = [:]
+        for day in selectedDefinition.days {
+            for slot in day.exerciseSlots {
+                if !seen.contains(slot.defaultExercise) {
+                    seen.insert(slot.defaultExercise)
+                    mapping[slot.defaultExercise] = day.name
+                }
+            }
+        }
+        return mapping
+    }
+
+    private var needsDayGrouping: Bool {
+        Set(exerciseDayMapping.values).count > 1
+    }
+
     private var weightSetupStep: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Spacer().frame(height: 60)
-
             Text("Your 10RM")
                 .font(Typo.title)
+                .padding(.top, 60)
 
             Text("A conservative estimate of the most\nyou can lift for 10 reps with good form.")
                 .font(Typo.body)
@@ -207,22 +228,45 @@ struct OnboardingFlow: View {
             .pickerStyle(.segmented)
             .frame(maxWidth: 120)
             .padding(.top, 16)
-            .padding(.bottom, 24)
+            .padding(.bottom, 16)
             .onChange(of: unit) { oldUnit, newUnit in
                 convertWeights(from: oldUnit, to: newUnit)
             }
 
-            VStack(spacing: 16) {
-                ForEach(selectedTemplate.exercises, id: \.name) { exercise in
-                    if exercise.type == .weighted {
-                        weightCard(exercise: exercise)
+            ScrollView {
+                VStack(spacing: 12) {
+                    if needsDayGrouping {
+                        let dayMapping = exerciseDayMapping
+                        ForEach(selectedDefinition.days, id: \.name) { day in
+                            let dayExercises = exerciseDefaults.filter { dayMapping[$0.name] == day.name }
+                            if !dayExercises.isEmpty {
+                                Text(day.name)
+                                    .font(Typo.captionEmphasis)
+                                    .foregroundStyle(theme.textSecondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.top, dayExercises.first?.name == exerciseDefaults.first?.name ? 0 : 8)
+
+                                ForEach(dayExercises, id: \.name) { exercise in
+                                    if exercise.type == .weighted {
+                                        weightCard(exercise: exercise)
+                                    } else {
+                                        bodyweightCard(exercise: exercise)
+                                    }
+                                }
+                            }
+                        }
                     } else {
-                        bodyweightCard(exercise: exercise)
+                        ForEach(exerciseDefaults, id: \.name) { exercise in
+                            if exercise.type == .weighted {
+                                weightCard(exercise: exercise)
+                            } else {
+                                bodyweightCard(exercise: exercise)
+                            }
+                        }
                     }
                 }
+                .padding(.bottom, 16)
             }
-
-            Spacer()
 
             ctaButton("Continue") {
                 withAnimation { step = 3 }
@@ -231,56 +275,51 @@ struct OnboardingFlow: View {
         .padding(.horizontal, 28)
     }
 
-    private func weightCard(exercise: ProgramTemplate.TemplateExercise) -> some View {
+    private func weightCard(exercise: ExerciseDefaults) -> some View {
         let increment = unit == .kg ? exercise.increment : exercise.incrementLbs
         let weight = Binding(
             get: { exerciseWeights[exercise.name] ?? (unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs) },
             set: { exerciseWeights[exercise.name] = $0 }
         )
 
-        return VStack(spacing: 12) {
-            HStack {
-                Text(exercise.name)
-                    .font(Typo.heading)
-                Spacer()
-                Text("+\(formatted(increment)) \(unit.symbol)")
-                    .font(Typo.caption)
+        return HStack(spacing: 12) {
+            Text(exercise.name)
+                .font(Typo.bodyEmphasis)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button {
+                if weight.wrappedValue > increment { weight.wrappedValue -= increment }
+            } label: {
+                Image(systemName: "minus.circle.fill")
+                    .font(.title2)
                     .foregroundStyle(theme.textSecondary)
             }
+            .buttonStyle(.borderless)
 
-            HStack(spacing: 16) {
-                Button {
-                    if weight.wrappedValue > increment { weight.wrappedValue -= increment }
-                } label: {
-                    Image(systemName: "minus.circle.fill")
-                        .font(Typo.stepperButton)
-                        .foregroundStyle(theme.textSecondary)
-                }
-                .buttonStyle(.borderless)
+            Text(formatted(weight.wrappedValue))
+                .font(Typo.weightStandard)
+                .frame(minWidth: 44, alignment: .center)
 
-                Text(formatted(weight.wrappedValue))
-                    .font(Typo.weightLarge)
-                    .frame(minWidth: 60)
-
-                Button {
-                    weight.wrappedValue += increment
-                } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(Typo.stepperButton)
-                        .foregroundStyle(theme.accentColor)
-                }
-                .buttonStyle(.borderless)
-
-                Text(unit.symbol)
-                    .font(Typo.body)
-                    .foregroundStyle(theme.textSecondary)
+            Button {
+                weight.wrappedValue += increment
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(theme.accentColor)
             }
+            .buttonStyle(.borderless)
+
+            Text(unit.symbol)
+                .font(Typo.caption)
+                .foregroundStyle(theme.textSecondary)
+                .frame(width: 20)
         }
-        .padding(16)
-        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 16))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 12))
     }
 
-    private func bodyweightCard(exercise: ProgramTemplate.TemplateExercise) -> some View {
+    private func bodyweightCard(exercise: ExerciseDefaults) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(exercise.name)
@@ -335,31 +374,38 @@ struct OnboardingFlow: View {
                 .padding(.top, 8)
 
             VStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Toggle("Include 2-Week Intro Cycle", isOn: $includeIntro)
-                        .tint(theme.accentColor)
-                        .padding(16)
-                        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
+                if selectedDefinition.introCycle != nil {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Toggle("Include 2-Week Intro Cycle", isOn: $includeIntro)
+                            .tint(theme.accentColor)
+                            .padding(16)
+                            .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
 
-                    Text("Builds up tonnage gradually before the\nfull Heavy-Light-Medium cycle.")
-                        .font(Typo.caption)
-                        .foregroundStyle(theme.textSecondary)
-                        .padding(.leading, 4)
+                        Text("Builds up tonnage gradually before the\nfull \(selectedDefinition.days.map(\.name).joined(separator: "-")) cycle.")
+                            .font(Typo.caption)
+                            .foregroundStyle(theme.textSecondary)
+                            .padding(.leading, 4)
+                    }
                 }
 
                 if healthKitManager.isAvailable {
-                    Toggle(isOn: $syncHealth) {
+                    Toggle(isOn: Binding(
+                        get: { healthKitManager.syncEnabled },
+                        set: { newValue in
+                            healthKitManager.syncEnabled = newValue
+                            if newValue {
+                                Task { await healthKitManager.requestAuthorization() }
+                            }
+                        }
+                    )) {
                         Label("Sync with Apple Health", systemImage: "heart.fill")
                     }
                     .tint(theme.accentColor)
                     .padding(16)
                     .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
-                    .onChange(of: syncHealth) {
-                        if syncHealth {
-                            Task { await healthKitManager.requestAuthorization() }
-                        }
-                    }
                 }
+
+                remindersCard
             }
             .padding(.top, 32)
 
@@ -372,6 +418,70 @@ struct OnboardingFlow: View {
         .padding(.horizontal, 28)
     }
 
+    // MARK: - Reminders Card
+
+    private var remindersCard: some View {
+        VStack(spacing: 12) {
+            Toggle("Workout Reminders", isOn: Binding(
+                get: { reminderManager.isEnabled },
+                set: { newValue in
+                    if newValue {
+                        Task {
+                            let granted = await reminderManager.requestPermission()
+                            reminderManager.isEnabled = granted
+                        }
+                    } else {
+                        reminderManager.isEnabled = false
+                    }
+                }
+            ))
+            .tint(theme.accentColor)
+
+            if reminderManager.isEnabled {
+                Divider().overlay(theme.backgroundColor)
+
+                DatePicker("Time", selection: Binding(
+                    get: { reminderManager.reminderTime },
+                    set: { reminderManager.reminderTime = $0 }
+                ), displayedComponents: .hourAndMinute)
+
+                Divider().overlay(theme.backgroundColor)
+
+                HStack(spacing: 6) {
+                    ForEach(ReminderManager.dayNames, id: \.id) { day in
+                        let isSelected = reminderManager.reminderDays.contains(day.id)
+                        Button {
+                            if isSelected {
+                                reminderManager.reminderDays.remove(day.id)
+                            } else {
+                                reminderManager.reminderDays.insert(day.id)
+                            }
+                        } label: {
+                            Text(day.short)
+                                .font(Typo.small)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(
+                                    isSelected ? theme.accentColor : Color.white.opacity(0.08),
+                                    in: RoundedRectangle(cornerRadius: 8)
+                                )
+                                .foregroundStyle(isSelected ? .black : theme.textSecondary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                if reminderManager.reminderDays.count != selectedDefinition.days.count {
+                    Text("This program is designed for \(selectedDefinition.days.count) days per week.")
+                        .font(Typo.caption)
+                        .foregroundStyle(.orange)
+                }
+            }
+        }
+        .padding(16)
+        .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
+    }
+
     // MARK: - Ready
 
     private var readyStep: some View {
@@ -381,39 +491,65 @@ struct OnboardingFlow: View {
             Text("Ready to Train")
                 .font(Typo.title)
 
-            Text(selectedTemplate.name)
+            Text(selectedDefinition.name)
                 .font(Typo.body)
                 .foregroundStyle(theme.accentColor)
                 .padding(.top, 4)
                 .padding(.bottom, 24)
 
-            VStack(spacing: 1) {
-                ForEach(selectedTemplate.exercises, id: \.name) { exercise in
-                    HStack {
-                        Text(exercise.name)
-                            .foregroundStyle(theme.textSecondary)
-                        Spacer()
-                        if exercise.type == .weighted {
-                            let w = exerciseWeights[exercise.name] ?? (unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs)
-                            Text("\(formatted(w)) \(unit.symbol)")
-                                .fontWeight(.semibold)
-                        } else {
-                            Text(PushUpVariant.forIntensity(1.0, maxLevel: pushUpStart).rawValue)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(theme.accentColor)
+            ScrollView {
+                VStack(spacing: 8) {
+                    if needsDayGrouping {
+                        let dayMapping = exerciseDayMapping
+                        ForEach(selectedDefinition.days, id: \.name) { day in
+                            let dayExercises = exerciseDefaults.filter { dayMapping[$0.name] == day.name }
+                            if !dayExercises.isEmpty {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(day.name)
+                                        .font(Typo.captionEmphasis)
+                                        .foregroundStyle(theme.accentColor)
+                                        .padding(.leading, 4)
+
+                                    VStack(spacing: 1) {
+                                        ForEach(dayExercises, id: \.name) { exercise in
+                                            exerciseSummaryRow(exercise)
+                                        }
+                                    }
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                }
+                            }
                         }
+                    } else {
+                        VStack(spacing: 1) {
+                            ForEach(exerciseDefaults, id: \.name) { exercise in
+                                exerciseSummaryRow(exercise)
+                            }
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
-                    .background(theme.cardColor)
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 14))
 
             VStack(alignment: .leading, spacing: 8) {
-                scheduleRow("Mon", "Heavy — max series", selectedTemplate.exercises.count == 2 ? "50% → 75% → 100%" : "50/75/100%")
-                scheduleRow("Wed", "Light", "50% only")
-                scheduleRow("Fri", "Medium", "50% → 75%")
+                ForEach(selectedDefinition.days, id: \.name) { day in
+                    let weekdayName = day.suggestedWeekday.flatMap { wd -> String? in
+                        let formatter = DateFormatter()
+                        formatter.locale = Locale(identifier: "en_US_POSIX")
+                        let names = formatter.shortWeekdaySymbols!
+                        return names[(wd - 1) % 7]
+                    } ?? "—"
+                    let week1Intensities = WorkoutEngine.intensityLevels(definition: selectedDefinition, dayName: day.name, week: 1)
+                    let setsDesc: String = if week1Intensities.count > 1 {
+                        week1Intensities.map { "\(Int($0 * 100))%" }.joined(separator: "/")
+                    } else if let slot = day.exerciseSlots.first,
+                              let group = slot.setGroups.first,
+                              let scheme = group.sets.first {
+                        "\(scheme.reps)×\(group.repeatCount.fixedValue ?? 1)"
+                    } else {
+                        ""
+                    }
+                    scheduleRow(weekdayName, day.name, setsDesc)
+                }
             }
             .padding(16)
             .background(theme.cardColor, in: RoundedRectangle(cornerRadius: 14))
@@ -427,6 +563,27 @@ struct OnboardingFlow: View {
             }
         }
         .padding(.horizontal, 28)
+    }
+
+    private func exerciseSummaryRow(_ exercise: ExerciseDefaults) -> some View {
+        HStack {
+            Text(exercise.name)
+                .font(Typo.caption)
+                .foregroundStyle(theme.textSecondary)
+            Spacer()
+            if exercise.type == .weighted {
+                let w = exerciseWeights[exercise.name] ?? (unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs)
+                Text("\(formatted(w)) \(unit.symbol)")
+                    .font(Typo.captionEmphasis)
+            } else {
+                Text(PushUpVariant.forIntensity(1.0, maxLevel: pushUpStart).rawValue)
+                    .font(Typo.captionEmphasis)
+                    .foregroundStyle(theme.accentColor)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(theme.cardColor)
     }
 
     private func scheduleRow(_ day: String, _ type: String, _ detail: String) -> some View {
@@ -461,7 +618,7 @@ struct OnboardingFlow: View {
 
     private func convertWeights(from oldUnit: WeightUnit, to newUnit: WeightUnit) {
         guard oldUnit != newUnit else { return }
-        for exercise in selectedTemplate.exercises where exercise.type == .weighted {
+        for exercise in exerciseDefaults where exercise.type == .weighted {
             guard let weight = exerciseWeights[exercise.name] else { continue }
             if newUnit == .lbs {
                 exerciseWeights[exercise.name] = (weight * 2.20462).rounded()
@@ -475,7 +632,7 @@ struct OnboardingFlow: View {
     }
 
     private func initWeights() {
-        for exercise in selectedTemplate.exercises where exercise.type == .weighted {
+        for exercise in exerciseDefaults where exercise.type == .weighted {
             if exerciseWeights[exercise.name] == nil {
                 exerciseWeights[exercise.name] = unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs
             }
@@ -490,25 +647,26 @@ struct OnboardingFlow: View {
 
     private func createProgram() {
         let program = Program(
+            programType: selectedDefinition.id,
             startDate: .now,
-            introCycleEnabled: includeIntro
+            introCycleEnabled: selectedDefinition.introCycle != nil ? includeIntro : false
         )
 
-        for (index, templateEx) in selectedTemplate.exercises.enumerated() {
-            let increment = unit == .kg ? templateEx.increment : templateEx.incrementLbs
-            let rm = exerciseWeights[templateEx.name] ?? (unit == .kg ? templateEx.defaultRM : templateEx.defaultRMLbs)
+        for (index, exercise) in exerciseDefaults.enumerated() {
+            let increment = unit == .kg ? exercise.increment : exercise.incrementLbs
+            let rm = exerciseWeights[exercise.name] ?? (unit == .kg ? exercise.defaultRM : exercise.defaultRMLbs)
 
-            let exercise = Exercise(
-                name: templateEx.name,
-                type: templateEx.type,
+            let ex = Exercise(
+                name: exercise.name,
+                type: exercise.type,
                 initial10RM: rm,
                 weightIncrement: increment,
                 unit: unit,
                 sortOrder: index,
-                pushUpStart: templateEx.type == .bodyweight ? pushUpStart : .regular
+                pushUpStart: exercise.type == .bodyweight ? pushUpStart : .regular
             )
-            exercise.program = program
-            program.exercises.append(exercise)
+            ex.program = program
+            program.exercises.append(ex)
         }
 
         modelContext.insert(program)

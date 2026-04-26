@@ -53,6 +53,17 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "65342890605BF3565C211514"
+               BuildableName = "StronqTests.xctest"
+               BlueprintName = "StronqTests"
+               ReferencedContainer = "container:Stronq.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

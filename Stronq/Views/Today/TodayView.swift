@@ -50,17 +50,17 @@ struct TodayView: View {
                     // Day header
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Week \(viewModel.weekNumber) · \(DeLormeEngine.suggestedDay(for: viewModel.dayType))")
+                            Text("Week \(viewModel.weekNumber) · \(WorkoutEngine.suggestedDay(definition: program.definition ?? .delormeClassic, dayName: viewModel.dayName))")
                                 .font(Typo.caption)
                                 .foregroundStyle(theme.textSecondary)
-                            Text(viewModel.dayType.rawValue)
+                            Text(viewModel.dayName)
                                 .font(Typo.title)
                         }
                         Spacer()
                     }
                     ForEach(viewModel.plannedExercises, id: \.name) { exercise in
-                        let seriesCount = viewModel.seriesPerExerciseCount(exercise.name)
-                        let isMax = viewModel.seriesModeForExercise(exercise.name) == .max
+                        let seriesCount = viewModel.groupsPerExerciseCount(exercise.name)
+                        let isMax = viewModel.groupModeForExercise(exercise.name) == .max
 
                         VStack(alignment: .leading, spacing: 6) {
                             HStack {
@@ -68,11 +68,11 @@ struct TodayView: View {
                                     .font(Typo.heading)
                                 Spacer()
                                 if isMax {
-                                    Label("max series", systemImage: "flame")
+                                    Label("max \(viewModel.groupTerm())", systemImage: "flame")
                                         .font(Typo.small)
                                         .foregroundStyle(theme.accentColor)
                                 } else {
-                                    Text("\(seriesCount) series")
+                                    Text(viewModel.groupTerm(count: seriesCount))
                                         .font(Typo.small)
                                         .foregroundStyle(theme.textSecondary)
                                 }
@@ -92,7 +92,7 @@ struct TodayView: View {
                                             .foregroundStyle(theme.textSecondary)
                                     }
                                     Spacer()
-                                    Text("x5")
+                                    Text("x\(set.reps)")
                                         .font(Typo.caption)
                                         .foregroundStyle(theme.textSecondary)
                                 }
@@ -197,14 +197,14 @@ struct TodayView: View {
                 .font(Typo.hero)
                 .padding(.bottom, 8)
 
-            Text(summary.dayType.rawValue)
+            Text(summary.dayName)
                 .font(Typo.body)
                 .foregroundStyle(theme.textSecondary)
 
             VStack(spacing: 12) {
                 HStack(spacing: 24) {
                     statBubble(value: summary.duration, label: "Time")
-                    statBubble(value: summary.seriesCounts.map(String.init).joined(separator: "/"), label: "Series")
+                    statBubble(value: "\(summary.groupCounts.reduce(0, +))", label: "Sets")
                     statBubble(value: formatted(summary.volume), label: "Volume")
                 }
             }

@@ -8,6 +8,7 @@ struct SettingsView: View {
     @Query private var programs: [Program]
     @Query(sort: \BodyweightEntry.date, order: .reverse) private var bodyweightEntries: [BodyweightEntry]
     @State private var showingPaywall = false
+    @State private var showingNewProgramConfirm = false
     @State private var newBodyweight: String = ""
     @State private var reminderManager = ReminderManager()
 
@@ -19,7 +20,7 @@ struct SettingsView: View {
                 theme.backgroundColor.ignoresSafeArea()
 
                 List {
-                    exercisesSection.listRowBackground(theme.cardColor)
+                    exercisesSection
                     programSection.listRowBackground(theme.cardColor)
                     remindersSection.listRowBackground(theme.cardColor)
                     appearanceSection.listRowBackground(theme.cardColor)
@@ -40,38 +41,65 @@ struct SettingsView: View {
 
     // MARK: - Exercises
 
-    private var exercisesSection: some View {
-        Section("Exercises") {
-            if let program {
-                ForEach(program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder })) { exercise in
-                    NavigationLink {
-                        ExerciseConfigView(exercise: exercise)
-                    } label: {
-                        HStack {
-                            Text(exercise.name)
-                            Spacer()
-                            if exercise.type == .weighted {
-                                Text("\(formatted(exercise.initial10RM)) \(exercise.unit.symbol)")
-                                    .foregroundStyle(theme.textSecondary)
-                            }
-                        }
-                    }
+    private func exerciseRow(_ exercise: Exercise) -> some View {
+        NavigationLink {
+            ExerciseConfigView(exercise: exercise)
+        } label: {
+            HStack {
+                Text(exercise.name)
+                Spacer()
+                if exercise.type == .weighted {
+                    Text("\(formatted(exercise.initial10RM)) \(exercise.unit.symbol)")
+                        .foregroundStyle(theme.textSecondary)
                 }
             }
         }
     }
 
+    @ViewBuilder
+    private var exercisesSection: some View {
+        if let program, let definition = program.definition, definition.days.count > 1 {
+            let sorted = program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder })
+            ForEach(definition.days, id: \.name) { day in
+                let slotNames = Set(day.exerciseSlots.map(\.defaultExercise) + day.exerciseSlots.flatMap(\.alternatives))
+                let dayExercises = sorted.filter { slotNames.contains($0.name) }
+                if !dayExercises.isEmpty {
+                    Section(day.name) {
+                        ForEach(dayExercises) { exercise in
+                            exerciseRow(exercise)
+                        }
+                    }
+                    .listRowBackground(theme.cardColor)
+                }
+            }
+        } else if let program {
+            Section("Exercises") {
+                ForEach(program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder })) { exercise in
+                    exerciseRow(exercise)
+                }
+            }
+            .listRowBackground(theme.cardColor)
+        }
+    }
+
     // MARK: - Program
+
+    private var isMultiSetProgram: Bool {
+        guard let def = program?.definition, let day = def.days.first else { return false }
+        return WorkoutEngine.intensityLevels(definition: def, dayName: day.name, week: 1).count > 1
+    }
 
     private var programSection: some View {
         Section("Program") {
             if let program {
-                Stepper("Set rest: \(program.restBetweenSets)s", value: Binding(
-                    get: { program.restBetweenSets },
-                    set: { program.restBetweenSets = $0 }
-                ), in: 15...180, step: 15)
+                if isMultiSetProgram {
+                    Stepper("Set rest: \(program.restBetweenSets)s", value: Binding(
+                        get: { program.restBetweenSets },
+                        set: { program.restBetweenSets = $0 }
+                    ), in: 15...180, step: 15)
+                }
 
-                Stepper("Series rest: \(program.restBetweenSeries)s", value: Binding(
+                Stepper("\(isMultiSetProgram ? "Series" : "Set") rest: \(program.restBetweenSeries)s", value: Binding(
                     get: { program.restBetweenSeries },
                     set: { program.restBetweenSeries = $0 }
                 ), in: 60...600, step: 30)
@@ -105,6 +133,21 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 120)
+                }
+
+                Button("New Program") {
+                    showingNewProgramConfirm = true
+                }
+                .foregroundStyle(theme.accentColor)
+                .alert("Start a new program?", isPresented: $showingNewProgramConfirm) {
+                    Button("Start New", role: .destructive) {
+                        for p in programs { modelContext.delete(p) }
+                        try? modelContext.save()
+                        UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("Your current program and workout history will be removed.")
                 }
             }
         }
@@ -159,8 +202,9 @@ struct SettingsView: View {
                     }
                 }
 
-                if reminderManager.reminderDays.count != 3 {
-                    Text("The program is designed for 3 days per week.")
+                if let dayCount = program?.definition?.days.count,
+                   reminderManager.reminderDays.count != dayCount {
+                    Text("This program is designed for \(dayCount) days per week.")
                         .font(Typo.caption)
                         .foregroundStyle(.orange)
                 }
