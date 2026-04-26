@@ -93,9 +93,9 @@ struct ProgressView: View {
                         id: session.id.uuidString,
                         week: session.weekNumber,
                         volume: session.totalVolume,
-                        dayType: session.dayName
+                        dayName: session.dayName
                     )
-                }.sorted { ($0.week, $0.dayType) < ($1.week, $1.dayType) }
+                }.sorted { ($0.week, $0.dayName) < ($1.week, $1.dayName) }
 
                 Chart(volumeData, id: \.id) { point in
                     BarMark(
@@ -316,7 +316,7 @@ struct VolumePoint: Identifiable {
     let id: String
     let week: Int
     let volume: Double
-    let dayType: String
+    let dayName: String
 }
 
 struct BodyweightPoint: Identifiable {
