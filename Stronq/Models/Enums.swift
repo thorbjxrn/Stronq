@@ -1,46 +1,5 @@
 import Foundation
 
-enum DayType: String, Codable, CaseIterable {
-    case heavy = "Heavy"
-    case light = "Light"
-    case medium = "Medium"
-
-    var intensityLevels: [Double] {
-        switch self {
-        case .heavy: [0.5, 0.75, 1.0]
-        case .medium: [0.5, 0.75]
-        case .light: [0.5]
-        }
-    }
-
-    var setsPerSeries: Int { intensityLevels.count }
-
-    var weekday: Int {
-        switch self {
-        case .heavy: 2   // Monday
-        case .light: 4   // Wednesday
-        case .medium: 6  // Friday
-        }
-    }
-
-    static func sortOrder(_ rawValue: String) -> Int {
-        switch rawValue {
-        case "Heavy": 0
-        case "Light": 1
-        case "Medium": 2
-        default: 3
-        }
-    }
-
-    var shortLabel: String {
-        switch self {
-        case .heavy: "H"
-        case .light: "L"
-        case .medium: "M"
-        }
-    }
-}
-
 enum ExerciseType: String, Codable {
     case bodyweight
     case weighted

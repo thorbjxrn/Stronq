@@ -1,19 +1,19 @@
 import Foundation
 
 struct SessionSummary: Sendable {
-    let dayType: DayType
+    let dayName: String
     let duration: String
-    let seriesCounts: [Int]
+    let groupCounts: [Int]
     let volume: Double
 
-    var totalSeries: Int { seriesCounts.reduce(0, +) }
+    var totalGroups: Int { groupCounts.reduce(0, +) }
 
-    init(dayType: DayType, elapsed: TimeInterval, volume: Double, seriesCounts: [Int]) {
-        self.dayType = dayType
+    init(dayName: String, elapsed: TimeInterval, volume: Double, groupCounts: [Int]) {
+        self.dayName = dayName
         let mins = Int(elapsed) / 60
         let secs = Int(elapsed) % 60
         self.duration = "\(mins):\(String(format: "%02d", secs))"
         self.volume = volume
-        self.seriesCounts = seriesCounts
+        self.groupCounts = groupCounts
     }
 }
