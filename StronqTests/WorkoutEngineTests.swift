@@ -112,10 +112,10 @@ final class ProgramDefinitionTests: XCTestCase {
         XCTAssertEqual(ProgramRegistry.all.count, 3)
     }
 
-    func testRegistryFindsCandito() {
-        let def = ProgramRegistry.definition(for: "candito-6week")
+    func testRegistryFindsPHUL() {
+        let def = ProgramRegistry.definition(for: "phul")
         XCTAssertNotNil(def)
-        XCTAssertEqual(def?.name, "Candito 6-Week")
+        XCTAssertEqual(def?.name, "PHUL")
     }
 }
 

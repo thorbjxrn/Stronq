@@ -8,6 +8,7 @@ struct SettingsView: View {
     @Query private var programs: [Program]
     @Query(sort: \BodyweightEntry.date, order: .reverse) private var bodyweightEntries: [BodyweightEntry]
     @State private var showingPaywall = false
+    @State private var showingNewProgramConfirm = false
     @State private var newBodyweight: String = ""
     @State private var reminderManager = ReminderManager()
 
@@ -105,6 +106,21 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 120)
+                }
+
+                Button("New Program") {
+                    showingNewProgramConfirm = true
+                }
+                .foregroundStyle(theme.accentColor)
+                .alert("Start a new program?", isPresented: $showingNewProgramConfirm) {
+                    Button("Start New", role: .destructive) {
+                        for p in programs { modelContext.delete(p) }
+                        try? modelContext.save()
+                        UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("Your current program and workout history will be removed.")
                 }
             }
         }

@@ -211,7 +211,9 @@ struct WorkoutSessionView: View {
 
             ForEach(group.sets) { set in
                     let exerciseUnit = viewModel.plannedExercises.first(where: { $0.name == exerciseName })?.unit ?? .kg
-                    SetRowView(set: set, viewModel: viewModel, theme: theme, unit: exerciseUnit)
+                    SetRowView(set: set, viewModel: viewModel, theme: theme, unit: exerciseUnit) {
+                        advanceIfDone(exerciseName)
+                    }
             }
         }
         .padding(14)
@@ -288,8 +290,7 @@ struct WorkoutSessionView: View {
         let elapsed = viewModel.elapsedTime
         let volume = viewModel.activeSession?.totalVolume ?? 0
         let day = viewModel.dayName
-        let groups = program.exercises
-            .sorted(by: { $0.sortOrder < $1.sortOrder })
+        let groups = viewModel.plannedExercises
             .map { viewModel.completedGroupCount(for: $0.name) }
 
         viewModel.finishWorkout(program: program, modelContext: modelContext)
@@ -353,6 +354,7 @@ struct SetRowView: View {
     let viewModel: WorkoutViewModel
     let theme: ThemeManager
     var unit: WeightUnit = .kg
+    var onComplete: (() -> Void)?
     @State private var isEditing = false
 
     var body: some View {
@@ -362,6 +364,7 @@ struct SetRowView: View {
                     viewModel.uncompleteSet(set)
                 } else {
                     viewModel.completeSet(set)
+                    onComplete?()
                 }
                 isEditing = false
             } label: {

@@ -67,10 +67,10 @@ struct WorkoutEngine {
         let term: String
         if multiSet {
             term = capitalized ? "Series" : "series"
-        } else if let count, count == 1 {
-            term = capitalized ? "Set" : "set"
-        } else {
+        } else if let count, count != 1 {
             term = capitalized ? "Sets" : "sets"
+        } else {
+            term = capitalized ? "Set" : "set"
         }
         if let count { return "\(count) \(term)" }
         return term

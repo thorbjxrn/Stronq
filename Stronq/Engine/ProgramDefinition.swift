@@ -10,6 +10,11 @@ enum RepeatMode: Codable, Equatable, Sendable {
     case fixed(Int)
     case max
     case matchDay(String)
+
+    var fixedValue: Int? {
+        if case .fixed(let n) = self { return n }
+        return nil
+    }
 }
 
 enum ProgressionTrigger: Codable, Equatable, Sendable {

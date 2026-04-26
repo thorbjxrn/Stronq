@@ -7,6 +7,10 @@ final class HealthKitManager {
     private let healthStore = HKHealthStore()
     private(set) var isAuthorized = false
 
+    var syncEnabled: Bool = UserDefaults.standard.bool(forKey: "healthKitSyncEnabled") {
+        didSet { UserDefaults.standard.set(syncEnabled, forKey: "healthKitSyncEnabled") }
+    }
+
     var isAvailable: Bool {
         HKHealthStore.isHealthDataAvailable()
     }

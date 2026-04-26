@@ -217,6 +217,14 @@ struct WeekCard: View {
     }
 
     private func dayRow(_ dayName: String) -> some View {
+        let planned = WorkoutEngine.generateWorkout(
+            definition: definition,
+            dayName: dayName,
+            week: week,
+            exercises: program.exercises
+        )
+        let intensities = WorkoutEngine.intensityLevels(definition: definition, dayName: dayName, week: week)
+        let isMultiSet = intensities.count > 1
         let heavyPerExercise = heavyGroupsPerExercise
         let mode = WorkoutEngine.groupCount(
             definition: definition,
@@ -224,37 +232,20 @@ struct WeekCard: View {
             week: week,
             heavyGroupCount: heavyGroupsForWeek
         )
-        let perExerciseModes: [(name: String, count: Int)] = program.exercises
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .map { ex in
-                let hc = heavyPerExercise[ex.name]
-                let m = WorkoutEngine.groupCountForExercise(definition: definition, dayName: dayName, week: week, exerciseName: ex.name, heavyGroupCount: hc)
-                switch m {
-                case .fixed(let n): return (name: ex.name, count: n)
-                case .max: return (name: ex.name, count: 0)
-                }
-            }
-        let hasVariableGroups = Set(perExerciseModes.map(\.count)).count > 1
-        let planned = WorkoutEngine.generateWorkout(
-            definition: definition,
-            dayName: dayName,
-            week: week,
-            exercises: program.exercises
-        )
         let session = findSession(dayName)
         let isDone = session?.isCompleted == true
         let progressionGroupCount = 5
-        let exerciseGroups: [(name: String, count: Int)] = isDone && session != nil ? program.exercises.sorted(by: { $0.sortOrder < $1.sortOrder }).map { ex in
-            (name: ex.name, count: session!.fullyCompletedGroupCount(for: ex.name))
-        } : []
+
+        let exerciseGroups: [(name: String, count: Int)] = isDone && session != nil
+            ? planned.map { ex in (name: ex.name, count: session!.fullyCompletedGroupCount(for: ex.name)) }
+            : []
         let allHitTarget = isDone && !exerciseGroups.isEmpty && exerciseGroups.allSatisfy { $0.count >= progressionGroupCount }
 
-        return VStack(alignment: .leading, spacing: 8) {
+        return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(dayName)
                     .font(Typo.bodyEmphasis)
-                    .foregroundStyle(allHitTarget ? theme.completedColor :
-                                     isDone ? theme.accentColor : theme.accentColor)
+                    .foregroundStyle(isDone ? theme.accentColor : theme.accentColor)
 
                 if allHitTarget {
                     Image(systemName: "checkmark.circle.fill")
@@ -265,23 +256,12 @@ struct WeekCard: View {
                 Spacer()
 
                 if isDone {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         ForEach(exerciseGroups, id: \.name) { eg in
                             Text("\(eg.count)")
                                 .font(Typo.small)
                                 .foregroundStyle(eg.count >= progressionGroupCount ? theme.completedColor : theme.accentColor)
                         }
-                    }
-                } else if hasVariableGroups {
-                    HStack(spacing: 6) {
-                        ForEach(perExerciseModes, id: \.name) { em in
-                            Text("\(em.count)")
-                                .font(Typo.small)
-                                .foregroundStyle(theme.textSecondary)
-                        }
-                        Text(WorkoutEngine.groupTerm(definition: definition, dayName: dayName, week: week))
-                            .font(Typo.statLabel)
-                            .foregroundStyle(theme.textSecondary)
                     }
                 } else {
                     switch mode {
@@ -298,17 +278,34 @@ struct WeekCard: View {
             }
 
             ForEach(planned, id: \.name) { exercise in
-                HStack(spacing: 0) {
-                    Text(exercise.name)
-                        .font(Typo.caption)
-                        .foregroundStyle(theme.textSecondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                if isMultiSet {
+                    HStack(spacing: 0) {
+                        Text(exercise.name)
+                            .font(Typo.caption)
+                            .foregroundStyle(theme.textSecondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
-                    ForEach(exercise.sets, id: \.intensity) { set in
-                        Text(set.shortDisplayWeight)
+                        ForEach(exercise.sets, id: \.intensity) { set in
+                            Text(set.shortDisplayWeight)
+                                .font(.system(.caption, design: .monospaced, weight: .semibold))
+                                .foregroundStyle(.white.opacity(0.85))
+                                .frame(width: 52, alignment: .trailing)
+                        }
+                    }
+                } else {
+                    let slot = definition.days.first(where: { $0.name == dayName })?
+                        .exerciseSlots.first(where: { $0.defaultExercise == exercise.name || $0.alternatives.contains(exercise.name) })
+                    let reps = slot?.setGroups.first?.sets.first?.reps ?? 5
+                    let sets = slot?.setGroups.first?.repeatCount.fixedValue ?? 1
+
+                    HStack {
+                        Text(exercise.name)
+                            .font(Typo.caption)
+                            .foregroundStyle(theme.textSecondary)
+                        Spacer()
+                        Text("\(exercise.sets.first?.shortDisplayWeight ?? "")  \(reps)×\(sets)")
                             .font(.system(.caption, design: .monospaced, weight: .semibold))
                             .foregroundStyle(.white.opacity(0.85))
-                            .frame(width: 52, alignment: .trailing)
                     }
                 }
             }

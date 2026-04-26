@@ -43,6 +43,8 @@ final class CompletedSet {
         if pushUpVariant != nil {
             return pushUpVariant?.rawValue ?? "Regular"
         }
-        return String(format: "%.2f", targetWeight)
+        return targetWeight.truncatingRemainder(dividingBy: 1) == 0
+            ? String(format: "%.0f", targetWeight)
+            : String(format: "%.1f", targetWeight)
     }
 }
