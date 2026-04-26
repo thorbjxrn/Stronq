@@ -204,7 +204,7 @@ struct TodayView: View {
             VStack(spacing: 12) {
                 HStack(spacing: 24) {
                     statBubble(value: summary.duration, label: "Time")
-                    statBubble(value: summary.groupCounts.map(String.init).joined(separator: "/"), label: viewModel.groupTerm(capitalized: true))
+                    statBubble(value: "\(summary.groupCounts.reduce(0, +))", label: "Sets")
                     statBubble(value: formatted(summary.volume), label: "Volume")
                 }
             }

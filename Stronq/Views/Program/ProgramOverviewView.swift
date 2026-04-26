@@ -263,7 +263,7 @@ struct WeekCard: View {
                                 .foregroundStyle(eg.count >= progressionGroupCount ? theme.completedColor : theme.accentColor)
                         }
                     }
-                } else {
+                } else if isMultiSet {
                     switch mode {
                     case .max:
                         Label("max \(WorkoutEngine.groupTerm(definition: definition, dayName: dayName, week: week))", systemImage: "flame")
@@ -297,15 +297,29 @@ struct WeekCard: View {
                         .exerciseSlots.first(where: { $0.defaultExercise == exercise.name || $0.alternatives.contains(exercise.name) })
                     let reps = slot?.setGroups.first?.sets.first?.reps ?? 5
                     let sets = slot?.setGroups.first?.repeatCount.fixedValue ?? 1
+                    let unitSymbol = program.exercises.first?.unit.symbol ?? "kg"
 
-                    HStack {
+                    HStack(spacing: 0) {
                         Text(exercise.name)
                             .font(Typo.caption)
                             .foregroundStyle(theme.textSecondary)
-                        Spacer()
-                        Text("\(exercise.sets.first?.shortDisplayWeight ?? "")  \(reps)×\(sets)")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        Text(exercise.sets.first?.shortDisplayWeight ?? "")
                             .font(.system(.caption, design: .monospaced, weight: .semibold))
                             .foregroundStyle(.white.opacity(0.85))
+                            .frame(width: 44, alignment: .trailing)
+
+                        Text(unitSymbol)
+                            .font(Typo.statLabel)
+                            .foregroundStyle(theme.textSecondary)
+                            .frame(width: 24, alignment: .leading)
+                            .padding(.leading, 2)
+
+                        Text("\(reps)×\(sets)")
+                            .font(.system(.caption, design: .monospaced, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.85))
+                            .frame(width: 38, alignment: .trailing)
                     }
                 }
             }
