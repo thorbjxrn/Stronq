@@ -279,18 +279,18 @@ struct WeekCard: View {
                                 .font(Typo.small)
                                 .foregroundStyle(theme.textSecondary)
                         }
-                        Text("series")
+                        Text(WorkoutEngine.groupTerm(definition: definition, dayName: dayName, week: week))
                             .font(Typo.statLabel)
                             .foregroundStyle(theme.textSecondary)
                     }
                 } else {
                     switch mode {
                     case .max:
-                        Label("max series", systemImage: "flame")
+                        Label("max \(WorkoutEngine.groupTerm(definition: definition, dayName: dayName, week: week))", systemImage: "flame")
                             .font(Typo.statLabel)
                             .foregroundStyle(theme.accentColor.opacity(0.8))
                     case .fixed(let n):
-                        Text("\(n) series")
+                        Text(WorkoutEngine.groupTerm(definition: definition, dayName: dayName, week: week, count: n))
                             .font(Typo.statLabel)
                             .foregroundStyle(theme.textSecondary)
                     }

@@ -90,6 +90,11 @@ final class WorkoutViewModel {
 
     var hasWorkoutToday: Bool { !plannedExercises.isEmpty }
 
+    func groupTerm(count: Int? = nil, capitalized: Bool = false) -> String {
+        guard let definition else { return count.map { "\($0) series" } ?? "series" }
+        return WorkoutEngine.groupTerm(definition: definition, dayName: dayName, week: weekNumber, count: count, capitalized: capitalized)
+    }
+
     func groupsPerExerciseCount(_ name: String) -> Int {
         let count = groupsPerExercise[name] ?? 0
         return count == 0 ? 5 : count

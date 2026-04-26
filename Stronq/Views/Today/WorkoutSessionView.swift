@@ -83,7 +83,7 @@ struct WorkoutSessionView: View {
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
                             if seriesCount > 0 {
-                                Text("\(seriesCount) series")
+                                Text(viewModel.groupTerm(count: seriesCount))
                                     .font(Typo.statLabel)
                                     .foregroundStyle(theme.textSecondary)
                             }
@@ -138,11 +138,11 @@ struct WorkoutSessionView: View {
                 HStack {
                     switch mode {
                     case .max:
-                        Label("Max series", systemImage: "flame")
+                        Label("Max \(viewModel.groupTerm())", systemImage: "flame")
                             .font(Typo.caption)
                             .foregroundStyle(theme.accentColor)
                     case .fixed(let n):
-                        Text("\(currentSeries) of \(n) series")
+                        Text("\(currentSeries) of \(viewModel.groupTerm(count: n))")
                             .font(Typo.caption)
                             .foregroundStyle(theme.textSecondary)
                     }
@@ -162,7 +162,7 @@ struct WorkoutSessionView: View {
                         Button {
                             withAnimation { viewModel.addAnotherGroupForExercise(exercise.name) }
                         } label: {
-                            Label("Add Series", systemImage: "plus.circle.fill")
+                            Label("Add \(viewModel.groupTerm(capitalized: true))", systemImage: "plus.circle.fill")
                                 .font(Typo.bodyEmphasis)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
@@ -178,7 +178,7 @@ struct WorkoutSessionView: View {
                                 }
                             }
                         } label: {
-                            Label("Done — \(viewModel.completedGroupCount(for: exercise.name)) series", systemImage: "checkmark")
+                            Label("Done — \(viewModel.groupTerm(count: viewModel.completedGroupCount(for: exercise.name)))", systemImage: "checkmark")
                                 .font(Typo.bodyEmphasis)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
@@ -198,7 +198,7 @@ struct WorkoutSessionView: View {
 
         return VStack(spacing: 6) {
             HStack {
-                Text("Series \(group.group)")
+                Text("\(viewModel.groupTerm(capitalized: true)) \(group.group)")
                     .font(Typo.captionEmphasis)
                     .foregroundStyle(isCurrent ? theme.accentColor : theme.textSecondary)
                 Spacer()
@@ -237,6 +237,7 @@ struct WorkoutSessionView: View {
                 }
                 if let lastSet = incompleteSets.last {
                     viewModel.completeSet(lastSet)
+                    advanceIfDone(exerciseName)
                 } else {
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 }
@@ -245,6 +246,7 @@ struct WorkoutSessionView: View {
         .onTapGesture(count: 1) {
             if let nextSet = group.sets.first(where: { !$0.isCompleted }) {
                 viewModel.completeSet(nextSet)
+                advanceIfDone(exerciseName)
             }
         }
         .opacity(allDone && !isCurrent ? 0.5 : 1)
@@ -256,13 +258,20 @@ struct WorkoutSessionView: View {
         HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(theme.completedColor)
-            Text("\(name) done — \(seriesCount) series")
+            Text("\(name) done — \(viewModel.groupTerm(count: seriesCount))")
                 .foregroundStyle(theme.textSecondary)
         }
         .font(Typo.body)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background(theme.completedColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+    }
+
+    private func advanceIfDone(_ exerciseName: String) {
+        guard viewModel.isExerciseDone(exerciseName),
+              let nextIndex = viewModel.plannedExercises.firstIndex(where: { !viewModel.isExerciseDone($0.name) })
+        else { return }
+        withAnimation(.easeInOut(duration: 0.3)) { selectedExercise = nextIndex }
     }
 
     private func isFirstIncompleteGroup(_ series: Int, exerciseName: String) -> Bool {

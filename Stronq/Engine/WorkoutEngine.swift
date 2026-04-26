@@ -26,14 +26,20 @@ struct PlannedSet: Sendable {
         if let variant = pushUpVariant {
             return variant.shortName
         }
-        return String(format: "%.2f", weight)
+        return formatWeight(weight)
     }
 
     var displayWeight: String {
         if let variant = pushUpVariant {
             return variant.rawValue
         }
-        return String(format: "%.2f", weight)
+        return formatWeight(weight)
+    }
+
+    private func formatWeight(_ value: Double) -> String {
+        value.truncatingRemainder(dividingBy: 1) == 0
+            ? String(format: "%.0f", value)
+            : String(format: "%.1f", value)
     }
 }
 
@@ -47,6 +53,28 @@ struct PlannedWorkoutExercise: Sendable {
 // MARK: - WorkoutEngine
 
 struct WorkoutEngine {
+
+    // MARK: - Group Terminology
+
+    static func groupTerm(
+        definition: ProgramDefinition,
+        dayName: String,
+        week: Int,
+        count: Int? = nil,
+        capitalized: Bool = false
+    ) -> String {
+        let multiSet = intensityLevels(definition: definition, dayName: dayName, week: week).count > 1
+        let term: String
+        if multiSet {
+            term = capitalized ? "Series" : "series"
+        } else if let count, count == 1 {
+            term = capitalized ? "Set" : "set"
+        } else {
+            term = capitalized ? "Sets" : "sets"
+        }
+        if let count { return "\(count) \(term)" }
+        return term
+    }
 
     // MARK: - Intensity Levels
 
@@ -186,8 +214,19 @@ struct WorkoutEngine {
         let intensities = intensityLevels(definition: definition, dayName: dayName, week: week)
         let reps = repCount(definition: definition, dayName: dayName, week: week)
 
+        let day = definition.days.first(where: { $0.name == dayName })
+        let slotNames: Set<String>? = day.map { d in
+            var names = Set<String>()
+            for slot in d.exerciseSlots {
+                names.insert(slot.defaultExercise)
+                names.formUnion(slot.alternatives)
+            }
+            return names
+        }
+
         return exercises
             .sorted { $0.sortOrder < $1.sortOrder }
+            .filter { slotNames?.contains($0.name) ?? true }
             .map { exercise in
                 let rm = exercise.initial10RM
                 let sets = intensities.map { intensity in

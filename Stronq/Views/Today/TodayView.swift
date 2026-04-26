@@ -68,11 +68,11 @@ struct TodayView: View {
                                     .font(Typo.heading)
                                 Spacer()
                                 if isMax {
-                                    Label("max series", systemImage: "flame")
+                                    Label("max \(viewModel.groupTerm())", systemImage: "flame")
                                         .font(Typo.small)
                                         .foregroundStyle(theme.accentColor)
                                 } else {
-                                    Text("\(seriesCount) series")
+                                    Text(viewModel.groupTerm(count: seriesCount))
                                         .font(Typo.small)
                                         .foregroundStyle(theme.textSecondary)
                                 }
@@ -204,7 +204,7 @@ struct TodayView: View {
             VStack(spacing: 12) {
                 HStack(spacing: 24) {
                     statBubble(value: summary.duration, label: "Time")
-                    statBubble(value: summary.groupCounts.map(String.init).joined(separator: "/"), label: "Series")
+                    statBubble(value: summary.groupCounts.map(String.init).joined(separator: "/"), label: viewModel.groupTerm(capitalized: true))
                     statBubble(value: formatted(summary.volume), label: "Volume")
                 }
             }

@@ -16,7 +16,11 @@ final class PurchaseManager {
     private var transactionListener: Task<Void, Never>?
 
     init() {
+        #if DEBUG
+        isPremium = true
+        #else
         isPremium = UserDefaults.standard.bool(forKey: "isPremiumCached")
+        #endif
         transactionListener = listenForTransactions()
         Task { await verifyEntitlement() }
     }

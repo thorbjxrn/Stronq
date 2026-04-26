@@ -424,11 +424,8 @@ struct OnboardingFlow: View {
                         let names = formatter.shortWeekdaySymbols!
                         return names[(wd - 1) % 7]
                     } ?? "—"
-                    let setsDesc = day.exerciseSlots.first.map { slot -> String in
-                        slot.setGroups.first.map { group in
-                            group.sets.map { "\(Int($0.intensity * 100))%" }.joined(separator: "/")
-                        } ?? ""
-                    } ?? ""
+                    let week1Intensities = WorkoutEngine.intensityLevels(definition: selectedDefinition, dayName: day.name, week: 1)
+                    let setsDesc = week1Intensities.map { "\(Int($0 * 100))%" }.joined(separator: "/")
                     scheduleRow(weekdayName, day.name, setsDesc)
                 }
             }
